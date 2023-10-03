@@ -1,0 +1,20 @@
+MERN para realizar individualmente:
+Realizar un sistema administrativo (Que contenga una API) con una interfaz sencilla y responsive, la cual 
+permita crear elementos, modificar elementos, eliminar elementos, visualizar todos los elementos y buscar un elemento.
+
+
+Debe contener una pagina con una cuadricula o carrusel donde puedas mostrar todos los elementos registrados
+Debe contener una seccion para poder ver los detalles de un elemento al hacer click sobre el desde la cuadricula o carrusel de elementos en la pagina general
+
+Además debe tener un sistema de login, register y recovery (que majene preguntas de seguridad)
+
+Opcional: Cada vez que se registre un elemento se debe enviar un correo con la información de dicho elemento a didacusdev@gmail.com (node mailer)
+Opcional: Si realizas un E-Commerce podrias incluso realizar un carrito funcional, que permita deducir de la base de datos 
+y mostrar una factura con los detalles de la compra
+IMPORTANTE: Los Sprints seran semanales 
+
+El primer sprint inicia el 25/Septiembre/2023 y se cumple el 02/Octubre/2023 desde alli se repite la dimanica hasta el 30/Noviembre/2023 que finaliza el 5to Sprint.
+
+Fecha de inicio: 25/Septiembre/2023
+Fecha de Entrega: 03/Noviembre/2023
+Graduacion (Acto): ?/Noviembre/2023 (Antes del 15)
