@@ -2,7 +2,7 @@
 const express = require ('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const { response } = require('express');
+// const { response } = require('express');
 
 // app
 const app = express();
@@ -21,10 +21,6 @@ conexionBD();
 
 // Schema de los farmacos
 const farmaco = new mongoose.Schema({
-    id: {
-        type: Number,
-        unique: true,
-    },
     nombre: {
         type: String,
         unique: true,
@@ -34,6 +30,7 @@ const farmaco = new mongoose.Schema({
         type: [String], 
         required: true
     },
+    id : this.familia[0] + this.nombre.slice(0, 3),
     mecanismoDeAccion: {
         type: String,
         default: "Información faltante",
@@ -44,7 +41,7 @@ const farmaco = new mongoose.Schema({
     },
     presentaciones: [
         {
-            presentacion: {
+            tipo: {
                 type: String,
                 default: "Información faltante",
             },
@@ -106,6 +103,13 @@ const farmaco = new mongoose.Schema({
         type: String,
         default: "No requerido ajuste"
     },
+});
+
+// cración del Id
+farmaco.virtual("id").get(function () {
+    const familia = this.familia.join(" ");
+    const nombre = this.nombre.slice(0, 3);
+    return familia + nombre;
 });
 
 // modelo
