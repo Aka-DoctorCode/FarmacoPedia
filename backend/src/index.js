@@ -2,7 +2,7 @@
 const express = require ('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-// const { response } = require('express');
+// const { res } = require('express');
 
 // app
 const app = express();
@@ -30,10 +30,13 @@ const farmaco = new mongoose.Schema({
         type: [String], 
         required: true
     },
-    id : this.familia[0] + this.nombre.slice(0, 3),
+    id: {
+        type: String,
+        unique: true
+    },
     mecanismoDeAccion: {
         type: String,
-        default: "Información faltante",
+        default: "Información faltante"
     },
     indicacion: {
         type: [String],
@@ -64,7 +67,7 @@ const farmaco = new mongoose.Schema({
         default: "Información faltante",
     },
     dosisPediatrica: {
-        type: String,
+        type: [String],
         requiered: true
     },
     dosisMaxPedia: {
@@ -105,13 +108,6 @@ const farmaco = new mongoose.Schema({
     },
 });
 
-// cración del Id
-farmaco.virtual("id").get(function () {
-    const familia = this.familia.join(" ");
-    const nombre = this.nombre.slice(0, 3);
-    return familia + nombre;
-});
-
 // modelo
 const Farmaco = mongoose.model('Farmaco', farmaco);
 
@@ -121,9 +117,9 @@ app.get("/farmacos", async (req, res)=>{
     res.status(200).json(farmacosEncontrados);
 
     if (farmacosEncontrados != null) {
-        response.status(200).json(farmacosEncontrados);
+        res.status(200).json(farmacosEncontrados);
     } else {
-        response.status(404).json({
+        res.status(404).json({
             "error": "No se encontraron farmacos",
             "solucion": "Intenta con otro"
         });
@@ -133,34 +129,35 @@ app.get("/farmacos", async (req, res)=>{
 app.get("/farmaco/:nombre", async (req, res)=>{
     const {nombre} = req.params;
     const farmacoEncontrado = await Farmaco.findOne({"nombre": nombre});
+    console.log(farmacoEncontrado);
 
     if (farmacoEncontrado != null) {
-        response.status(200).json(farmacoEncontrado);
+        res.status(200).json(farmacoEncontrado);
     }else{
-        response.status(404).json({
+        res.status(404).json({
             "error": "No se encontro el farmaco",
             "solucion": "Intenta con otro"
         });
     }
 });
 
-app.get("/farmaco/:familia", async (req, res)=>{
+app.get("/farmacos/familia/:familia", async (req, res)=>{
     const {familia} = req.params;
     const farmacoEncontrado = await Farmaco.findAll({"familia": familia});
 
     if (farmacoEncontrado != null) {
-        response.status(200).json(farmacoEncontrado);
+        res.status(200).json(farmacoEncontrado);
     }else{
-        response.status(404).json({
-            "error": "No se encontro el farmaco",
+        res.status(404).json({
+            "error": "No se encontraron farmacos",
             "solucion": "Intenta con otro"
         });
     }
 });
 
 app.post("/agregarFarmaco", async (req, res)=>{
-    const {id, nombre, familia, mecanismoDeAccion, indicacion, presentaciones, viaAdministracion, dosisAdulto, dosisMaxAdult, dosisPediatrica, dosisMaxPedia, riesgo, contraindicaciones, ajusteRenal, ajusteHepatico} = req.body;
-
+    const {nombre, familia, mecanismoDeAccion, indicacion, presentaciones, viaAdministracion, dosisAdulto, dosisMaxAdult, dosisPediatrica, dosisMaxPedia, riesgo, contraindicaciones, ajusteRenal, ajusteHepatico} = req.body;
+    const id = familia[0] + "_" + nombre.slice(0, 3);
     try {
         const nuevoFarmaco = new Farmaco({id, nombre, familia, mecanismoDeAccion, indicacion, presentaciones, viaAdministracion, dosisAdulto, dosisMaxAdult, dosisPediatrica, dosisMaxPedia, riesgo, contraindicaciones, ajusteRenal, ajusteHepatico});
 
