@@ -2,7 +2,6 @@
 const express = require ('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-// const { res } = require('express');
 
 // app
 const app = express();
@@ -112,9 +111,8 @@ const farmaco = new mongoose.Schema({
 const Farmaco = mongoose.model('Farmaco', farmaco);
 
 // rutas
-app.get("/farmacos", async (req, res)=>{
+app.get("/farmacos", async (req, res) => {
     const farmacosEncontrados = await Farmaco.find();
-    res.status(200).json(farmacosEncontrados);
 
     if (farmacosEncontrados != null) {
         res.status(200).json(farmacosEncontrados);
@@ -143,9 +141,9 @@ app.get("/farmaco/:nombre", async (req, res)=>{
 
 app.get("/farmacos/familia/:familia", async (req, res)=>{
     const {familia} = req.params;
-    const farmacoEncontrado = await Farmaco.findAll({"familia": familia});
+    const farmacoEncontrado = await Farmaco.find({ familia });
 
-    if (farmacoEncontrado != null) {
+    if (farmacoEncontrado.length > 0) {
         res.status(200).json(farmacoEncontrado);
     }else{
         res.status(404).json({
@@ -157,7 +155,7 @@ app.get("/farmacos/familia/:familia", async (req, res)=>{
 
 app.post("/agregarFarmaco", async (req, res)=>{
     const {nombre, familia, mecanismoDeAccion, indicacion, presentaciones, viaAdministracion, dosisAdulto, dosisMaxAdult, dosisPediatrica, dosisMaxPedia, riesgo, contraindicaciones, ajusteRenal, ajusteHepatico} = req.body;
-    const id = familia[0] + "_" + nombre.slice(0, 3);
+    const id = (familia && familia.length > 0) ? familia[0] + "_" + nombre.slice(0, 3) : "";
     try {
         const nuevoFarmaco = new Farmaco({id, nombre, familia, mecanismoDeAccion, indicacion, presentaciones, viaAdministracion, dosisAdulto, dosisMaxAdult, dosisPediatrica, dosisMaxPedia, riesgo, contraindicaciones, ajusteRenal, ajusteHepatico});
 
