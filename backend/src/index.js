@@ -18,16 +18,19 @@ async function conexionBD(){
 }
 conexionBD();
 
+
 // Schema de los farmacos
 const farmaco = new mongoose.Schema({
     nombre: {
         type: String,
         unique: true,
-        required: true
+        required: true,
+        match: /^[a-záéíóúü]+$/
     },
     familia: {
         type: [String], 
-        required: true
+        required: true,
+        match: /^[a-záéíóúü]+$/
     },
     id: {
         type: String,
@@ -35,76 +38,159 @@ const farmaco = new mongoose.Schema({
     },
     mecanismoDeAccion: {
         type: String,
-        default: "Información faltante"
+        default: "información faltante",
     },
     indicacion: {
         type: [String],
-        default: "Información faltante",
+        default: "información faltante",
+        match: /^[a-záéíóúü]\s+$/
     },
     presentaciones: [
         {
             tipo: {
                 type: String,
-                default: "Información faltante",
+                default: "información faltante",
+                match: /^[a-záéíóúü]\s+$/
             },
-            dosis: {
-                type: String,
-                default: "Información faltante",
+            presentacion:{
+                composicion: {
+                    type: String,
+                    default: "información faltante",
+                    match: /^[a-záéíóúü0-9\,.-/]\s+$/
+                },
+            },
+            viasAdministracion: {
+                type: [String],
+                default: "información faltante",
+                match: /^[a-záéíóúü]\s+$/
             }
+        },
+    ],
+    nombresComercial: [
+        {
+            nombreComercial: {
+                type: String,
+                default: "información faltante",
+                match: /^[a-záéíóúü]\s+$/
+            },
+            composicion: {
+                type: String,
+                default: "información faltante",
+                match: /^[a-z0-9\,.-/]\s+$/
+            },
+            paises: [
+                {
+                    pais: {
+                        type: String,
+                        default: "información faltante",
+                        match: /^[a-záéíóúü]\s+$/
+                    }
+                }
+            ]
         }
     ],
-    viaAdministracion: {
-        type: [String],
-        default: "Información faltante",
-    },
-    dosisAdulto: {
-        type: [String],
-        requiered: true
-    },
-    dosisMaxAdult:{
-        type: String,
-        default: "Información faltante",
-    },
-    dosisPediatrica: {
-        type: [String],
-        requiered: true
-    },
-    dosisMaxPedia: {
-        type: String,
-        default: "Información faltante",
+    posologia: {
+        dosisAdulto: {
+            viaAdministracion: [
+                {
+                    dosis: [
+                        {
+                            dosis: {
+                                type: String,
+                                required: true,
+                                match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷]\s+$/
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        dosisMaxAdulto: {
+            type: [String],
+            default: "información faltante",
+            match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷]\s+$/
+        },
+        dosisPediatrica: {
+            viaAdministracion: [
+                {
+                    dosis: [
+                        {
+                            dosis: {
+                                type: String,
+                                required: true,
+                                match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷]\s+$/
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        dosisMaxPediatrica: {
+            type: [String],
+            default: "información faltante",
+            match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷]\s+$/
+        },
     },
     riesgo: [
         {
             embarazo: {
                 type: String,
-                default: "desconocido",
+                default: "información faltante",
+                match: /^[a-záéíóúü]\s+$/
             },
             lactancia: {
                 type: String,
-                default: "desconocido",
+                default: "información faltante",
+                match: /^[a-záéíóúü]\s+$/
             },
             renal: {
-                type: String,
-                default: "desconocido",
+                riesgo: {
+                    type: String,
+                    default: "información faltante",
+                    match: /^[a-záéíóúü]\s+$/
+                },
+                ajusteRenal: {
+                    type: String,
+                    default: "información faltante",
+                    match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷]\s+$/
+                    
+                }
             },
             hepatico: {
-                type: String,
-                default: "desconocido",
+                riesgo: {
+                    type: String,
+                    default: "información faltante",
+                    match: /^[a-záéíóúü]\s+$/
+                },
+                ajusteHepatico: {
+                    type: String,
+                    default: "información faltante",
+                    match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷]\s+$/
+                    
+                }
             }
         }
     ],
     contraindicaciones: {
         type: [String],
-        default: "Información faltante"
+        default: "información faltante",
+        match: /^[a-záéíóúü]\s+$/
     },
-    ajusteRenal: {
+    interacciones: {
+        type: [String],
+        default: "información faltante",
+        match: /^[a-záéíóúü]\s+$/
+    },
+    reaccionesAdversas: {
+        type: [String],
+        default: "información faltante",
+        match: /^[a-záéíóúü]\s+$/
+    },
+    sobreDosis: {
         type: String,
-        default: "No requerido ajuste"
-    },
-    ajusteHepatico: {
-        type: String,
-        default: "No requerido ajuste"
-    },
+        default: "información faltante",
+        // match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷]\s+$/
+    }
 });
 
 // modelo
@@ -118,8 +204,7 @@ app.get("/farmacos", async (req, res) => {
         res.status(200).json(farmacosEncontrados);
     } else {
         res.status(404).json({
-            "error": "No se encontraron farmacos",
-            "solucion": "Intenta con otro"
+            "error": "No se encontraron farmacos la base de datos esta vacia",
         });
     }
 });
@@ -147,17 +232,18 @@ app.get("/farmacos/familia/:familia", async (req, res)=>{
         res.status(200).json(farmacoEncontrado);
     }else{
         res.status(404).json({
-            "error": "No se encontraron farmacos",
-            "solucion": "Intenta con otro"
+            "error": "No se encontraron farmacos en esta familia",
+            "solucion": "Intenta con otra familia"
         });
     }
 });
 
 app.post("/agregarFarmaco", async (req, res)=>{
-    const {nombre, familia, mecanismoDeAccion, indicacion, presentaciones, viaAdministracion, dosisAdulto, dosisMaxAdult, dosisPediatrica, dosisMaxPedia, riesgo, contraindicaciones, ajusteRenal, ajusteHepatico} = req.body;
+    const datos = req.body;
+    const {nombre, familia} = req.body;
     const id = (familia && familia.length > 0) ? familia[0] + "_" + nombre.slice(0, 3) : "";
     try {
-        const nuevoFarmaco = new Farmaco({id, nombre, familia, mecanismoDeAccion, indicacion, presentaciones, viaAdministracion, dosisAdulto, dosisMaxAdult, dosisPediatrica, dosisMaxPedia, riesgo, contraindicaciones, ajusteRenal, ajusteHepatico});
+        const nuevoFarmaco = new Farmaco({id, nombre, familia, datos});
 
         await nuevoFarmaco.save();
 
@@ -170,45 +256,6 @@ app.post("/agregarFarmaco", async (req, res)=>{
             "error": error,
             "No se pudo agregar el farmaco": "Intenta con otro",
             "solucion": "Intenta con otro"
-        });
-    }
-});
-
-app.put("/farmaco/:nombre", async (req, res)=>{
-    const {nombreFarmaco} = req.params;
-
-    const {id, nombre, familia, mecanismoDeAccion, indicacion, presentaciones, viaAdministracion, dosisAdulto, dosisMaxAdult, dosisPediatrica, dosisMaxPedia, riesgo, contraindicaciones, ajusteRenal, ajusteHepatico} = req.body;
-
-    try {
-        const farmacoModificado = await Farmaco.findOneAndUpdate(
-            {"nombre": nombreFarmaco},
-            {id, nombre, familia, mecanismoDeAccion, indicacion, presentaciones, viaAdministracion, dosisAdulto, dosisMaxAdult, dosisPediatrica, dosisMaxPedia, riesgo, contraindicaciones, ajusteRenal, ajusteHepatico}
-        );
-
-        res.status(200).json({
-            "Se actualizo el farmaco": farmacoModificado,
-            "NuevosDatos": {
-                "nombre": nombre,
-                "familia": familia,
-                "mecanismoDeAccion": mecanismoDeAccion,
-                "indicacion": indicacion,
-                "presentaciones": presentaciones,
-                "viaAdministracion": viaAdministracion,
-                "dosisAdulto": dosisAdulto,
-                "dosisMaxAdult": dosisMaxAdult,
-                "dosisPediatrica": dosisPediatrica,
-                "dosisMaxPedia": dosisMaxPedia,
-                "riesgo": riesgo,
-                "contraindicaciones": contraindicaciones,
-                "ajusteRenal": ajusteRenal,
-                "ajusteHepatico": ajusteHepatico
-            },
-            "datosAnteriores" : farmacoModificado
-        });
-    }catch(error){
-        res.status(400).json({
-            "error": error,
-            "Solucion": "Asegurate que el farmaco este bien escrito, o puede que este no exista aún en la base de datos"
         });
     }
 });
