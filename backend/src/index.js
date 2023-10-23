@@ -266,6 +266,6 @@ app.delete("/farmaco/:nombre", async (req, res)=>{
 
 // escuchar el puerto
 app.listen(8000, () => {
-    console.log("Servidor escuchando en el puerto 7000");
-    console.log("http://localhost:7000");
+    console.log("Servidor escuchando en el puerto 8000");
+    console.log("http://localhost:8000");
 })
