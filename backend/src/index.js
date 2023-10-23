@@ -2,6 +2,7 @@
 const express = require ('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+require("dotenv").config();
 
 // app
 const app = express();
@@ -11,7 +12,8 @@ app.use(express.json());
 app.use(cors());
 
 // conexion base de datos
-const bd = "mongodb://localhost:27017/FarmacoPedia";
+// const bd = "mongodb://localhost:27017/FarmacoPedia";
+const bd = process.env.DB_URI
 async function conexionBD(){
     await mongoose.connect(bd);
     console.log("Conexión a la base de datos exitosa");
@@ -263,7 +265,7 @@ app.delete("/farmaco/:nombre", async (req, res)=>{
 
 
 // escuchar el puerto
-app.listen(7000, () => {
+app.listen(8000, () => {
     console.log("Servidor escuchando en el puerto 7000");
     console.log("http://localhost:7000");
 })
