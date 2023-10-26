@@ -215,31 +215,7 @@ app.get("/farmaco/:nombre", async (req, res)=>{
     }
 });
 
-app.get("/farmacos/familias", async (req, res)=>{
-    const farmacosEnBD = await Farmaco.find();
-    let familias = [];
-    if (farmacosEnBD.length > 0) {
-        farmacosEnBD.map(
-            (farmaco)=>{
-                farmaco.familia.map(
-                    (familia)=>{
-                        if (familias.includes(familia)){
-                            console.log("familia duplicada")
-                        }else{
-                            familias.push(familia)
-                        } 
-                    }
-                )
-            }
-        )
-        res.status(200).json(familias);
-    }else{
-        res.status(404).json({
-            "error": "No se encontraron farmacos en esta familia",
-            "solucion": "Intenta con otra familia"
-        });
-    }
-});
+
 
 app.get("/farmacos/familia/:familia", async (req, res)=>{
     const {familia} = req.params;
