@@ -15,7 +15,7 @@ app.use(cors());
 // const bd = "mongodb://localhost:27017/FarmacoPedia";
 const bd = process.env.DB_URI
 async function conexionBD(){
-    await mongoose.connect(bd);
+    await mongoose.connect(bd, {useNewUrlParser: true, useUnifiedTopology: true});
     console.log("Conexión a la base de datos exitosa");
 }
 conexionBD();
@@ -265,7 +265,7 @@ app.delete("/farmaco/:nombre", async (req, res)=>{
 
 
 // escuchar el puerto
-app.listen(8000, () => {
-    console.log("Servidor escuchando en el puerto 8000");
-    console.log("http://localhost:8000");
+app.listen(8001, () => {
+    console.log("Servidor escuchando en el puerto 8001");
+    console.log("http://localhost:8001");
 })
