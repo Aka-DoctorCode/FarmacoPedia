@@ -12,8 +12,8 @@ app.use(express.json());
 app.use(cors());
 
 // conexion base de datos
-// const bd = "mongodb://localhost:27017/FarmacoPedia";
-const bd = process.env.DB_URI
+const bd = "mongodb://localhost:27017/FarmacoPedia";
+// const bd = process.env.DB_URI
 async function conexionBD(){
     await mongoose.connect(bd, {useNewUrlParser: true, useUnifiedTopology: true});
     console.log("Conexión a la base de datos exitosa");
@@ -190,9 +190,15 @@ app.post("/agregarFarmaco", async (req, res)=>{
 
 app.get("/farmacos", async (req, res) => {
     const farmacosEncontrados = await Farmaco.find();
-
+    let nombresFarmacos = []
     if (farmacosEncontrados != null) {
-        res.status(200).json(farmacosEncontrados);
+        farmacosEncontrados.map(
+            (farmaco)=>{
+                if (!nombresFarmacos.includes(farmaco.nombre))
+                    nombresFarmacos.push(farmaco.nombre)
+            }
+        )
+        res.status(200).json({"nombres" : nombresFarmacos});
     } else {
         res.status(404).json({
             "error": "No se encontraron farmacos la base de datos esta vacia",
@@ -232,7 +238,7 @@ app.get("/farmacos/familias", async (req, res)=>{
                 )
             }
         )
-        res.status(200).json(familias);
+        res.status(200).json({"familias" :familias});
     }else{
         res.status(404).json({
             "error": "No se encontraron farmacos en esta familia",
@@ -243,10 +249,16 @@ app.get("/farmacos/familias", async (req, res)=>{
 
 app.get("/farmacos/familia/:familia", async (req, res)=>{
     const {familia} = req.params;
-    const farmacoEncontrado = await Farmaco.find({ familia });
-
-    if (farmacoEncontrado.length > 0) {
-        res.status(200).json(farmacoEncontrado);
+    const farmacosEncontrados = await Farmaco.find({ familia });
+    let nombres = [];
+    if (farmacosEncontrados.length > 0) {
+        farmacosEncontrados.map(
+            (farmaco)=>{
+                if (!nombres.includes(farmaco.nombre))
+                    nombres.push(farmaco.nombre);
+            }
+        )
+        res.status(200).json({"nombres" : nombres});
     }else{
         res.status(404).json({
             "error": "No se encontraron farmacos en esta familia",
