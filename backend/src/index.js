@@ -187,7 +187,6 @@ app.post("/agregarFarmaco", async (req, res)=>{
     }
 });
 
-
 app.get("/farmacos", async (req, res) => {
     const farmacosEncontrados = await Farmaco.find();
     let nombresFarmacos = []
