@@ -1,0 +1,66 @@
+#marco {
+    position: relative;
+    height: 50px;
+    width: 275px;
+    background-color: rgba(52, 192, 236, 1);
+    border-radius: 14px;
+    border: 1px solid #1e1e1e;
+    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25), 1px 2px rgba(0, 0, 0, 0.65);
+}
+
+#lupa {
+    height: 30px;
+    width: 30px;
+    background-color: #00000000;
+    border-color: #00000000;
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+}
+
+#lupa:active {
+    transform: translate(2px, 3px);
+}
+
+#negro {
+    height: 22px;
+    width: 22px;
+    border-radius: 50%;
+    background-color: #1e1e1e;
+    position: absolute;
+    bottom: 18px;
+    right: 10px;
+}
+
+#blanco {
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+    background-color: #F0F0F0;
+    position: absolute;
+    bottom: 22px;
+    right: 14px;
+    font-family: "Futura-Bold";
+}
+
+#barra {
+    width: 20px;
+    height: 4px;
+    position: absolute;
+    background-color: #1e1e1e;
+    transform: rotate(125deg);
+    border-radius: 0px 8px 8px 0px;
+    right: 22px;
+    bottom: 11px
+}
+
+#input {
+    height: 27px;
+    width: 226px;
+    border-radius: 8px;
+    position: absolute;
+    left: 5px;
+    bottom: 10px;
+    border: 1px solid #1e1e1e;
+    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+}

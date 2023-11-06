@@ -1,0 +1,99 @@
+#contenedor {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(30, 30, 30, 0.95);
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+#descargo {
+    height: 80%;
+    width: 70%;
+    background-color: rgb(240, 240, 240);
+    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#contenedorTitulo {
+    width: 100%;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+#descargo {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+#titulo {
+    height: 40px;
+    width: 240px;
+    font-family: "Futura-Bold";
+    font-size: 30px;
+    text-align: center;
+}
+
+#principal {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.barra {
+    width: 110%;
+    height: 5px;
+    background-color: #1e1e1e;
+    border-radius: 10px;
+}
+
+p {
+    text-align: justify;
+    font-family: 'Roboto';
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+#boton {
+    width: 50%;
+    margin-bottom: 25px;
+    font-family: "Futura";
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-align: center;
+    background-color: #34bfeb;
+    border: 0.5px solid #1e1e1e;
+    border-radius: 10px;
+    box-shadow: 1px 2px 0px rgba(30, 30, 30, 0.65);
+}
+
+#boton:hover {
+    animation: grow 100ms ease-in-out forwards;
+}
+
+.botonAfter {
+    transform: translate(2px, 3px) scale(1.1);
+    box-shadow: 0px 0px rgba(30, 30, 30, 0.65);
+}
+
+@keyframes grow {
+    0% {}
+
+    100% {
+        transform: translate(2px, 3px) scale(1.1);
+        box-shadow: 0px 0px rgba(30, 30, 30, 0.65);
+    }
+}
