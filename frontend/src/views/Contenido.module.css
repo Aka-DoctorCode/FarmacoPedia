@@ -1,0 +1,43 @@
+#contenedor {
+    width: auto;
+    height: 100vh;
+    padding: 0px 30px;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 145px;
+}
+
+#tituloVista {
+    width: 70%;
+    text-align: left;
+    font-family: "Futura-Bold";
+    font-size: 30px;
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+#lista {
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* padding: 20px; */
+    /* gap: 5px; */
+    /* overflow-y: auto; */
+    /*height: 400px;
+    overflow: auto; */
+}
+
+.pildora {
+    /* height: 37px; */
+    /* width: 275px;
+    height: 37px;
+    border: 1px solid rgba(30, 30, 30, 0.65);
+    border-radius: 25px;
+    box-shadow: inset 0px 4px 4px rgba(30, 30, 30, 0.25), 3px 2px 4px rgba(30, 30, 30, 0.65);
+    margin: 5px 0px;
+    font-family: "Futura-Bold"; */
+}
+
+.pildora:active {
+    /* transform: translate(2px, 3px);
+    box-shadow: inset 0px 4px 4px rgba(30, 30, 30, 0.25), 0px 0px 4px rgba(30, 30, 30, 0.65); */
+}
