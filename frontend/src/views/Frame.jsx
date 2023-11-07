@@ -31,12 +31,10 @@ const Frame = () => {
 				<CapsulaOff menu={menuMostrar} />
 			</header>
 			<Contenido />
-			{/* <main id={Styles.bordes}>
-				<section id={Styles.laterales}>
-					<div className={Styles.bordesLaterales} id={Styles.izquierda} />
-					<div className={Styles.bordesLaterales} id={Styles.derecha} />
-				</section>
-			</main> */}
+			<main id={Styles.bordes}>
+				<div className={Styles.bordesLaterales} id={Styles.izquierda} />
+				<div className={Styles.bordesLaterales} id={Styles.derecha} />
+			</main>
 			<Footer />
 		</section>
 	);

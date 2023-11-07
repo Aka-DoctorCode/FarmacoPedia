@@ -37,38 +37,30 @@
 }
 
 #bordes {
-    /* display: flex; */
-    /* flex-direction: column; */
-    /* justify-content: flex-end; */
-    /* height: 100% */
-    /* width: 100%; */
-}
-
-#laterales {
-    /* display: flex; */
-    /* justify-content: space-between; */
-    /* height: 100%; */
-    /* position: absolute; */
-    /* width: 100%; */
-    /* z-index: -1; */
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    width: 100vw;
+    height: 100%;
+    z-index: -1;
 }
 
 .bordesLaterales {
-    /* background: linear-gradient(180deg,
+    background: linear-gradient(180deg,
             rgb(32.15, 118.34, 145.56) 0%,
             rgb(52.09, 191.77, 235.88) 86.98%,
-            rgba(52.09, 191.77, 235.88, 0.75) 100%); */
-    /* border-color: #1e1e1e; */
-    /* height: 100%; */
-    /* width: 32px; */
+            rgba(52.09, 191.77, 235.88, 0.75) 100%);
+    border-color: #1e1e1e;
+    height: 100%;
+    width: 32px;
 }
 
 #izquierda {
-    /* border-right-style: solid; */
-    /* border-right-width: 1px; */
+    border-right-style: solid;
+    border-right-width: 1px;
 }
 
 #derecha {
-    /* border-left-style: solid; */
-    /* border-left-width: 1px; */
+    border-left-style: solid;
+    border-left-width: 1px;
 }
