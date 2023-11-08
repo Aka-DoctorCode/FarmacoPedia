@@ -3,7 +3,14 @@ import { counterContext } from '../context/counterContext';
 import Styles from './Menu.module.css';
 import StylesCapsulaOn from './MenuCapsulaOn.module.css';
 const Menu = () => {
-	const { menu, menuOcultar } = useContext(counterContext);
+	const {
+		menu,
+		menuOcultar,
+		listaFarmacosMostrar,
+		listaFarmacosOcultar,
+		listaFamiliaMostrar,
+		listaFamiliaOcultar,
+	} = useContext(counterContext);
 
 	const x = [];
 	for (let i = 1; i <= 40; i++) {
@@ -35,8 +42,26 @@ const Menu = () => {
 				</button>
 				<nav id={Styles.menuCapsulaOn}>
 					{/* <button id={Styles.boton}>Inicio</button> */}
-					<button id={Styles.boton}>Farmacos</button>
-					<button id={Styles.boton}>Familias</button>
+					<button
+						onClick={() => {
+							listaFarmacosMostrar();
+							listaFamiliaOcultar();
+							menuOcultar();
+						}}
+						id={Styles.boton}
+					>
+						Farmacos
+					</button>
+					<button
+						onClick={() => {
+							listaFamiliaMostrar();
+							listaFarmacosOcultar();
+							menuOcultar();
+						}}
+						id={Styles.boton}
+					>
+						Familias
+					</button>
 					{/* <button id={Styles.boton}>Aportar</button> */}
 				</nav>
 			</aside>

@@ -5,6 +5,8 @@ const StateContext = ({ children }) => {
 	const [descargoVisible, setDescargoVisible] = useState(true);
 	const [menu, setMenu] = useState(false);
 	const [busquda, setBusqueda] = useState(false);
+	const [listaFarmacos, setListaFarmacos] = useState(true);
+	const [listaFamilia, setListaFamilia] = useState(false);
 
 	const descargoOcultar = () => {
 		setDescargoVisible(false);
@@ -21,6 +23,18 @@ const StateContext = ({ children }) => {
 	const busquedaOcultar = () => {
 		setBusqueda(false);
 	};
+	const listaFarmacosMostrar = () => {
+		setListaFarmacos(true);
+	};
+	const listaFarmacosOcultar = () => {
+		setListaFarmacos(false);
+	};
+	const listaFamiliaMostrar = () => {
+		setListaFamilia(true);
+	};
+	const listaFamiliaOcultar = () => {
+		setListaFamilia(false);
+	};
 	return (
 		<counterContext.Provider
 			value={{
@@ -32,6 +46,12 @@ const StateContext = ({ children }) => {
 				busquda,
 				busquedaMostrar,
 				busquedaOcultar,
+				listaFarmacos,
+				listaFarmacosMostrar,
+				listaFarmacosOcultar,
+				listaFamilia,
+				listaFamiliaMostrar,
+				listaFamiliaOcultar,
 			}}
 		>
 			{children}

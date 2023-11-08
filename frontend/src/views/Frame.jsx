@@ -2,11 +2,11 @@ import React, { useContext } from 'react';
 import { counterContext } from '../context/counterContext';
 
 import Styles from './Frame.module.css';
-import StylesCapsulaOff from './FrameCapsulaOff.module.css';
 
 const Frame = ({
 	showMenu,
-	showContenido,
+	showContenidoFarmacos,
+	showContenidoFamilia,
 	showSearchOn,
 	showSearchOff,
 	cargar,
@@ -21,10 +21,11 @@ const Frame = ({
 						onClick={() => {
 							menuMostrar();
 						}}
-						id={StylesCapsulaOff.menuCapsulaOff}
+						id={Styles.menuCapsulaOff}
+						className={Styles.botonAfter}
 					>
-						<div id={StylesCapsulaOff.capsulaOscuro} />
-						<div id={StylesCapsulaOff.capsulaClaro} />
+						<div id={Styles.capsulaOscuro} />
+						<div id={Styles.capsulaClaro} />
 					</button>
 				</header>
 				<main id={Styles.bordes}>
@@ -34,10 +35,14 @@ const Frame = ({
 			</section>
 			{cargar === true && [
 				<React.Fragment key='menu'>{showMenu()}</React.Fragment>,
-				<React.Fragment key='contenido'>{showContenido()}</React.Fragment>,
+				<React.Fragment key='ContenidoFarmacos'>
+					{showContenidoFarmacos()}
+				</React.Fragment>,
+				<React.Fragment key='ContenidoFamilia'>
+					{showContenidoFamilia()}
+				</React.Fragment>,
 				<React.Fragment key='searchOn'>{showSearchOn()}</React.Fragment>,
 				<React.Fragment key='searchOff'>{showSearchOff()}</React.Fragment>,
-				// Otros elementos que puedas renderizar
 			]}
 		</>
 	);

@@ -15,8 +15,10 @@
     z-index: 1;
 }
 
+
 #menuCapsulaOn:hover {
-    animation: grow 100ms ease-in-out forwards;
+    transform: translate(2px, 3px) scale(1.3) rotate(90deg);
+    box-shadow: 0px 0px rgba(30, 30, 30, 0.65);
 }
 
 #bloquePartiuculas {

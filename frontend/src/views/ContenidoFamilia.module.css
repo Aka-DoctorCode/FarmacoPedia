@@ -1,4 +1,6 @@
 #contenedor {
+    position: absolute;
+    top: 100px;
     width: auto;
     height: 100vh;
     padding: 0px 30px;
@@ -36,7 +38,7 @@
     font-size: 30px;
 }
 
-.pildora:active {
-    transform: translate(2px, 3px);
+.pildora:hover {
+    transform: translate(2px, 3px) scale(1.1);
     box-shadow: inset 0px 4px 2px rgba(30, 30, 30, 0.25), 0px 0px rgba(30, 30, 30, 0.65);
 }

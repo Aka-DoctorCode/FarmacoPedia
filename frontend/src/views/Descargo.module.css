@@ -81,19 +81,6 @@ p {
 }
 
 #boton:hover {
-    animation: grow 100ms ease-in-out forwards;
-}
-
-.botonAfter {
     transform: translate(2px, 3px) scale(1.1);
     box-shadow: 0px 0px rgba(30, 30, 30, 0.65);
-}
-
-@keyframes grow {
-    0% {}
-
-    100% {
-        transform: translate(2px, 3px) scale(1.1);
-        box-shadow: 0px 0px rgba(30, 30, 30, 0.65);
-    }
 }

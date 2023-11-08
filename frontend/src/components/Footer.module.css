@@ -73,6 +73,10 @@
     gap: 15px;
 }
 
+.boton:hover {
+    transform: translate(2px, 3px) scale(1.1);
+}
+
 #logos {
     width: 30px;
     height: 30px;

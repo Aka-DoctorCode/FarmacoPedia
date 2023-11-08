@@ -5,7 +5,8 @@ import Descargo from './views/Descargo';
 import Frame from './views/Frame';
 import Menu from './components/Menu';
 
-import Contenido from './views/Contenido';
+import ContenidoFarmacos from './views/ContenidoFarmacos';
+import ContenidoFamilia from './views/ContenidoFamilia';
 import SearchOn from './components/SearchOn';
 import SearchOff from './components/SearchOff';
 import Footer from './components/Footer';
@@ -25,7 +26,8 @@ const App = () => {
 			<Frame
 				cargar={cargar}
 				showMenu={() => <Menu cargar={cargar} />}
-				showContenido={() => <Contenido cargar={cargar} />}
+				showContenidoFarmacos={() => <ContenidoFarmacos cargar={cargar} />}
+				showContenidoFamilia={() => <ContenidoFamilia cargar={cargar} />}
 				showSearchOn={() => <SearchOn cargar={cargar} />}
 				showSearchOff={() => <SearchOff cargar={cargar} />}
 			></Frame>

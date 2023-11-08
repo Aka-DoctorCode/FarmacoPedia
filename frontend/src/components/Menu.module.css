@@ -1,8 +1,9 @@
 #contenedor {
     position: absolute;
+    top: 0px;
     z-index: 1;
     width: 100%;
-    height: 100%;
+    height: calc(100% + 100px);
     display: flex;
     justify-content: end;
     background-color: rgba(30, 30, 30, 0.65);
@@ -36,20 +37,8 @@
     padding-top: 2px;
 }
 
-#boton:hover {
-    animation: grow 100ms ease-in-out forwards;
-}
 
-.botonAfter {
+#boton:hover {
     transform: translate(2px, 3px) scale(1.1);
     box-shadow: 0px 0px rgba(30, 30, 30, 0.65);
-}
-
-@keyframes grow {
-    0% {}
-
-    100% {
-        transform: translateY(3px) translateX(2px) scale(1.1);
-        box-shadow: inset 4px 4px 10px 5px rgb(30, 30, 30, 0.25), 0px 0px rgb(30, 30, 30, 0.65);
-    }
 }
