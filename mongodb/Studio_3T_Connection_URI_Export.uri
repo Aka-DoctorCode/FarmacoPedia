@@ -1,0 +1,5 @@
+// Connections Exported from Studio 3T -- https://studio3t.com/
+// Exported on 9 nov. 2023 00:17:38
+
+// LocalHost
+mongodb://localhost:27017/?retryWrites=true&serverSelectionTimeoutMS=5000&connectTimeoutMS=10000&3t.uriVersion=3&3t.connection.name=LocalHost&3t.alwaysShowAuthDB=true&3t.alwaysShowDBFromUserRole=true

@@ -334,9 +334,9 @@ app.patch("/farmaco/modificar/:nombre", async (req, res) => {
     });
   } catch (error) {
     res.status(400).json({
-      error: error,
-      Solución:
-        "Asegurate que el farmaco este bien escrito, o puede que este no exista en la base de datos",
+      error: "Error al actualizar el farmaco",
+      mensaje:
+        "Asegurate que el farmaco esté bien escrito o que exista en la base de datos",
     });
   }
   // try {
