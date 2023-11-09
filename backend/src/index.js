@@ -1,7 +1,7 @@
 // imports
-const express = require ('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
+const express = require("express");
+const cors = require("cors");
+const mongoose = require("mongoose");
 require("dotenv").config();
 
 // app
@@ -12,297 +12,371 @@ app.use(express.json());
 app.use(cors());
 
 // conexion base de datos
-const bd = "mongodb://localhost:27017/FarmacoPedia";
-// const bd = process.env.DB_URI
-async function conexionBD(){
-    await mongoose.connect(bd, {useNewUrlParser: true, useUnifiedTopology: true});
-    console.log("Conexión a la base de datos exitosa");
+// const bd = "mongodb://localhost:27017/FarmacoPedia";
+const bd = process.env.DB_URI;
+async function conexionBD() {
+  await mongoose.connect(bd, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  console.log("Conexión a la base de datos exitosa");
 }
 conexionBD();
 
-
 // Schema de los farmacos
 const farmaco = new mongoose.Schema({
-    nombre: {
+  nombre: {
+    type: String,
+    unique: true,
+    required: true,
+    match: /^[a-z -]+$/i,
+  },
+  familia: {
+    type: [String],
+    required: true,
+    match: /^[a-z]+$/,
+  },
+  id: {
+    type: String,
+    unique: true,
+  },
+  mecanismoDeAccion: {
+    type: String,
+    match: /^[a-záéíóúüñA-ZÁ́ÉÍÓÚÜÑ\,.;:()0-9\s]+$/gm,
+  },
+  indicaciones: {
+    type: [String],
+    match: /^[a-záéíóúüñ\s]+$/gm,
+  },
+  presentaciones: [
+    {
+      tipo: {
         type: String,
-        unique: true,
-        required: true,
-        match: /^[a-z]+$/
-    },
-    familia: {
-        type: [String], 
-        required: true,
-        match: /^[a-z]+$/
-    },
-    id: {
-        type: String,
-        unique: true
-    },
-    mecanismoDeAccion: {
-        type: String,
-        match: /^[a-záéíóúüñA-ZÁ́ÉÍÓÚÜÑ\,.;:()0-9\s]+$/gm
-    },
-    indicaciones: {
+        match: /^[a-záéíóúüñ\s]+$/gm,
+      },
+      composicion: {
         type: [String],
-        match: /^[a-záéíóúüñ\s]+$/gm
+        match: /^[a-záéíóúüñ0-9\,.-/\s]+$/gm,
+      },
+      viasAdministracion: {
+        type: [String],
+        match: /^[a-záéíóúüñ\s]+$/gm,
+      },
     },
-    presentaciones: [
+  ],
+  nombresComercial: [
+    {
+      nombre: {
+        type: String,
+        match: /^[a-záéíóúüñ\s]+$/gm,
+      },
+      composicion: {
+        type: [String],
+        match: /^[a-záéíóúüñ0-9\,.-/\s]+$/gm,
+      },
+      paises: {
+        type: [String],
+        match: /^[a-záéíóúüñ\s]+$/gm,
+      },
+    },
+  ],
+  posologia: {
+    dosisAdulto: {
+      viaDeAdministracion: [
         {
-            tipo: {
-                type: String,
-                match: /^[a-záéíóúüñ\s]+$/gm
-            },
-            composicion: {
-                type: [String],
-                match: /^[a-záéíóúüñ0-9\,.-/\s]+$/gm
-            },
-            viasAdministracion: {
-                type: [String],
-                match: /^[a-záéíóúüñ\s]+$/gm
-            }
+          via: {
+            type: String,
+            match: /^[a-záéíóúüñ\s]+$/gm,
+          },
+          dosis: {
+            type: [String],
+            match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷\s]+$/gm,
+          },
         },
-    ],
-    nombresComercial: [
+      ],
+    },
+    dosisMaxAdulto: {
+      type: [String],
+      match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷\s]+$/gm,
+    },
+    dosisPediatrica: {
+      viaDeAdministracion: [
         {
-            nombre: {
-                type: String,
-                match: /^[a-záéíóúüñ\s]+$/gm
-            },
-            composicion: {
-                type: [String],
-                match: /^[a-záéíóúüñ0-9\,.-/\s]+$/gm
-            },
-            paises: {
-                type: [String],
-                match: /^[a-záéíóúüñ\s]+$/gm
-            }
-        }
-    ],
-    posologia: {
-        dosisAdulto: {
-            viaDeAdministracion: [
-                {
-                    via: {
-                        type: String,
-                        match: /^[a-záéíóúüñ\s]+$/gm
-                    },
-                    dosis: {
-                        type: [String],
-                        match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷\s]+$/gm
-                    }
-                },
-            ],
-        },
-        dosisMaxAdulto: {
-            type: [String],
-            match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷\s]+$/gm
-        },
-        dosisPediatrica: {
-            viaDeAdministracion: [
-                {
-                    via: {
-                        type: String,
-                        match: /^[a-záéíóúüñ\s]+$/gm
-                    },
-                    dosis: {
-                        type: [String],
-                        match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷\s]+$/gm
-                    }
-                },
-            ],
-        },
-        dosisMaxPediatrica: {
-            type: [String],
-            match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷\s]+$/gm
-        },
-    },
-    riesgo: {
-        embarazo: {
+          via: {
             type: String,
-            match: /^[a-záéíóúüñ\s]+$/gm
+            match: /^[a-záéíóúüñ\s]+$/gm,
+          },
+          dosis: {
+            type: [String],
+            match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷\s]+$/gm,
+          },
         },
-        lactancia: {
-            type: String,
-            match: /^[a-záéíóúüñ\s]+$/gm
-        },
-        renal: {
-            riesgo: {
-                type: String,
-                match: /^[a-záéíóúüñ\s]+$/gm
-            },
-            ajusteRenal: {
-                type: String,
-                match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷\s]+$/gm
-            }
-        },
-        hepatico: {
-            riesgo: {
-                type: String,
-                match: /^[a-záéíóúüñ\s]+$/gm
-            },
-            ajusteHepatico: {
-                type: String,
-                match: /^[a-záéíóúüñ\,.;:()%-+=*/<>≤≥÷\s]+$/gm
-            }
-        }
+      ],
     },
-    contraindicaciones: {
-        type: [String],
-        match: /^[a-záéíóúüñ\s]+$/gm
+    dosisMaxPediatrica: {
+      type: [String],
+      match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷\s]+$/gm,
     },
-    interacciones: {
-        type: [String],
-        match: /^[a-záéíóúüñ\s]+$/gm
+  },
+  riesgo: {
+    embarazo: {
+      type: String,
+      match: /^[a-záéíóúüñ\s]+$/gm,
     },
-    reaccionesAdversas: {
-        type: [String],
-        match: /^[a-záéíóúüñ\s]+$/gm
+    lactancia: {
+      type: String,
+      match: /^[a-záéíóúüñ\s]+$/gm,
     },
-    sobreDosis: {
+    renal: {
+      riesgo: {
         type: String,
-        match: /^[a-záéíóúüñ\,.;:()%-+=*/<>≤≥÷\s]+$/gm
-    }
+        match: /^[a-záéíóúüñ\s]+$/gm,
+      },
+      ajusteRenal: {
+        type: String,
+        match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷\s]+$/gm,
+      },
+    },
+    hepatico: {
+      riesgo: {
+        type: String,
+        match: /^[a-záéíóúüñ\s]+$/gm,
+      },
+      ajusteHepatico: {
+        type: String,
+        match: /^[a-záéíóúüñ\,.;:()%-+=*/<>≤≥÷\s]+$/gm,
+      },
+    },
+  },
+  contraindicaciones: {
+    type: [String],
+    match: /^[a-záéíóúüñ\s]+$/gm,
+  },
+  interacciones: {
+    type: [String],
+    match: /^[a-záéíóúüñ\s]+$/gm,
+  },
+  reaccionesAdversas: {
+    type: [String],
+    match: /^[a-záéíóúüñ\s]+$/gm,
+  },
+  sobreDosis: {
+    type: String,
+    match: /^[a-záéíóúüñ\,.;:()%-+=*/<>≤≥÷\s]+$/gm,
+  },
 });
 
 // modelo
-const Farmaco = mongoose.model('Farmaco', farmaco);
+const Farmaco = mongoose.model("Farmaco", farmaco);
 
+const randomId = () => {
+  const randomNumber = Math.floor(10 + Math.random() * 90);
+  return randomNumber.toString();
+};
 // rutas
-app.post("/agregarFarmaco", async (req, res)=>{
-    const {nombre, familia, mecanismoDeAccion, indicaciones, presentaciones, nombresComercial, posologia, riesgo, contraindicaciones, interacciones, reaccionesAdversas, sobreDosis} = req.body;
-    const id = (familia && familia.length > 0) ? familia[0] + "." + nombre.slice(0, 5) : "";
-    try {
-        const nuevoFarmaco = new Farmaco({id, nombre, familia, mecanismoDeAccion, indicaciones, presentaciones, nombresComercial, posologia, riesgo, contraindicaciones, interacciones, reaccionesAdversas, sobreDosis});
-        await nuevoFarmaco.save();
-        res.status(200).json({
-            "Se agrego con exito a la base de datos": nuevoFarmaco
-        });
-    }catch(error){
-        console.log(error);
-        res.status(400).json({
-            "error": error,
-            "Solución 1": `verifica que ${nombre} no exista en la base de datos`,
-            "Solución 2": 'asegurate de que se cumple el schema',
-        });
-    }
+app.post("/agregarFarmaco", async (req, res) => {
+  const {
+    nombre,
+    familia,
+    mecanismoDeAccion,
+    indicaciones,
+    presentaciones,
+    nombresComercial,
+    posologia,
+    riesgo,
+    contraindicaciones,
+    interacciones,
+    reaccionesAdversas,
+    sobreDosis,
+  } = req.body;
+  const id =
+    familia && familia.length > 0
+      ? familia[0] + "." + nombre.slice(0, 5) + randomId()
+      : "";
+  try {
+    const nuevoFarmaco = new Farmaco({
+      id,
+      nombre,
+      familia,
+      mecanismoDeAccion,
+      indicaciones,
+      presentaciones,
+      nombresComercial,
+      posologia,
+      riesgo,
+      contraindicaciones,
+      interacciones,
+      reaccionesAdversas,
+      sobreDosis,
+    });
+    await nuevoFarmaco.save();
+    res.status(200).json({
+      "Se agrego con exito a la base de datos": nuevoFarmaco,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      error: error,
+      "Solución 1": `verifica que ${nombre} no exista en la base de datos`,
+      "Solución 2": "asegurate de que se cumple el schema",
+    });
+  }
 });
 
 app.get("/farmacos", async (req, res) => {
-    const farmacosEncontrados = await Farmaco.find();
-    let nombresFarmacos = []
-    if (farmacosEncontrados != null) {
-        farmacosEncontrados.map(
-            (farmaco)=>{
-                if (!nombresFarmacos.includes(farmaco.nombre))
-                    nombresFarmacos.push(farmaco.nombre)
-            }
-        )
-        res.status(200).json({"nombres" : nombresFarmacos});
-    } else {
-        res.status(404).json({
-            "error": "No se encontraron farmacos la base de datos esta vacia",
-        });
-    }
+  const farmacosEncontrados = await Farmaco.find();
+  let nombresFarmacos = [];
+  if (farmacosEncontrados != null) {
+    farmacosEncontrados.map((farmaco) => {
+      if (!nombresFarmacos.includes(farmaco.nombre))
+        nombresFarmacos.push(farmaco.nombre);
+    });
+    nombresFarmacos.sort();
+    res.status(200).json({ nombres: nombresFarmacos });
+  } else {
+    res.status(404).json({
+      error: "No se encontraron farmacos la base de datos esta vacia",
+    });
+  }
 });
 
-app.get("/farmaco/:nombre", async (req, res)=>{
-    const {nombre} = req.params;
-    const farmacoEncontrado = await Farmaco.findOne({"nombre": nombre});
-    console.log(farmacoEncontrado);
+app.get("/farmaco/:nombre", async (req, res) => {
+  const { nombre } = req.params;
+  const farmacoEncontrado = await Farmaco.findOne({ nombre: nombre });
+  console.log(farmacoEncontrado);
 
-    if (farmacoEncontrado != null) {
-        res.status(200).json(farmacoEncontrado);
-    }else{
-        res.status(404).json({
-            "error": "No se encontro el farmaco",
-            "solucion": "Intenta con otro"
-        });
-    }
+  if (farmacoEncontrado != null) {
+    res.status(200).json(farmacoEncontrado);
+  } else {
+    res.status(404).json({
+      error: "No se encontro el farmaco",
+      solucion: "Intenta con otro",
+    });
+  }
 });
 
-app.get("/farmacos/familias", async (req, res)=>{
-    const farmacosEnBD = await Farmaco.find();
-    let familias = [];
-    if (farmacosEnBD.length > 0) {
-        farmacosEnBD.map(
-            (farmaco)=>{
-                farmaco.familia.map(
-                    (familia)=>{
-                        if (familias.includes(familia)){
-                            console.log("familia duplicada")
-                        }else{
-                            familias.push(familia)
-                        } 
-                    }
-                )
-            }
-        )
-        res.status(200).json({"familias" :familias});
-    }else{
-        res.status(404).json({
-            "error": "No se encontraron farmacos en esta familia",
-            "solucion": "Intenta con otra familia"
-        });
-    }
+app.get("/farmacos/familias", async (req, res) => {
+  const farmacosEnBD = await Farmaco.find();
+  let familias = [];
+  if (farmacosEnBD.length > 0) {
+    farmacosEnBD.map((farmaco) => {
+      farmaco.familia.map((familia) => {
+        if (familias.includes(familia)) {
+          console.log("familia duplicada");
+        } else {
+          familias.push(familia);
+        }
+      });
+    });
+    familias.sort();
+    res.status(200).json({ familias: familias });
+  } else {
+    res.status(404).json({
+      error: "No se encontraron farmacos en esta familia",
+      solucion: "Intenta con otra familia",
+    });
+  }
 });
 
-app.get("/farmacos/familia/:familia", async (req, res)=>{
-    const {familia} = req.params;
-    const farmacosEncontrados = await Farmaco.find({ familia });
-    let nombres = [];
-    if (farmacosEncontrados.length > 0) {
-        farmacosEncontrados.map(
-            (farmaco)=>{
-                if (!nombres.includes(farmaco.nombre))
-                    nombres.push(farmaco.nombre);
-            }
-        )
-        res.status(200).json({"nombres" : nombres});
-    }else{
-        res.status(404).json({
-            "error": "No se encontraron farmacos en esta familia",
-            "solucion": "Intenta con otra familia"
-        });
-    }
+app.get("/farmacos/familia/:familia", async (req, res) => {
+  const { familia } = req.params;
+  const farmacosEncontrados = await Farmaco.find({ familia });
+  let nombres = [];
+  if (farmacosEncontrados.length > 0) {
+    farmacosEncontrados.map((farmaco) => {
+      if (!nombres.includes(farmaco.nombre)) nombres.push(farmaco.nombre);
+    });
+    nombres.sort();
+    res.status(200).json({ nombres: nombres });
+  } else {
+    res.status(404).json({
+      error: "No se encontraron farmacos en esta familia",
+      solucion: "Intenta con otra familia",
+    });
+  }
 });
 
-app.patch("/farmaco/:nombre", async (req, res) =>{
-    const nuevosDatos = req.body;
+app.patch("/farmaco/:nombre", async (req, res) => {
+  const nuevosDatos = req.body;
 
-    try {
-        await Farmaco.updateOne(
-            {"nombre": req.params.nombre},
-            {$set: nuevosDatos}
-        );
-        res.status(200).json({
-            "Se actualizo el farmaco" : `${nuevosDatos.nombre}`,
-            "NuevosDatos": {nuevosDatos}
-        })
-    } catch (error) {
-        res.status(400).json({
-            "error": error,
-            "Solución": "Asegurate que el farmaco este bien escrito, o puede que este no exista en la base de datos"
-        });
-    }
+  try {
+    await Farmaco.updateOne(
+      { nombre: req.params.nombre },
+      { $set: nuevosDatos }
+    );
+    res.status(200).json({
+      "Se actualizo el farmaco": `${nuevosDatos.nombre}`,
+      NuevosDatos: { nuevosDatos },
+    });
+  } catch (error) {
+    res.status(400).json({
+      error: error,
+      Solución:
+        "Asegurate que el farmaco este bien escrito, o puede que este no exista en la base de datos",
+    });
+  }
 });
 
-app.delete("/farmaco/:nombre", async (req, res)=>{
-    const farmacoAEliminar = await Farmaco.findOneAndDelete({"nombre": req.params.nombre});
-
-    farmacoAEliminar != null
-        ? res.status(200).json({
-            "respuesta": `Se elimino el farmaco ${farmacoAEliminar.nombre}`,
-            "farmaco": farmacoAEliminar
-        })
-        : res.status(404).json({
-            "respuesta": "No se encontro el farmaco",
-            "farmaco": farmacoAEliminar
-        });
+// modificar ID
+app.patch("/farmaco/modificar/:nombre", async (req, res) => {
+  const farmacoModificar =
+    req.params.familia[0] + "." + req.params.nombre.slice(0, 5) + randomId();
+  try {
+    await Farmaco.updateOne(
+      { nombre: req.params.nombre },
+      { $set: { id: farmacoModificar.id } }
+    );
+    res.status(200).json({
+      "Se actualizo el farmaco": `${req.params.nombre}`,
+      NuevosDatos: {
+        id: farmacoModificar.id,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      error: error,
+      Solución:
+        "Asegurate que el farmaco este bien escrito, o puede que este no exista en la base de datos",
+    });
+  }
+  // try {
+  //   await Farmaco.updateOne(
+  //     { id: req.params.id },
+  //     { $set: { id: req.params.familia[0] + "." + req.params.nombre.slice(0, 5) + randomId() } }
+  //   );
+  //   res.status(200).json({
+  //     "Se actualizo el farmaco": `${req.params.nombre}`,
+  //     NuevosDatos: {
+  //       id: req.familia[0] + "." + req.params.nombre.slice(0, 5),
+  //     },
+  //   });
+  // } catch (error) {
+  //   res.status(400).json({
+  //     error: error,
+  //     Solución:
+  //       "Asegurate que el farmaco este bien escrito, o puede que este no exista en la base de datos",
+  //   });
+  // }
 });
 
+app.delete("/farmaco/:nombre", async (req, res) => {
+  const farmacoAEliminar = await Farmaco.findOneAndDelete({
+    nombre: req.params.nombre,
+  });
+
+  farmacoAEliminar != null
+    ? res.status(200).json({
+        respuesta: `Se elimino el farmaco ${farmacoAEliminar.nombre}`,
+        farmaco: farmacoAEliminar,
+      })
+    : res.status(404).json({
+        respuesta: "No se encontro el farmaco",
+        farmaco: farmacoAEliminar,
+      });
+});
 
 // escuchar el puerto
 app.listen(8001, () => {
-    console.log("Servidor escuchando en el puerto 8001");
-    console.log("http://localhost:8001");
-})
+  console.log("Servidor escuchando en el puerto 8001");
+  console.log("http://localhost:8001");
+});

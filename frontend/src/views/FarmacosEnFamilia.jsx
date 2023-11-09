@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { counterContext } from '../context/counterContext';
-import Styles from './ContenidoFamilia.module.css';
+import Styles from './FarmacosEnFamilia.module.css';
 
 // import { useState } from 'react';
-const ContenidoFamilia = () => {
+const FarmacosEnFamilia = () => {
 	const { listaFamilia } = useContext(counterContext);
 	const x = [];
 	for (let i = 1; i <= 99; i++) {
@@ -32,7 +32,7 @@ const ContenidoFamilia = () => {
 				<div id={Styles.lista}>
 					{data.familias.map((familia, index) => (
 						<button key={index} className={Styles.pildora}>
-							{familia.length > 20 ? `${familia.substring(0, 20)}...` : familia}
+							{familia}
 						</button>
 					))}
 				</div>
@@ -41,4 +41,4 @@ const ContenidoFamilia = () => {
 	);
 };
 
-export default ContenidoFamilia;
+export default FarmacosEnFamilia;

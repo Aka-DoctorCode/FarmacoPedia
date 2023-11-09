@@ -1,24 +1,31 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import axios from 'axios';
 import { counterContext } from '../context/counterContext';
 import Styles from './ContenidoFarmacos.module.css';
-
-// import { useState } from 'react';
 const ContenidoFarmacos = () => {
 	const { listaFarmacos } = useContext(counterContext);
-	const x = [];
-	for (let i = 1; i <= 99; i++) {
-		x.push('n' + i);
-	}
-
+	const rutaBD = 'http://localhost:8001/farmacos';
+	const [datos, setDatos] = useState([]);
+	useEffect(() => {
+		async function traerDatos() {
+			try {
+				const response = await axios.get(rutaBD);
+				setDatos(response.data.nombres);
+			} catch (error) {
+				console.error('Error al obtener los datos:', error);
+			}
+		}
+		traerDatos();
+	}, []);
 	return (
 		listaFarmacos && (
 			<section id={Styles.contenedor}>
 				<span id={Styles.tituloVista}>Lista de Farmacos por Nombre</span>
 				<div id={Styles.lista}>
-					{x.map((index) => {
+					{datos.map((nombre, index) => {
 						return (
 							<button key={index} className={Styles.pildora}>
-								Farmaco
+								{nombre.length > 20 ? `${nombre.substring(0, 20)}...` : nombre}
 							</button>
 						);
 					})}
