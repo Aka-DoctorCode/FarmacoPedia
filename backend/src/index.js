@@ -12,8 +12,8 @@ app.use(express.json());
 app.use(cors());
 
 // conexion base de datos
-// const bd = "mongodb://localhost:27017/FarmacoPedia";
-const bd = process.env.DB_URI;
+const bd = "mongodb://localhost:27017/FarmacoPedia";
+// const bd = process.env.DB_URI;
 async function conexionBD() {
   await mongoose.connect(bd, {
     useNewUrlParser: true,
@@ -262,7 +262,6 @@ app.get("/farmacos/familias", async (req, res) => {
     farmacosEnBD.map((farmaco) => {
       farmaco.familia.map((familia) => {
         if (familias.includes(familia)) {
-          console.log("familia duplicada");
         } else {
           familias.push(familia);
         }
@@ -315,48 +314,6 @@ app.patch("/farmaco/:nombre", async (req, res) => {
         "Asegurate que el farmaco este bien escrito, o puede que este no exista en la base de datos",
     });
   }
-});
-
-// modificar ID
-app.patch("/farmaco/modificar/:nombre", async (req, res) => {
-  const farmacoModificar =
-    req.params.familia[0] + "." + req.params.nombre.slice(0, 5) + randomId();
-  try {
-    await Farmaco.updateOne(
-      { nombre: req.params.nombre },
-      { $set: { id: farmacoModificar.id } }
-    );
-    res.status(200).json({
-      "Se actualizo el farmaco": `${req.params.nombre}`,
-      NuevosDatos: {
-        id: farmacoModificar.id,
-      },
-    });
-  } catch (error) {
-    res.status(400).json({
-      error: "Error al actualizar el farmaco",
-      mensaje:
-        "Asegurate que el farmaco esté bien escrito o que exista en la base de datos",
-    });
-  }
-  // try {
-  //   await Farmaco.updateOne(
-  //     { id: req.params.id },
-  //     { $set: { id: req.params.familia[0] + "." + req.params.nombre.slice(0, 5) + randomId() } }
-  //   );
-  //   res.status(200).json({
-  //     "Se actualizo el farmaco": `${req.params.nombre}`,
-  //     NuevosDatos: {
-  //       id: req.familia[0] + "." + req.params.nombre.slice(0, 5),
-  //     },
-  //   });
-  // } catch (error) {
-  //   res.status(400).json({
-  //     error: error,
-  //     Solución:
-  //       "Asegurate que el farmaco este bien escrito, o puede que este no exista en la base de datos",
-  //   });
-  // }
 });
 
 app.delete("/farmaco/:nombre", async (req, res) => {
