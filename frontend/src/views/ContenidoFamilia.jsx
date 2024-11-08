@@ -28,11 +28,11 @@ const ContenidoFamilia = () => {
 	return (
 		listaFamilia && (
 			<section id={Styles.contenedor}>
-				<span id={Styles.tituloVista}>Lista de Farmacos por Familia</span>
+				<span id={Styles.tituloVista}>Selecciona una Familia</span>
 				<div id={Styles.lista}>
 					{data.familias.map((familia, index) => (
 						<button key={index} className={Styles.pildora}>
-							{/* {familia.length > 20 ? `${familia.substring(0, 20)}...` : familia} */}
+							{familia.length > 20 ? `${familia.substring(0, 20)}...` : familia}
 							{familia}
 						</button>
 					))}

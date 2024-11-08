@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './styles/App.css';
+// import Styles from './styles/App.css';
 
 import Descargo from './views/Descargo';
 import Frame from './views/Frame';

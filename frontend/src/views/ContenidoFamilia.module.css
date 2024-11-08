@@ -2,11 +2,11 @@
     position: absolute;
     top: 100px;
     width: auto;
-    height: 100vh;
+    height: auto;
     padding: 0px 30px;
     display: flex;
     flex-direction: column;
-    padding-bottom: 145px;
+    /* padding-bottom: 145px; */
 }
 
 #tituloVista {
@@ -21,6 +21,7 @@
 #lista {
     width: 100%;
     overflow-y: scroll;
+    max-height: 61vh;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
