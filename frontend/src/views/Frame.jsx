@@ -1,5 +1,4 @@
-import React, { useContext } from 'react';
-import { counterContext } from '../context/counterContext';
+import React from 'react';
 
 import Styles from './Frame.module.css';
 
@@ -11,22 +10,11 @@ const Frame = ({
 	showSearchOff,
 	cargar,
 }) => {
-	const { menuMostrar } = useContext(counterContext);
 	return (
 		<>
 			<section id={Styles.marco}>
 				<header id={Styles.cabezera}>
 					<h1 id={Styles.titulo}>FarmacoPedia</h1>
-					<button
-						onClick={() => {
-							menuMostrar();
-						}}
-						id={Styles.menuCapsulaOff}
-						className={Styles.botonAfter}
-					>
-						<div id={Styles.capsulaOscuro} />
-						<div id={Styles.capsulaClaro} />
-					</button>
 				</header>
 				<main id={Styles.bordes}>
 					<div className={Styles.bordesLaterales} id={Styles.izquierda} />

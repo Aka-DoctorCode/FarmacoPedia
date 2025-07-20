@@ -1,0 +1,7 @@
+#contenedor {
+    position: absolute;
+    z-index: 1;
+    top: 100px;
+    right: 60px;
+    left: 60px;
+}

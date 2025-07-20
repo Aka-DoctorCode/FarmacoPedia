@@ -12,8 +12,7 @@ app.use(express.json());
 app.use(cors());
 
 // conexion base de datos
-const bd = "mongodb://localhost:27017/FarmacoPedia";
-// const bd = process.env.DB_URI;
+const bd = process.env.DB_URI;
 async function conexionBD() {
   await mongoose.connect(bd, {
     useNewUrlParser: true,

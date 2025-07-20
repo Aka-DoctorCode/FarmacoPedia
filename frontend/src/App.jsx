@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Descargo from './views/Descargo';
 import Frame from './views/Frame';
 import Menu from './components/Menu';
+import BotonPill from './components/BontonPill';
 
 import ContenidoFarmacos from './views/ContenidoFarmacos';
 import ContenidoFamilia from './views/ContenidoFamilia';
@@ -22,6 +23,7 @@ const App = () => {
 
 	return (
 		<StateContext>
+			<BotonPill />
 			{descargoVisible && <Descargo ocultar={hideDescargo} />}
 			<Frame
 				cargar={cargar}
