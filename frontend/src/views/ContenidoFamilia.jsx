@@ -33,7 +33,6 @@ const ContenidoFamilia = () => {
 					{data.familias.map((familia, index) => (
 						<button key={index} className={Styles.pildora}>
 							{familia.length > 20 ? `${familia.substring(0, 20)}...` : familia}
-							{familia}
 						</button>
 					))}
 				</div>

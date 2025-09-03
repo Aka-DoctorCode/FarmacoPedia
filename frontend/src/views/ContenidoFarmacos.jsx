@@ -26,7 +26,6 @@ const ContenidoFarmacos = () => {
 						return (
 							<button key={index} className={Styles.pildora}>
 								{nombre.length > 20 ? `${nombre.substring(0, 20)}...` : nombre}
-								{nombre}
 							</button>
 						);
 					})}

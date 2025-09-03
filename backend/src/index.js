@@ -63,22 +63,22 @@ const farmaco = new mongoose.Schema({
       },
     },
   ],
-  nombresComercial: [
-    {
-      nombre: {
-        type: String,
-        match: /^[a-záéíóúüñ\s]+$/gm,
-      },
-      composicion: {
-        type: [String],
-        match: /^[a-záéíóúüñ0-9\,.-/\s]+$/gm,
-      },
-      paises: {
-        type: [String],
-        match: /^[a-záéíóúüñ\s]+$/gm,
-      },
-    },
-  ],
+  // nombresComercial: [
+  //   {
+  //     nombre: {
+  //       type: String,
+  //       match: /^[a-záéíóúüñ\s]+$/gm,
+  //     },
+  //     composicion: {
+  //       type: [String],
+  //       match: /^[a-záéíóúüñ0-9\,.-/\s]+$/gm,
+  //     },
+  //     paises: {
+  //       type: [String],
+  //       match: /^[a-záéíóúüñ\s]+$/gm,
+  //     },
+  //   },
+  // ],
   posologia: {
     dosisAdulto: {
       viaDeAdministracion: [
@@ -180,7 +180,7 @@ app.post("/agregarFarmaco", async (req, res) => {
     mecanismoDeAccion,
     indicaciones,
     presentaciones,
-    nombresComercial,
+    // nombresComercial,
     posologia,
     riesgo,
     contraindicaciones,
@@ -200,7 +200,7 @@ app.post("/agregarFarmaco", async (req, res) => {
       mecanismoDeAccion,
       indicaciones,
       presentaciones,
-      nombresComercial,
+      // nombresComercial,
       posologia,
       riesgo,
       contraindicaciones,

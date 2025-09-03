@@ -9,7 +9,7 @@ const Post = () => {
 	const [mecanismoDeAccion, setMecanismoDeAccion] = useState('');
 	const [indicaciones, setIndicaciones] = useState('');
 	const [presentaciones, setPresentaciones] = useState('');
-	const [nombresComercial, setNombresComercial] = useState('');
+	// const [nombresComercial, setNombresComercial] = useState('');
 	const [posologia, setPosologia] = useState('');
 	const [riesgo, setRiesgo] = useState('');
 	const [contraindicaciones, setContraindicaciones] = useState('');
@@ -25,7 +25,7 @@ const Post = () => {
 			mecanismoDeAccion,
 			indicaciones,
 			presentaciones,
-			nombresComercial,
+			// nombresComercial,
 			posologia,
 			riesgo,
 			contraindicaciones,
@@ -43,9 +43,11 @@ const Post = () => {
 		}
 	};
 
+	const [showAsteriscoBox, setShowAsteriscoBox] = useState(false);
+
 	return (
 		<section id={Styles.contenedor}>
-			<h1>Agregar Farmaco</h1>
+			<h1 id={Styles.titulo}>Agregar nuevo farmaco</h1>
 			<form onSubmit={handleSubmit}>
 				<label>
 					Nombre:
@@ -55,106 +57,114 @@ const Post = () => {
 						onChange={(e) => setNombre(e.target.value)}
 					/>
 				</label>
-				<br />
 				<label>
-					Familia:
+					<div className={Styles.labelConAsterisco}>
+						<span>Familia:</span>
+						<div
+							className={Styles.asterisco}
+							onMouseOver={() => setShowAsteriscoBox(true)}
+							onMouseOut={() => setShowAsteriscoBox(false)}
+						>
+							&nbsp;!&nbsp;
+						</div>
+						{showAsteriscoBox && (
+							<div
+								className={Styles.asteriscoBox}
+								onMouseOver={() => setShowAsteriscoBox(true)}
+								onMouseOut={() => setShowAsteriscoBox(false)}
+							>
+								&nbsp;&nbsp;&nbsp;&nbsp;Separe cada familia con una
+								coma&nbsp;&nbsp;
+							</div>
+						)}
+					</div>
 					<input
 						type='text'
 						value={familia}
 						onChange={(e) => setFamilia(e.target.value)}
 					/>
 				</label>
-				<br />
 				<label>
 					Mecanismo de Acción:
-					<input
+					<textarea
 						type='text'
 						value={mecanismoDeAccion}
 						onChange={(e) => setMecanismoDeAccion(e.target.value)}
 					/>
 				</label>
-				<br />
 				<label>
 					Indicaciones:
-					<input
+					<textarea
 						type='text'
 						value={indicaciones}
 						onChange={(e) => setIndicaciones(e.target.value)}
 					/>
 				</label>
-				<br />
 				<label>
 					Presentaciones:
-					<input
+					<textarea
 						type='text'
 						value={presentaciones}
 						onChange={(e) => setPresentaciones(e.target.value)}
 					/>
 				</label>
-				<br />
-				<label>
+				{/* <label>
 					Nombres Comercial:
-					<input
+					<textarea
 						type='text'
 						value={nombresComercial}
 						onChange={(e) => setNombresComercial(e.target.value)}
 					/>
-				</label>
-				<br />
+				</label> */}
 				<label>
 					Posología:
-					<input
+					<textarea
 						type='text'
 						value={posologia}
 						onChange={(e) => setPosologia(e.target.value)}
 					/>
 				</label>
-				<br />
+
 				<label>
 					Riesgo:
-					<input
+					<textarea
 						type='text'
 						value={riesgo}
 						onChange={(e) => setRiesgo(e.target.value)}
 					/>
 				</label>
-				<br />
 				<label>
 					Contraindicaciones:
-					<input
+					<textarea
 						type='text'
 						value={contraindicaciones}
 						onChange={(e) => setContraindicaciones(e.target.value)}
 					/>
 				</label>
-				<br />
 				<label>
 					Interacciones:
-					<input
+					<textarea
 						type='text'
 						value={interacciones}
 						onChange={(e) => setInteracciones(e.target.value)}
 					/>
 				</label>
-				<br />
 				<label>
 					Reacciones Adversas:
-					<input
+					<textarea
 						type='text'
 						value={reaccionesAdversas}
 						onChange={(e) => setReaccionesAdversas(e.target.value)}
 					/>
 				</label>
-				<br />
 				<label>
 					Sobre Dosis:
-					<input
+					<textarea
 						type='text'
 						value={sobreDosis}
 						onChange={(e) => setSobreDosis(e.target.value)}
 					/>
 				</label>
-				<br />
 				<button type='submit'>Agregar Farmaco</button>
 			</form>
 		</section>
