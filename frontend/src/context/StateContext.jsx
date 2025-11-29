@@ -2,7 +2,11 @@ import { useState } from 'react';
 import { counterContext } from './counterContext';
 
 const StateContext = ({ children }) => {
-	const [descargoVisible, setDescargoVisible] = useState(true);
+	const [descargoVisible, setDescargoVisible] = useState(() => {
+		return !document.cookie
+			.split(';')
+			.some((item) => item.trim() === 'farmacopedia_disclaimer_accepted=true');
+	});
 	const [menu, setMenu] = useState(false);
 	const [busquda, setBusqueda] = useState(false);
 	const [listaFarmacos, setListaFarmacos] = useState(true);
@@ -10,6 +14,8 @@ const StateContext = ({ children }) => {
 
 	const descargoOcultar = () => {
 		setDescargoVisible(false);
+		document.cookie =
+			'farmacopedia_disclaimer_accepted=true; path=/; max-age=3600';
 	};
 	const menuMostrar = () => {
 		setMenu(true);

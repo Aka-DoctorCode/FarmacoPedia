@@ -34,7 +34,7 @@ const Post = () => {
 			sobreDosis,
 		};
 		try {
-			const response = await axios.post('/agregarFarmaco', farmaco);
+			const response = await axios.post(`${import.meta.env.VITE_API_URL}/agregarFarmaco`, farmaco);
 			console.log(response.data);
 			alert('Farmaco agregado con éxito');
 		} catch (error) {

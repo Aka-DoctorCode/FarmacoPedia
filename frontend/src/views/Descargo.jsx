@@ -31,8 +31,7 @@ export const Descargo = () => {
 							del sitio web, basada en la información proporcionada. Los
 							usuarios del sitio web son responsables de su propia salud y
 							bienestar. Si tiene alguna pregunta o inquietud sobre su salud,
-							debe consultar a un profesional de la salud. Fecha de vigencia: 22
-							de octubre de 2023
+							debe consultar a un profesional de la salud.
 						</p>
 						<div className={Styles.barra}></div>
 						<p>
