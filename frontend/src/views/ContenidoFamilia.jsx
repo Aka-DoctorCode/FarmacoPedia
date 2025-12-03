@@ -26,18 +26,16 @@ const ContenidoFamilia = () => {
 		fetchData(); // Llama a la función para obtener los datos cuando el componente se monta
 	}, []);
 	return (
-		listaFamilia && (
-			<section id={Styles.contenedor}>
-				<span id={Styles.tituloVista}>Selecciona una Familia</span>
-				<div id={Styles.lista}>
-					{data.familias.map((familia, index) => (
-						<button key={index} className={Styles.pildora}>
-							{familia.length > 20 ? `${familia.substring(0, 20)}...` : familia}
-						</button>
-					))}
-				</div>
-			</section>
-		)
+		<section id={Styles.contenedor}>
+			<span id={Styles.tituloVista}>Selecciona una Familia</span>
+			<div id={Styles.lista}>
+				{data.familias.map((familia, index) => (
+					<button key={index} className={Styles.pildora}>
+						{familia.length > 20 ? `${familia.substring(0, 20)}...` : familia}
+					</button>
+				))}
+			</div>
+		</section>
 	);
 };
 

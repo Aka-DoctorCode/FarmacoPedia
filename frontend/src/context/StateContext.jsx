@@ -11,6 +11,7 @@ const StateContext = ({ children }) => {
 	const [busquda, setBusqueda] = useState(false);
 	const [listaFarmacos, setListaFarmacos] = useState(true);
 	const [listaFamilia, setListaFamilia] = useState(false);
+	const [theme, setTheme] = useState('dark');
 
 	const descargoOcultar = () => {
 		setDescargoVisible(false);
@@ -41,6 +42,12 @@ const StateContext = ({ children }) => {
 	const listaFamiliaOcultar = () => {
 		setListaFamilia(false);
 	};
+	const toggleTheme = () => {
+		const newTheme = theme === 'dark' ? 'light' : 'dark';
+		setTheme(newTheme);
+		document.documentElement.setAttribute('data-theme', newTheme);
+	};
+
 	return (
 		<counterContext.Provider
 			value={{
@@ -58,6 +65,8 @@ const StateContext = ({ children }) => {
 				listaFamilia,
 				listaFamiliaMostrar,
 				listaFamiliaOcultar,
+				theme,
+				toggleTheme,
 			}}
 		>
 			{children}

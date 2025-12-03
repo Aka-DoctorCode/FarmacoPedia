@@ -1,16 +1,17 @@
 import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { counterContext } from '../context/counterContext';
 import Styles from './Menu.module.css';
 import StylesCapsulaOn from './MenuCapsulaOn.module.css';
+
 const Menu = () => {
-	const {
-		menu,
-		menuOcultar,
-		listaFarmacosMostrar,
-		listaFarmacosOcultar,
-		listaFamiliaMostrar,
-		listaFamiliaOcultar,
-	} = useContext(counterContext);
+	const { menu, menuOcultar } = useContext(counterContext);
+	const navigate = useNavigate();
+
+	const handleNavigation = (path) => {
+		navigate(path);
+		menuOcultar();
+	};
 
 	const x = [];
 	for (let i = 1; i <= 40; i++) {
@@ -41,28 +42,18 @@ const Menu = () => {
 					<div id={StylesCapsulaOn.capsulaClaro} />
 				</button>
 				<nav id={Styles.menuCapsulaOn}>
-					{/* <button id={Styles.boton}>Inicio</button> */}
 					<button
-						onClick={() => {
-							listaFarmacosMostrar();
-							listaFamiliaOcultar();
-							menuOcultar();
-						}}
+						onClick={() => handleNavigation('/farmacos')}
 						id={Styles.boton}
 					>
 						Farmacos
 					</button>
 					<button
-						onClick={() => {
-							listaFamiliaMostrar();
-							listaFarmacosOcultar();
-							menuOcultar();
-						}}
+						onClick={() => handleNavigation('/familias')}
 						id={Styles.boton}
 					>
 						Familias
 					</button>
-					{/* <button id={Styles.boton}>Aportar</button> */}
 				</nav>
 			</aside>
 		)

@@ -1,0 +1,75 @@
+{
+    // Nombre genérico del fármaco (ej: "IBUPROFENO")
+    "nombre": "",
+    // Array con las familias farmacológicas (ej: ["AINE", "ANALGESICO"])
+    "familia": [],
+    // Identificador único (puede ser generado automáticamente o un código interno)
+    "id": "",
+    // Descripción detallada de cómo actúa el fármaco en el organismo
+    "mecanismoDeAccion": "",
+    // Array de strings con las condiciones para las que se usa (ej: ["Dolor leve", "Fiebre"])
+    "indicaciones": [],
+    // Array de objetos con las formas en que viene el medicamento
+    "presentaciones": [
+        {
+            // Tipo de presentación (ej: "Comprimido", "Jarabe", "Inyectable")
+            "tipo": "",
+            // Composición química o concentración (ej: ["Ibuprofeno 400mg"])
+            "composicion": [],
+            // Vías de administración posibles para esta presentación (ej: ["Oral"])
+            "viasAdministracion": []
+        }
+    ],
+    // Información sobre dosis
+    "posologia": {
+        "dosisAdulto": {
+            "viaDeAdministracion": [
+                {
+                    // Vía específica (ej: "Oral")
+                    "via": "",
+                    // Array de strings con las dosis recomendadas (ej: ["400mg cada 8 horas"])
+                    "dosis": []
+                }
+            ]
+        },
+        // Array de strings con dosis máximas permitidas (ej: ["2400mg al día"])
+        "dosisMaxAdulto": [],
+        // Configuración igual para dosis pediátrica
+        "dosisPediatrica": {
+            "viaDeAdministracion": [
+                {
+                    "via": "",
+                    "dosis": []
+                }
+            ]
+        },
+        "dosisMaxPediatrica": []
+    },
+    // Información sobre riesgos en condiciones especiales
+    "riesgo": {
+        // Texto descriptivo del riesgo en embarazo (ej: "Categoría C. Evitar en tercer trimestre")
+        "embarazo": "",
+        // Texto descriptivo del riesgo en lactancia
+        "lactancia": "",
+        "renal": {
+            // Descripción del riesgo renal
+            "riesgo": "",
+            // Instrucciones de ajuste de dosis si aplica
+            "ajusteRenal": ""
+        },
+        "hepatico": {
+            // Descripción del riesgo hepático
+            "riesgo": "",
+            // Instrucciones de ajuste de dosis si aplica
+            "ajusteHepatico": ""
+        }
+    },
+    // Array de strings con situaciones donde NO se debe usar (ej: ["Alergia a AINEs"])
+    "contraindicaciones": [],
+    // Array de strings con interacciones con otros medicamentos o alimentos
+    "interacciones": [],
+    // Array de strings con efectos secundarios posibles
+    "reaccionesAdversas": [],
+    // Texto descriptivo de qué hacer o qué pasa en caso de sobredosis
+    "sobreDosis": ""
+}

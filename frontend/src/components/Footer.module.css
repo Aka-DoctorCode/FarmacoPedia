@@ -3,13 +3,16 @@
     justify-content: center;
     align-items: center;
     gap: 50px;
-    background: #1e1e1e;
+    background: rgba(26, 26, 26, 0.75);
+    border-top: 3px solid var(--glass-border);
     height: 150px;
     position: absolute;
     width: 100%;
     bottom: -100px;
-    color: #a0a0a0;
+    color: var(--color-text-muted);
 }
+
+
 
 #menuCapsulaOff {
     height: 35px;
@@ -50,7 +53,7 @@
     flex-direction: column;
     gap: 6px;
     margin: 10px;
-    font-family: "Futura-Bold";
+    font-family: var(--font-sans);
 }
 
 #tituloFooter {
@@ -63,7 +66,7 @@
 }
 
 .resaltar {
-    color: rgba(52.09, 191.77, 235.88);
+    color: var(--color-primary);
 }
 
 #redesSociales {

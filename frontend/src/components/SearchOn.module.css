@@ -1,92 +1,116 @@
 #contenedor {
     position: absolute;
-    top: 0px;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 100vh;
-    background-color: rgba(30, 30, 30, 0.85);
+    height: 100%;
+    background-color: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding-top: 110px;
-    gap: 20px;
-    z-index: 1;
+    padding-top: 100px;
 }
 
 #boton {
-    background-color: #00000000;
-    border: 0px;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
 }
 
-#boton:hover {
-    transform: translate(2px, 3px) rotate(45deg) scale(1.3);
-
+#boton:hover #circulo {
+    background: var(--color-primary);
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.4);
+    transform: scale(1.1) rotate(90deg);
+    border-color: var(--color-primary);
 }
 
 #circulo {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: rgba(30, 30, 30, 0.2);
-    border: 2px solid #F0F0F0;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+#barra1,
+#barra2 {
+    position: absolute;
+    width: 20px;
+    height: 2px;
+    background-color: var(--color-text-main);
 }
 
 #barra1 {
-    position: absolute;
-    width: 70%;
-    height: 20%;
-    background-color: #F0F0F0;
-    border-radius: 10px;
-    rotate: 45deg;
+    transform: rotate(45deg);
 }
 
 #barra2 {
-    position: absolute;
-    width: 70%;
-    height: 20%;
-    background-color: #fffcfc;
-    border-radius: 10px;
-    rotate: 315deg;
+    transform: rotate(-45deg);
 }
 
 #marco {
-    position: relative;
-    width: 275px;
-    height: 50px;
-    background-color: rgba(52, 192, 236, 1);
-    border: 1px solid #1e1e1e;
-    border-radius: 14px;
-    box-shadow: inset 2px 4px 4px rgba(0, 0, 0, 0.25), 1px 2px rgba(0, 0, 0, 0.65);
+    width: 600px;
+    height: 60px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
 #lupa {
-    height: 30px;
-    width: 30px;
-    background-color: #00000000;
-    border-color: #00000000;
-    position: absolute;
-    bottom: 0px;
-    right: 0px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    padding: 0;
 }
 
-#lupa:hover {
-    transform: translate(2px, 3px) scale(1.3);
+#lupa:hover #negro {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 10px rgba(14, 165, 233, 0.4);
+}
+
+#lupa:hover #barra {
+    background-color: var(--color-primary);
+    box-shadow: 0 0 10px rgba(14, 165, 233, 0.4);
 }
 
 #negro {
-    height: 22px;
-    width: 22px;
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--color-text-main);
     border-radius: 50%;
-    background-color: #1e1e1e;
     position: absolute;
-    bottom: 18px;
-    right: 10px;
+    top: 10px;
+    left: 10px;
+    transition: all 0.3s ease;
 }
 
 #blanco {
+    display: block;
+    width: 6px;
+    height: 6px;
+    background-color: var(--color-text-main);
+    border-radius: 50%;
     height: 14px;
     width: 14px;
     border-radius: 50%;
@@ -94,27 +118,28 @@
     position: absolute;
     bottom: 22px;
     right: 14px;
-    font-family: "Futura-Bold";
+    font-family: var(--font-sans);
 }
 
 #barra {
-    width: 20px;
-    height: 4px;
+    width: 8px;
+    height: 2px;
+    background-color: var(--color-text-main);
     position: absolute;
-    background-color: #1e1e1e;
-    transform: rotate(125deg);
-    border-radius: 0px 8px 8px 0px;
-    right: 22px;
-    bottom: 11px
+    bottom: 12px;
+    right: 10px;
+    transform: rotate(45deg);
+    transition: all 0.3s ease;
 }
 
 #input {
-    height: 27px;
-    width: 180px;
-    border-radius: 8px;
-    position: absolute;
-    left: 5px;
-    bottom: 10px;
-    border: 1px solid #1e1e1e;
-    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+    flex: 1;
+    height: 100%;
+    background: transparent;
+    border: none;
+    font-family: var(--font-sans);
+    font-size: 1.2rem;
+    color: var(--color-text-main);
+    outline: none;
+    margin-left: 10px;
 }

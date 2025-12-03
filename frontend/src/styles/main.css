@@ -1,8 +1,34 @@
 @import './normalize.css';
+@import './theme.css';
 
 body,
 #root {
     height: 100vh;
-    font-family: 'Roboto', sans-serif;
+    font-family: var(--font-sans);
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-main);
     box-sizing: border-box;
+    overflow: hidden;
 }
+
+/* a {
+    text-decoration: none;
+    color: inherit;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--glass-border);
+    border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary);
+} */

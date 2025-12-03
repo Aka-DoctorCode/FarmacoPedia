@@ -18,20 +18,18 @@ const ContenidoFarmacos = () => {
 		traerDatos();
 	}, []);
 	return (
-		listaFarmacos && (
-			<section id={Styles.contenedor}>
-				<span id={Styles.tituloVista}>Selecciona un Farmaco</span>
-				<div id={Styles.lista}>
-					{datos.map((nombre, index) => {
-						return (
-							<button key={index} className={Styles.pildora}>
-								{nombre.length > 20 ? `${nombre.substring(0, 20)}...` : nombre}
-							</button>
-						);
-					})}
-				</div>
-			</section>
-		)
+		<section id={Styles.contenedor}>
+			<span id={Styles.tituloVista}>Selecciona un Farmaco</span>
+			<div id={Styles.lista}>
+				{datos.map((nombre, index) => {
+					return (
+						<button key={index} className={Styles.pildora}>
+							{nombre.length > 20 ? `${nombre.substring(0, 20)}...` : nombre}
+						</button>
+					);
+				})}
+			</div>
+		</section>
 	);
 };
 

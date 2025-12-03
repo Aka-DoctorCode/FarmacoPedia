@@ -7,7 +7,7 @@ export const Descargo = () => {
 	return (
 		descargoVisible && (
 			<section id={Styles.contenedor}>
-				<main id={Styles.descargo}>
+				<div id={Styles.descargo}>
 					<div id={Styles.contenedorTitulo}>
 						<h1 id={Styles.titulo}>Descargo de responsabilidad</h1>
 					</div>
@@ -48,7 +48,7 @@ export const Descargo = () => {
 					>
 						Acepto
 					</button>
-				</main>
+				</div>
 			</section>
 		)
 	);

@@ -322,13 +322,13 @@ app.delete("/farmaco/:nombre", async (req, res) => {
 
   farmacoAEliminar != null
     ? res.status(200).json({
-        respuesta: `Se elimino el farmaco ${farmacoAEliminar.nombre}`,
-        farmaco: farmacoAEliminar,
-      })
+      respuesta: `Se elimino el farmaco ${farmacoAEliminar.nombre}`,
+      farmaco: farmacoAEliminar,
+    })
     : res.status(404).json({
-        respuesta: "No se encontro el farmaco",
-        farmaco: farmacoAEliminar,
-      });
+      respuesta: "No se encontro el farmaco",
+      farmaco: farmacoAEliminar,
+    });
 });
 
 // escuchar el puerto

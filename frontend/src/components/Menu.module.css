@@ -1,44 +1,53 @@
 #contenedor {
     position: absolute;
     top: 0px;
-    z-index: 1;
+    z-index: 100;
+    /* Increased z-index to be above everything */
     width: 100%;
-    height: calc(100% + 100px);
+    height: 100%;
     display: flex;
     justify-content: end;
-    background-color: rgba(30, 30, 30, 0.65);
+    background-color: rgba(15, 23, 42, 0.6);
+    /* Darker overlay */
+    backdrop-filter: blur(4px);
 }
 
 #menuCapsulaOn {
     height: 100%;
-    width: 200px;
+    width: 250px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #207791;
-    border-radius: 10px 0px 0px 10px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border-left: 1px solid var(--glass-border);
     padding-top: 100px;
-    gap: 10px;
+    gap: 20px;
+    box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
 }
 
 #boton {
-    height: 30px;
-    width: 147px;
-    background-color: #f0f0f0;
-    border: 0.5px solid #1e1e1e;
-    border-radius: 8px;
-    box-shadow: inset 4px 4px 10px 5px #00000040, 1px 2px rgb(30, 30, 30, 0.65);
-    color: #1e1e1e;
-    font-family: "Futura-Bold";
-    font-size: 20px;
+    height: 45px;
+    width: 80%;
+    background-color: var(--color-bg-dark);
+    /* Solid background from theme */
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-main);
+    font-family: var(--font-sans);
+    font-size: 1.1rem;
     font-weight: 600;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     text-align: center;
-    padding-top: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 
 #boton:hover {
-    transform: translate(2px, 3px) scale(1.1);
-    box-shadow: 0px 0px rgba(30, 30, 30, 0.65);
+    background-color: var(--color-primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(14, 165, 233, 0.6);
+    border-color: var(--color-primary);
 }

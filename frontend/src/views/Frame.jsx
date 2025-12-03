@@ -1,38 +1,40 @@
-import React from 'react';
-
+import React, { useContext } from 'react';
+import { Outlet } from 'react-router-dom';
+import { counterContext } from '../context/counterContext';
+import Menu from '../components/Menu';
+import Footer from '../components/Footer';
+import SearchOn from '../components/SearchOn';
+import SearchOff from '../components/SearchOff';
+import BotonPill from '../components/BontonPill';
 import Styles from './Frame.module.css';
 
-const Frame = ({
-	showMenu,
-	showContenidoFarmacos,
-	showContenidoFamilia,
-	showSearchOn,
-	showSearchOff,
-	cargar,
-}) => {
+const Frame = () => {
+	const { theme, toggleTheme } = useContext(counterContext);
+
 	return (
-		<>
-			<section id={Styles.marco}>
-				<header id={Styles.cabezera}>
-					<h1 id={Styles.titulo}>FarmacoPedia</h1>
-				</header>
-				<main id={Styles.bordes}>
-					<div className={Styles.bordesLaterales} id={Styles.izquierda} />
-					<div className={Styles.bordesLaterales} id={Styles.derecha} />
-				</main>
-			</section>
-			{cargar === true && [
-				<React.Fragment key='menu'>{showMenu()}</React.Fragment>,
-				<React.Fragment key='ContenidoFarmacos'>
-					{showContenidoFarmacos()}
-				</React.Fragment>,
-				<React.Fragment key='ContenidoFamilia'>
-					{showContenidoFamilia()}
-				</React.Fragment>,
-				<React.Fragment key='searchOn'>{showSearchOn()}</React.Fragment>,
-				<React.Fragment key='searchOff'>{showSearchOff()}</React.Fragment>,
-			]}
-		</>
+		<section id={Styles.marco}>
+			<header id={Styles.cabezera}>
+				<h1 id={Styles.titulo}>FarmacoPedia</h1>
+				<div className={Styles.headerControls}>
+					<button onClick={toggleTheme} className={Styles.themeToggle} aria-label="Toggle Theme">
+						<div className={theme === 'dark' ? Styles.sunIcon : Styles.moonIcon}></div>
+					</button>
+					<SearchOff />
+					<BotonPill />
+				</div>
+			</header>
+
+			<SearchOn />
+
+			<main id={Styles.mainContent}>
+				<Outlet />
+				<Footer />
+			</main>
+
+			<div id={Styles.bordes} />
+
+			<Menu />
+		</section>
 	);
 };
 

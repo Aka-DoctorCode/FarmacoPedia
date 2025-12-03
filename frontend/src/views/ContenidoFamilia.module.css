@@ -1,47 +1,49 @@
 #contenedor {
-    position: absolute;
-    top: 100px;
-    width: auto;
-    height: auto;
-    padding: 0px 30px;
+    width: 100%;
+    max-width: 800px;
     display: flex;
     flex-direction: column;
-    /* padding-bottom: 145px; */
+    align-items: center;
+    gap: var(--spacing-md);
 }
 
 #tituloVista {
-    width: 70%;
-    text-align: left;
-    font-family: "Futura-Bold";
-    font-size: 30px;
-    margin-top: 20px;
-    margin-left: 20px;
+    width: 100%;
+    text-align: center;
+    font-family: var(--font-sans);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+    margin-bottom: var(--spacing-md);
 }
 
 #lista {
     width: 100%;
-    overflow-y: scroll;
-    max-height: 61vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 20px;
-    gap: 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--spacing-md);
+    padding-bottom: var(--spacing-xl);
 }
 
 .pildora {
-    width: 90%;
-    border: 1px solid rgba(30, 30, 30, 0.65);
-    border-radius: 25px;
-    box-shadow: inset 0px 4px 4px rgba(30, 30, 30, 0.25), 3px 2px rgba(30, 30, 30, 0.65);
-    font-family: "Futura";
-    letter-spacing: 2px;
-    font-size: 20px;
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-full);
+    color: var(--color-text-main);
+    font-family: var(--font-sans);
+    font-size: 1rem;
     text-transform: capitalize;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
 }
 
 .pildora:hover {
-    transform: translate(2px, 3px) scale(1.1);
-    box-shadow: inset 0px 4px 2px rgba(30, 30, 30, 0.25), 0px 0px rgba(30, 30, 30, 0.65);
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
 }
