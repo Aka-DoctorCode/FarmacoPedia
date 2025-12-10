@@ -214,7 +214,7 @@ app.post("/agregarFarmaco", async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(400).json({
+    res.status(404).json({
       error: error,
       "Solución 1": `verifica que ${nombre} no exista en la base de datos`,
       "Solución 2": "asegurate de que se cumple el schema",

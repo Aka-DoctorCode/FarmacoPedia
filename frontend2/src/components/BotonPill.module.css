@@ -1,0 +1,44 @@
+#menuCapsulaOff {
+    position: relative;
+    z-index: 10;
+    background-color: var(--color-bg-dark);
+    /* Solid background from theme */
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    height: 40px;
+    width: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#menuCapsulaOff:hover {
+    background-color: var(--color-primary);
+    /* Blue background on hover */
+    border-color: var(--color-primary);
+    /* Blue border */
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.6);
+    /* Stronger glow */
+    transform: scale(1.1);
+}
+
+#capsulaOscuro {
+    background-color: #1e1e1e;
+    border-radius: 8px 8px 0px 0px;
+    height: 14px;
+    width: 15px;
+}
+
+#capsulaClaro {
+    background-color: #f0f0f0;
+    border: 1px solid #1e1e1e;
+    border-radius: 8px 8px 0px 0px;
+    height: 14px;
+    width: 15px;
+    transform: rotate(-180deg);
+}

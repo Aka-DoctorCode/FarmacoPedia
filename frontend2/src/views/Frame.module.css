@@ -1,0 +1,140 @@
+#marco {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: relative;
+    background: radial-gradient(circle at top right, rgba(14, 165, 233, 0.15), transparent 40%),
+        radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.15), transparent 40%);
+}
+
+#cabezera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-lg);
+    height: 80px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    z-index: 10;
+}
+
+#titulo {
+    font-family: var(--font-sans);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    letter-spacing: -0.02em;
+    text-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+    margin: 0;
+}
+
+.headerControls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.themeToggle {
+    background: var(--color-bg-dark);
+    /* Solid background from theme */
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+    margin-right: var(--spacing-sm);
+    transition: all 0.3s ease;
+}
+
+.themeToggle:hover {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.6);
+}
+
+/* Sun Icon */
+.sunIcon {
+    width: 14px;
+    height: 14px;
+    background-color: var(--color-text-main);
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--color-bg-dark), 0 0 0 4px var(--color-text-main);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.themeToggle:hover .sunIcon {
+    background-color: white;
+    box-shadow: 0 0 0 2px var(--color-primary), 0 0 0 4px white;
+}
+
+/* Moon Icon */
+.moonIcon {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    box-shadow: 5px 2px 0 0 var(--color-text-main);
+    transform: rotate(-20deg) translate(-2px, -2px);
+    transition: all 0.3s ease;
+}
+
+.themeToggle:hover .moonIcon {
+    box-shadow: 5px 2px 0 0 white;
+}
+
+#mainContent {
+    flex: 1;
+    position: relative;
+    overflow-y: auto;
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Hide scrollbar by default */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+/* Chrome, Edge, Safari */
+#mainContent::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
+/* Show scrollbar on hover/scroll */
+#mainContent:hover::-webkit-scrollbar,
+#mainContent:active::-webkit-scrollbar {
+    width: 8px;
+}
+
+#mainContent:hover::-webkit-scrollbar-thumb,
+#mainContent:active::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary);
+    border-radius: 4px;
+    border: 2px solid var(--glass-bg);
+}
+
+/* Firefox show on hover */
+#mainContent:hover {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) var(--glass-bg);
+}
+
+/* Background decoration */
+#bordes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
