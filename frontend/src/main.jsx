@@ -5,7 +5,7 @@ import App from './App.jsx';
 import Post from './Routes/Route.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-	<BrowserRouter>
+	<BrowserRouter basename={import.meta.env.BASE_URL}>
 		<Routes>
 			<Route path='/' element={<App />} />
 			<Route path='/post' element={<Post />} />
