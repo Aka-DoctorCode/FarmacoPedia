@@ -332,7 +332,7 @@ app.delete("/farmaco/:nombre", async (req, res) => {
 });
 
 // escuchar el puerto
-app.listen(8001, () => {
-  console.log("Servidor escuchando en el puerto 8001");
-  console.log("http://localhost:8001");
+app.listen(5174, () => {
+  console.log("Servidor escuchando en el puerto 5174");
+  console.log("http://localhost:5174");
 });
