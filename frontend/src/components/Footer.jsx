@@ -18,7 +18,7 @@ const Footer = () => {
 				</span>
 				<div id={Styles.redesSociales}>
 					<a className={Styles.boton} href='https://github.com/Aka-DoctorCode'>
-						<img id={Styles.logos} src='./assets/github.png' alt='GitHud' />
+						<img id={Styles.logos} src='./assets/github.png' alt='frontend/assets/github.png' />
 					</a>
 					{/* <a
 						className={Styles.boton}
