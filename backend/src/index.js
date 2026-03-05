@@ -55,7 +55,7 @@ const farmaco = new mongoose.Schema({
       },
       composicion: {
         type: [String],
-        match: /^[a-záéíóúüñ0-9\,.-/\s]+$/gm,
+        match: /^[a-záéíóúüñ0-9\,./\s-]+$/gm,
       },
       viasAdministracion: {
         type: [String],
@@ -71,7 +71,7 @@ const farmaco = new mongoose.Schema({
   //     },
   //     composicion: {
   //       type: [String],
-  //       match: /^[a-záéíóúüñ0-9\,.-/\s]+$/gm,
+  //       match: /^[a-záéíóúüñ0-9\,./\s-]+$/gm,
   //     },
   //     paises: {
   //       type: [String],
@@ -172,167 +172,158 @@ const randomId = () => {
   const randomNumber = Math.floor(10 + Math.random() * 90);
   return randomNumber.toString();
 };
-// rutas
-app.post("/agregarFarmaco", async (req, res) => {
-  const {
-    nombre,
-    familia,
-    mecanismoDeAccion,
-    indicaciones,
-    presentaciones,
-    // nombresComercial,
-    posologia,
-    riesgo,
-    contraindicaciones,
-    interacciones,
-    reaccionesAdversas,
-    sobreDosis,
-  } = req.body;
-  const id =
-    familia && familia.length > 0
-      ? familia[0] + "." + nombre.slice(0, 5) + randomId()
-      : "";
-  try {
-    const nuevoFarmaco = new Farmaco({
-      id,
-      nombre,
-      familia,
-      mecanismoDeAccion,
-      indicaciones,
-      presentaciones,
-      // nombresComercial,
-      posologia,
-      riesgo,
-      contraindicaciones,
-      interacciones,
-      reaccionesAdversas,
-      sobreDosis,
-    });
-    await nuevoFarmaco.save();
-    res.status(200).json({
-      "Se agrego con exito a la base de datos": nuevoFarmaco,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(404).json({
-      error: error,
-      "Solución 1": `verifica que ${nombre} no exista en la base de datos`,
-      "Solución 2": "asegurate de que se cumple el schema",
-    });
-  }
-});
 
-app.get("/farmacos", async (req, res) => {
-  const farmacosEncontrados = await Farmaco.find();
-  let nombresFarmacos = [];
-  if (farmacosEncontrados != null) {
-    farmacosEncontrados.map((farmaco) => {
-      if (!nombresFarmacos.includes(farmaco.nombre))
-        nombresFarmacos.push(farmaco.nombre);
+const asyncHandler = (fn) => (req, res, next) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+};
+
+// ----------------------------------------------------
+// rutas
+// ----------------------------------------------------
+
+app.post("/agregarFarmaco", asyncHandler(async (req, res) => {
+    const { familia, nombre } = req.body;
+    
+    // Generate unique ID based on family and name
+    const id = familia && familia.length > 0
+        ? `${familia[0]}.${nombre.slice(0, 5)}${randomId()}`
+        : "";
+
+    const nuevoFarmaco = new Farmaco({
+        ...req.body,
+        id
     });
+
+    await nuevoFarmaco.save();
+    
+    res.status(201).json({
+        success: true,
+        message: "Drug successfully added to database",
+        data: nuevoFarmaco
+    });
+}));
+
+// GET: List all unique drug names
+app.get("/farmacos", asyncHandler(async (req, res) => {
+    const nombresFarmacos = await Farmaco.distinct("nombre");
+
+    if (nombresFarmacos.length === 0) {
+        return res.status(404).json({ error: "Database is empty" });
+    }
+
     nombresFarmacos.sort();
     res.status(200).json({ nombres: nombresFarmacos });
-  } else {
-    res.status(404).json({
-      error: "No se encontraron farmacos la base de datos esta vacia",
-    });
-  }
-});
+}));
 
-app.get("/farmaco/:nombre", async (req, res) => {
-  const { nombre } = req.params;
-  const farmacoEncontrado = await Farmaco.findOne({ nombre: nombre });
-  console.log(farmacoEncontrado);
+// GET: Find a specific drug by name
+app.get("/farmaco/:nombre", asyncHandler(async (req, res) => {
+    const { nombre } = req.params;
+    const farmacoEncontrado = await Farmaco.findOne({ nombre });
 
-  if (farmacoEncontrado != null) {
+    if (!farmacoEncontrado) {
+        return res.status(404).json({
+            error: "Drug not found",
+            solution: "Try searching for a different name"
+        });
+    }
+
     res.status(200).json(farmacoEncontrado);
-  } else {
-    res.status(404).json({
-      error: "No se encontro el farmaco",
-      solucion: "Intenta con otro",
-    });
-  }
-});
+}));
 
-app.get("/farmacos/familias", async (req, res) => {
-  const farmacosEnBD = await Farmaco.find();
-  let familias = [];
-  if (farmacosEnBD.length > 0) {
-    farmacosEnBD.map((farmaco) => {
-      farmaco.familia.map((familia) => {
-        if (familias.includes(familia)) {
-        } else {
-          familias.push(familia);
-        }
-      });
-    });
+// GET: List all unique drug families
+app.get("/farmacos/familias", asyncHandler(async (req, res) => {
+    const familias = await Farmaco.distinct("familia");
+
+    if (familias.length === 0) {
+        return res.status(404).json({ error: "No families found" });
+    }
+
     familias.sort();
-    res.status(200).json({ familias: familias });
-  } else {
-    res.status(404).json({
-      error: "No se encontraron farmacos en esta familia",
-      solucion: "Intenta con otra familia",
-    });
-  }
-});
+    res.status(200).json({ familias });
+}));
 
-app.get("/farmacos/familia/:familia", async (req, res) => {
-  const { familia } = req.params;
-  const farmacosEncontrados = await Farmaco.find({ familia });
-  let nombres = [];
-  if (farmacosEncontrados.length > 0) {
-    farmacosEncontrados.map((farmaco) => {
-      if (!nombres.includes(farmaco.nombre)) nombres.push(farmaco.nombre);
-    });
-    nombres.sort();
-    res.status(200).json({ nombres: nombres });
-  } else {
-    res.status(404).json({
-      error: "No se encontraron farmacos en esta familia",
-      solucion: "Intenta con otra familia",
-    });
-  }
-});
+// GET: List drugs belonging to a specific family
+app.get("/farmacos/familia/:familia", asyncHandler(async (req, res) => {
+    const { familia } = req.params;
+    const farmacosEncontrados = await Farmaco.find({ familia });
 
-app.patch("/farmaco/:nombre", async (req, res) => {
-  const nuevosDatos = req.body;
+    if (farmacosEncontrados.length === 0) {
+        return res.status(404).json({
+            error: "No drugs found in this family",
+            solution: "Verify the family name"
+        });
+    }
 
-  try {
-    await Farmaco.updateOne(
-      { nombre: req.params.nombre },
-      { $set: nuevosDatos }
+    const nombres = farmacosEncontrados.map(f => f.nombre).sort();
+    res.status(200).json({ nombres });
+}));
+
+// PATCH: Update drug data
+app.patch("/farmaco/:nombre", asyncHandler(async (req, res) => {
+    const { nombre } = req.params;
+    const updatedDrug = await Farmaco.findOneAndUpdate(
+        { nombre },
+        { $set: req.body },
+        { new: true, runValidators: true }
     );
+
+    if (!updatedDrug) {
+        return res.status(404).json({ error: "Drug not found for update" });
+    }
+
     res.status(200).json({
-      "Se actualizo el farmaco": `${nuevosDatos.nombre}`,
-      NuevosDatos: { nuevosDatos },
+        message: "Drug updated successfully",
+        data: updatedDrug
     });
-  } catch (error) {
-    res.status(400).json({
-      error: error,
-      Solución:
-        "Asegurate que el farmaco este bien escrito, o puede que este no exista en la base de datos",
+}));
+
+// DELETE: Remove a drug by name
+app.delete("/farmaco/:nombre", asyncHandler(async (req, res) => {
+    const farmacoEliminado = await Farmaco.findOneAndDelete({
+        nombre: req.params.nombre
     });
-  }
+
+    if (!farmacoEliminado) {
+        return res.status(404).json({ error: "Drug not found" });
+    }
+
+    res.status(200).json({
+        message: `Drug ${farmacoEliminado.nombre} deleted`,
+        data: farmacoEliminado
+    });
+}));
+
+app.use((err, req, res, next) => {
+    let statusCode = err.statusCode || 500;
+    let message = err.message || "Internal Server Error";
+
+    // Handle Mongoose Validation Errors
+    if (err.name === "ValidationError") {
+        statusCode = 400;
+        message = Object.values(err.errors).map(val => val.message).join(", ");
+    }
+
+    // Handle Mongoose Duplicate Key Errors (Unique constraint)
+    if (err.code === 11000) {
+        statusCode = 400;
+        message = `Duplicate field value entered: ${Object.keys(err.keyValue)}. Please use another value.`;
+    }
+
+    res.status(statusCode).json({
+        success: false,
+        error: message,
+        stack: process.env.NODE_ENV === "development" ? err.stack : {}
+    });
 });
 
-app.delete("/farmaco/:nombre", async (req, res) => {
-  const farmacoAEliminar = await Farmaco.findOneAndDelete({
-    nombre: req.params.nombre,
-  });
+// ----------------------------------------------------
+// Port listening
+// ----------------------------------------------------
+// Server Port configuration for local and production
+const port = process.env.PORT || 5174;
 
-  farmacoAEliminar != null
-    ? res.status(200).json({
-      respuesta: `Se elimino el farmaco ${farmacoAEliminar.nombre}`,
-      farmaco: farmacoAEliminar,
-    })
-    : res.status(404).json({
-      respuesta: "No se encontro el farmaco",
-      farmaco: farmacoAEliminar,
-    });
-});
-
-// escuchar el puerto
-app.listen(5174, () => {
-  console.log("Servidor escuchando en el puerto 5174");
-  console.log("http://localhost:5174");
+// Listen to the server on all network interfaces
+app.listen(port, "0.0.0.0", () => {
+    console.log(`Server running on port ${port}`);
+    console.log(`Health check: http://localhost:${port}/farmacos`);
 });
