@@ -4,7 +4,8 @@ import { counterContext } from '../context/counterContext';
 import Styles from './ContenidoFarmacos.module.css';
 const ContenidoFarmacos = () => {
 	const { listaFarmacos } = useContext(counterContext);
-	const rutaBD = `${import.meta.env.VITE_API_URL}/farmacos`;
+	const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5174';
+	const rutaBD = `${API_URL}/farmacos`;
 	const [datos, setDatos] = useState([]);
 	useEffect(() => {
 		async function traerDatos() {

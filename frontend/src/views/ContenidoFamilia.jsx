@@ -10,7 +10,8 @@ const ContenidoFamilia = () => {
 	for (let i = 1; i <= 99; i++) {
 		x.push('n' + i);
 	}
-	const rutaBD = `${import.meta.env.VITE_API_URL}/farmacos/familias`;
+	const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5174';
+	const rutaBD = `${API_URL}/farmacos/familias`;
 	const [data, setData] = useState({ familias: [] });
 
 	useEffect(() => {
