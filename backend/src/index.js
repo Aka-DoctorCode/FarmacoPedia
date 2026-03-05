@@ -15,7 +15,9 @@ app.use(cors());
 async function connectDatabase() {
   try {
     await mongoose.connect(process.env.DB_URI);
+    console.log("Database connection successful");
   } catch (error) {
+    console.error("Database connection failed:", error.message);
   }
 }
 connectDatabase();
@@ -26,12 +28,12 @@ const farmaco = new mongoose.Schema({
     type: String,
     unique: true,
     required: true,
-    match: /^[a-z -]+$/i,
+    match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s-]+$/i,
   },
   familia: {
     type: [String],
     required: true,
-    match: /^[a-z]+$/,
+    match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s-]+$/,
   },
   id: {
     type: String,
@@ -39,17 +41,17 @@ const farmaco = new mongoose.Schema({
   },
   mecanismoDeAccion: {
     type: String,
-    match: /^[a-záéíóúüñA-ZÁ́ÉÍÓÚÜÑ\,.;:()0-9\s]+$/gm,
+    match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ0-9\,.;:()%+*/<>≤≥÷\s-]+$/gm,
   },
   indicaciones: {
     type: [String],
-    match: /^[a-záéíóúüñ\s]+$/gm,
+    match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]+$/gm,
   },
   presentaciones: [
     {
       tipo: {
         type: String,
-        match: /^[a-záéíóúüñ\s]+$/gm,
+        match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]+$/gm,
       },
       composicion: {
         type: [String],
@@ -57,7 +59,7 @@ const farmaco = new mongoose.Schema({
       },
       viasAdministracion: {
         type: [String],
-        match: /^[a-záéíóúüñ\s]+$/gm,
+        match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]+$/gm,
       },
     },
   ],
@@ -65,7 +67,7 @@ const farmaco = new mongoose.Schema({
   //   {
   //     nombre: {
   //       type: String,
-  //       match: /^[a-záéíóúüñ\s]+$/gm,
+  //       match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]+$/gm,
   //     },
   //     composicion: {
   //       type: [String],
@@ -73,7 +75,7 @@ const farmaco = new mongoose.Schema({
   //     },
   //     paises: {
   //       type: [String],
-  //       match: /^[a-záéíóúüñ\s]+$/gm,
+  //       match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]+$/gm,
   //     },
   //   },
   // ],
@@ -83,83 +85,83 @@ const farmaco = new mongoose.Schema({
         {
           via: {
             type: String,
-            match: /^[a-záéíóúüñ\s]+$/gm,
+            match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]+$/gm,
           },
           dosis: {
             type: [String],
-            match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷\s]+$/gm,
+            match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ0-9\,.;:()%+*/<>≤≥÷\s-]+$/gm,
           },
         },
       ],
     },
     dosisMaxAdulto: {
       type: [String],
-      match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷\s]+$/gm,
+      match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ0-9\,.;:()%+*/<>≤≥÷\s-]+$/gm,
     },
     dosisPediatrica: {
       viaDeAdministracion: [
         {
           via: {
             type: String,
-            match: /^[a-záéíóúüñ\s]+$/gm,
+            match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]+$/gm,
           },
           dosis: {
             type: [String],
-            match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷\s]+$/gm,
+            match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ0-9\,.;:()%+*/<>≤≥÷\s-]+$/gm,
           },
         },
       ],
     },
     dosisMaxPediatrica: {
       type: [String],
-      match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷\s]+$/gm,
+      match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ0-9\,.;:()%+*/<>≤≥÷\s-]+$/gm,
     },
   },
   riesgo: {
-    embarazo: {
-      type: String,
-      match: /^[a-záéíóúüñ\s]+$/gm,
+        embarazo: {
+            type: String,
+            match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]+$/gm,
+        },
+        lactancia: {
+            type: String,
+            match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]+$/gm,
+        },
+        renal: {
+            riesgo: {
+                type: String,
+                match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]+$/gm,
+            },
+            ajusteRenal: {
+                type: String,
+                match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ0-9\,.;:()%+*/<>≤≥÷\s-]+$/gm,
+            },
+        },
+        hepatico: {
+            riesgo: {
+                type: String,
+                match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]+$/gm,
+            },
+            ajusteHepatico: {
+                type: String,
+                match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ0-9\,.;:()%+*/<>≤≥÷\s-]+$/gm,
+            },
+        },
     },
-    lactancia: {
-      type: String,
-      match: /^[a-záéíóúüñ\s]+$/gm,
-    },
-    renal: {
-      riesgo: {
-        type: String,
-        match: /^[a-záéíóúüñ\s]+$/gm,
-      },
-      ajusteRenal: {
-        type: String,
-        match: /^[a-záéíóúü\,.;:()%-+=*/<>≤≥÷\s]+$/gm,
-      },
-    },
-    hepatico: {
-      riesgo: {
-        type: String,
-        match: /^[a-záéíóúüñ\s]+$/gm,
-      },
-      ajusteHepatico: {
-        type: String,
-        match: /^[a-záéíóúüñ\,.;:()%-+=*/<>≤≥÷\s]+$/gm,
-      },
-    },
-  },
   contraindicaciones: {
     type: [String],
-    match: /^[a-záéíóúüñ\s]+$/gm,
+    match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]+$/gm,
   },
   interacciones: {
     type: [String],
-    match: /^[a-záéíóúüñ\s]+$/gm,
+    match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]+$/gm,
   },
   reaccionesAdversas: {
     type: [String],
-    match: /^[a-záéíóúüñ\s]+$/gm,
+    match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]+$/gm,
   },
   sobreDosis: {
     type: String,
-    match: /^[a-záéíóúüñ\,.;:()%-+=*/<>≤≥÷\s]+$/gm,
+    match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ0-9\,.;:()%+*/<>≤≥÷\s-]+$/gm,
   },
 });
 

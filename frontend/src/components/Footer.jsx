@@ -18,23 +18,23 @@ const Footer = () => {
 				</span>
 				<div id={Styles.redesSociales}>
 					<a className={Styles.boton} href='https://github.com/Aka-DoctorCode'>
-						<img id={Styles.logos} src='/assets/github.png' alt='GitHud' />
+						<img id={Styles.logos} src='./assets/github.png' alt='GitHud' />
 					</a>
-					<a
+					{/* <a
 						className={Styles.boton}
 						href='https://www.instagram.com/dr.molcas/'
 					>
 						<img id={Styles.logos} src='/assets/insta.png' alt='Instagra' />
-					</a>
+					</a> */}
 					<a className={Styles.boton} href='mailto:franciscomolina92@gmail.com'>
-						<img id={Styles.logos} src='/assets/gmail.png' alt='Gmail' />
+						<img id={Styles.logos} src='./assets/gmail.png' alt='Gmail' />
 					</a>
 					<a className={Styles.boton} href='https://wa.me/+584122211266'>
-						<img id={Styles.logos} src='/assets/whats.png' alt='Whatsapp' />
+						<img id={Styles.logos} src='./assets/whats.png' alt='Whatsapp' />
 					</a>
-					<a className={Styles.boton} href='https://t.me/+584143936561'>
+					{/* <a className={Styles.boton} href='https://t.me/+584143936561'>
 						<img id={Styles.logos} src='/assets/tele.png' alt='Telegram' />
-					</a>
+					</a> */}
 				</div>
 			</div>
 		</footer>
