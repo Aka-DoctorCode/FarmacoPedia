@@ -12,15 +12,13 @@ app.use(express.json());
 app.use(cors());
 
 // conexion base de datos
-const bd = process.env.DB_URI;
-async function conexionBD() {
-  await mongoose.connect(bd, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-  console.log("Conexión a la base de datos exitosa");
+async function connectDatabase() {
+  try {
+    await mongoose.connect(process.env.DB_URI);
+  } catch (error) {
+  }
 }
-conexionBD();
+connectDatabase();
 
 // Schema de los farmacos
 const farmaco = new mongoose.Schema({
