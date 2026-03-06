@@ -41,7 +41,7 @@ const dosageEntrySchema = new mongoose.Schema({
     unit: { 
         type: String, 
         trim: true, 
-        match: /^[a-záéíóúüñ0-9\,./\s-]+$/i 
+        match: /^[a-záéíóúüñ0-9\,./%\s-]+$/i 
     },
     route: [{ 
         type: String, 
