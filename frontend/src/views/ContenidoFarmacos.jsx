@@ -4,70 +4,62 @@ import { counterContext } from '../context/counterContext.js';
 import Styles from './ContenidoFarmacos.module.css';
 
 const ContenidoFarmacos = () => {
-    // 1. Added farmacoSeleccionado here
-    const { listaFarmacos, farmacoSeleccionado } = useContext(counterContext);
-    
+    // 1. Context extraction
+    const { 
+        listaFarmacos, 
+        listaFarmacosOcultar, 
+        setFarmacoSeleccionado,
+        // Assuming these exist for navigation/details
+        setDetalleFarmacoMostrar 
+    } = useContext(counterContext);
+
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5174';
-    const [drugData, setDrugData] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const drugsRoute = `${API_URL}/drugs/`;
+    const [drugs, setDrugs] = useState([]);
 
     useEffect(() => {
-        const fetchDrugDetails = async () => {
-            // Check if farmacoSeleccionado exists before fetching
-            if (!farmacoSeleccionado) return;
-
-            setLoading(true);
+        const fetchDrugs = async () => {
             try {
-                // 2. Fixed API_URL casing and template literal
-                const drugRoute = `${API_URL}/drugs/${farmacoSeleccionado}`;
-                const response = await axios.get(drugRoute);
-                
+                const response = await axios.get(drugsRoute);
                 if (response.data && response.data.success) {
-                    setDrugData(response.data.data);
+                    setDrugs(response.data.data);
                 }
             } catch (error) {
-                console.error('Error fetching drug details:', error);
-            } finally {
-                setLoading(false);
+                console.error('Error fetching drugs:', error);
             }
         };
 
-        fetchDrugDetails();
-    }, [farmacoSeleccionado, API_URL]); // 3. Updated dependency casing
-
-    // Optional: Add a loading state or a "Select a drug" message
-    if (loading) return <p>Loading...</p>;
-    if (!farmacoSeleccionado) return <p>Please select a drug to see details.</p>;
+        if (listaFarmacos) {
+            fetchDrugs();
+        }
+    }, [drugsRoute, listaFarmacos]);
 
     return (
-        listaFarmacos && drugData && (
+        listaFarmacos && (
             <section id={Styles.contenedor}>
-                <header className={Styles.header}>
-                    <h2 className={Styles.tituloDrug}>{drugData.name?.toUpperCase()}</h2>
-                    <p className={Styles.mechanism}><strong>Mecanismo de Acción:</strong> {drugData.actionMechanism}</p>
-                </header>
-
-                <div className={Styles.infoGrid}>
-                    <article className={Styles.card}>
-                        <h3>Dosificación Adultos</h3>
-                        {drugData.dosageGuidance?.adult && Object.entries(drugData.dosageGuidance.adult).map(([via, info]) => (
-                            <div key={via} className={Styles.viaRow}>
-                                <strong>Vía {via}:</strong>
-                                <ul>
-                                    <li>Pautas: {info.guidelines?.join(', ')}</li>
-                                    <li>Máx: {info.maxDose?.join(', ')}</li>
-                                </ul>
-                            </div>
-                        ))}
-                    </article>
-
-                    <article className={Styles.card}>
-                        <h3>Riesgos y Seguridad</h3>
-                        <p><strong>Embarazo:</strong> {drugData.risk?.pregnancy}</p>
-                        <p><strong>Lactancia:</strong> {drugData.risk?.lactation}</p>
-                        <p><strong>Ajuste Renal:</strong> {drugData.risk?.renal?.level} - {drugData.risk?.renal?.adjustment}</p>
-                    </article>
+                <span id={Styles.tituloVista}>Listado de Fármacos</span>
+                
+                <div id={Styles.lista}>
+                    {drugs.map((drug) => (
+                        <button 
+                            key={drug.id || drug._id} 
+                            className={Styles.pildora}
+                            onClick={() => {
+                                setFarmacoSeleccionado(drug);
+                                // Transition logic: Hide list and show details
+                                listaFarmacosOcultar();
+                                if (setDetalleFarmacoMostrar) setDetalleFarmacoMostrar(true);
+                            }}
+                        >
+                            {/* Handling name display with length limit */}
+                            {drug.name.length > 30 ? `${drug.name.substring(0, 30)}...` : drug.name}
+                        </button>
+                    ))}
                 </div>
+
+                {drugs.length === 0 && (
+                    <p className={Styles.mensajeVacio}>No se encontraron fármacos registrados.</p>
+                )}
             </section>
         )
     );
