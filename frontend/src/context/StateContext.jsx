@@ -1,6 +1,5 @@
-import { createContext, useState } from 'react';
-
-export const counterContext = createContext();
+import { useState } from 'react';
+import { counterContext } from './counterContext.js';
 
 const StateContext = ({ children }) => {
     // ---------------------------------------------------------

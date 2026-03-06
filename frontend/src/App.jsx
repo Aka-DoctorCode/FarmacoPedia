@@ -1,7 +1,5 @@
 import { useContext } from 'react';
-import { counterContext } from './context/counterContext.js';
-
-import Descargo from './views/Descargo';
+import { counterContext } from './context/counterContext.js';import Descargo from './views/Descargo';
 import Frame from './views/Frame';
 import Menu from './components/Menu';
 import BotonPill from './components/BontonPill';

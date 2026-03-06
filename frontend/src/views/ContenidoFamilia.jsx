@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import { counterContext } from '../context/counterContext';
+import { counterContext } from '../context/counterContext.js';
 import Styles from './ContenidoFamilia.module.css';
 
 const ContenidoFamilia = () => {
