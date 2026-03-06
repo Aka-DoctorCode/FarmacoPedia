@@ -6,37 +6,35 @@ import Styles from './ContenidoFamilia.module.css';
 // import { useState } from 'react';
 const ContenidoFamilia = () => {
 	const { listaFamilia } = useContext(counterContext);
-	const x = [];
-	for (let i = 1; i <= 99; i++) {
-		x.push('n' + i);
-	}
 	const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5174';
-	const rutaBD = `${API_URL}/farmacos/familias`;
-	const [data, setData] = useState({ familias: [] });
+    const familiesRoute = `${API_URL}/api/drugs/families`;
+    const [families, setFamilies] = useState([]);
 
 	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const response = await axios.get(rutaBD); // Realiza una solicitud GET a la ruta del backend
-				setData(response.data); // Almacena los datos en el estado local
-			} catch (error) {
-				console.error('Error al obtener datos del backend:', error);
-			}
-		};
-
-		fetchData(); // Llama a la función para obtener los datos cuando el componente se monta
-	}, []);
+        const fetchFamilies = async () => {
+            try {
+                const response = await axios.get(familiesRoute);
+                // The new API structure returns { success: true, data: [...] }
+                if (response.data && response.data.success) {
+                    setFamilies(response.data.data);
+                }
+            } catch (error) {
+                console.error('Error fetching drug families:', error);
+            }
+        };
+        fetchFamilies();
+    }, [familiesRoute]);
 	return (
 		listaFamilia && (
 			<section id={Styles.contenedor}>
 				<span id={Styles.tituloVista}>Selecciona una Familia</span>
 				<div id={Styles.lista}>
-					{data.familias.map((familia, index) => (
-						<button key={index} className={Styles.pildora}>
-							{familia.length > 20 ? `${familia.substring(0, 20)}...` : familia}
-						</button>
-					))}
-				</div>
+                    {families.map((family, index) => (
+                        <button key={index} className={Styles.pildora}>
+                            {family.length > 20 ? `${family.substring(0, 20)}...` : family}
+                        </button>
+                    ))}
+                </div>
 			</section>
 		)
 	);

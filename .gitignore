@@ -3,6 +3,7 @@
 /backend/.env
 /frontend/.env
 /backend/node_modules
+/backend/src/index copy.js
 /frontend/node_modules
 
 # Logs
