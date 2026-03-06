@@ -217,6 +217,6 @@ app.use((err, req, res, next) => {
 // Server
 // --------------------------------------------------------------
 const port = process.env.MONGODB_URI;
-app.listen(port, "0.0.0.0", () => {
+app.listen(process.env.MONGODB_URI, () => {
     console.log(`Server running on port ${port}`);
 });
