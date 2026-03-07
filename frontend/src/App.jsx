@@ -17,6 +17,12 @@ const App = () => {
 
 	return (
         <>
+            <Helmet>
+                <title>FarmacoPedia | Home</title>
+                <meta name="description" content="Welcome to FarmacoPedia, your encyclopedia for pharmacology and drugs." />
+                <meta property="og:title" content="FarmacoPedia" />
+                <meta property="og:type" content="website" />
+            </Helmet>
             <BotonPill />
             {descargoVisible && <Descargo ocultar={descargoOcultar} />}
             <Frame
