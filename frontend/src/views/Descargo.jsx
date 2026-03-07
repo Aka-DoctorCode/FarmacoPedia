@@ -1,57 +1,148 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import { counterContext } from '../context/counterContext';
 import Styles from './Descargo.module.css';
 
 export const Descargo = () => {
-	const { descargoVisible, descargoOcultar } = useContext(counterContext);
-	return (
-		descargoVisible && (
-			<section id={Styles.contenedor}>
-				<main id={Styles.descargo}>
-					<div id={Styles.contenedorTitulo}>
-						<h1 id={Styles.titulo}>Descargo de responsabilidad</h1>
-					</div>
-					<div id={Styles.principal}>
-						<div className={Styles.barra}></div>
-						<p>
-							El sitio web &#34;FarmacoPedia&#34; es un recurso de información
-							sobre medicamentos y tratamientos médicos. El contenido de este
-							sitio web está destinado a ser utilizado por profesionales de la
-							salud. Ni el sitio web, ni su creador o colaboradores, se hacen
-							responsables del mal uso que se le pueda dar a la información
-							presente en el sitio web. Los usuarios de &#34;FarmacoPedia&#34;
-							son responsables de verificar la información contenida en el sitio
-							web con otras fuentes, antes de tomar cualquier decisión médica.
-							Este descargo de responsabilidad se aplica a todo el contenido del
-							sitio web, incluyendo, pero no limitado a, artículos, videos,
-							imágenes, y otros materiales. Específicamente, el sitio web no se
-							hace responsable de: Errores o inexactitudes en la información
-							proporcionada. Daños o lesiones causadas por el uso de la
-							información proporcionada. Cualquier acción tomada por un usuario
-							del sitio web, basada en la información proporcionada. Los
-							usuarios del sitio web son responsables de su propia salud y
-							bienestar. Si tiene alguna pregunta o inquietud sobre su salud,
-							debe consultar a un profesional de la salud.
-						</p>
-						<div className={Styles.barra}></div>
-						<p>
-							Al hacer click en el botón acepto. Estoy de acuerdo con las
-							condiciones de uso de este sitio web y me hago responsable del uso
-							que le de a la información.
-						</p>
-					</div>
-					<button
-						onClick={() => {
-							descargoOcultar();
-						}}
-						id={Styles.boton}
-					>
-						Acepto
-					</button>
-				</main>
-			</section>
-		)
-	);
+    const { descargoVisible, descargoOcultar } = useContext(counterContext);
+    const [isAccepted, setIsAccepted] = useState(false);
+    const [hasScrolledToEnd, setHasScrolledToEnd] = useState(false);
+    const scrollRef = useRef(null);
+
+    // --------------------------------------------------------------
+    // Lógica de LocalStorage con Expiración (1 hora)
+    // --------------------------------------------------------------
+    useEffect(() => {
+        const checkAcceptance = () => {
+            const storedData = localStorage.getItem('farmacopedia_disclaimer_accepted');
+            if (storedData) {
+                const { timestamp } = JSON.parse(storedData);
+                const oneHour = 60 * 60 * 1000;
+                const now = new Date().getTime();
+
+                // Si no ha pasado una hora, ocultamos el descargo automáticamente
+                if (now - timestamp < oneHour) {
+                    descargoOcultar();
+                } else {
+                    localStorage.removeItem('farmacopedia_disclaimer_accepted');
+                }
+            }
+        };
+
+        if (descargoVisible) {
+            checkAcceptance();
+        }
+    }, [descargoVisible, descargoOcultar]);
+
+    // --------------------------------------------------------------
+    // Manejo de Scroll para asegurar lectura
+    // --------------------------------------------------------------
+    const handleScroll = () => {
+        if (scrollRef.current) {
+            const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+            // Tolerancia de 5px para dispositivos móviles
+            if (scrollTop + clientHeight >= scrollHeight - 5) {
+                setHasScrolledToEnd(true);
+            }
+        }
+    };
+
+    const handleAccept = () => {
+        const acceptanceData = {
+            accepted: true,
+            timestamp: new Date().getTime()
+        };
+        localStorage.setItem('farmacopedia_disclaimer_accepted', JSON.stringify(acceptanceData));
+        descargoOcultar();
+    };
+
+    return (
+        descargoVisible && (
+            <section id={Styles.contenedor}>
+                <main id={Styles.descargo}>
+                    <header id={Styles.contenedorTitulo}>
+                        <h1 id={Styles.titulo}>Terminos y Condiciones</h1>
+                    </header>
+
+                    <div 
+                        id={Styles.principal} 
+                        ref={scrollRef} 
+                        onScroll={handleScroll}
+                    >
+                        <div className={Styles.alertaEmergencia}>
+                            <strong>⚠️ ADVERTENCIA DE EMERGENCIA:</strong>
+                            <p>
+                                Esta aplicación NO es un sistema de respuesta ante emergencias. 
+                                Ante una situación crítica, contacte de inmediato con los servicios 
+                                de urgencia médicos de su localidad.
+                            </p>
+                        </div>
+
+                        <div className={Styles.barra}></div>
+
+                        <p>
+                            <strong>1. Ámbito Profesional:</strong> FarmacoPedia es una herramienta 
+                            exclusivamente informativa y educativa diseñada para profesionales de 
+                            la salud. Su uso no establece ni sustituye una relación médico-paciente.
+                        </p>
+
+                        <p>
+                            <strong>2. Evolución Científica:</strong> La farmacología es una ciencia 
+                            en cambio constante. Aunque nos esforzamos por la precisión, no garantizamos 
+                            que el contenido esté libre de errores tipográficos o sea el reflejo exacto 
+                            de la última actualización de guías clínicas internacionales.
+                        </p>
+
+                        <p>
+                            <strong>3. Responsabilidad Clínica:</strong> Es deber ineludible del facultativo 
+                            verificar dosis, contraindicaciones e interacciones con el etiquetado oficial 
+                            del fabricante (Prospecto/Ficha Técnica) antes de cualquier prescripción.
+                        </p>
+
+                        <p>
+                            <strong>4. Limitación de Daños:</strong> El autor y colaboradores no se hacen 
+                            responsables de daños directos, indirectos o incidentales derivados de 
+                            interpretaciones erróneas de los datos aquí expuestos.
+                        </p>
+
+                        <div className={Styles.barra}></div>
+                        
+                        {!hasScrolledToEnd && (
+                            <p className={Styles.hint}>
+                                * Por favor, lea todo el contenido para continuar.
+                            </p>
+                        )}
+                    </div>
+
+                    <footer id={Styles.footerDescargo}>
+                        <div className={Styles.toggleContainer}>
+                            <label className={Styles.switch}>
+                                <input 
+                                    type="checkbox" 
+                                    disabled={!hasScrolledToEnd}
+                                    checked={isAccepted}
+                                    onChange={(e) => setIsAccepted(e.target.checked)}
+                                />
+                                <span className={Styles.slider}></span>
+                            </label>
+                            <span className={Styles.toggleLabel}>
+                                Confirmo que soy profesional de la salud y asumo la 
+                                responsabilidad clínica del uso de esta información.
+                            </span>
+                        </div>
+
+                        <button
+                            onClick={handleAccept}
+                            id={Styles.boton}
+                            disabled={!isAccepted || !hasScrolledToEnd}
+                            className={(!isAccepted || !hasScrolledToEnd) ? Styles.botonDisabled : ''}
+                        >
+                            Ingresar a la Plataforma
+                        </button>
+                    </footer>
+                </main>
+            </section>
+        )
+    );
 };
 
 export default Descargo;

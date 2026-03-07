@@ -13,8 +13,8 @@
     "Drogas",
     "Dosis"
   ],
-  "author": "Dr. Francisco Molina",
-  "license": "All rights reserved",
+  "author": "Francisco Jose Molina Castillo (Aka-DoctorCode)",
+  "license": "SEE LICENSE IN ../LICENSE",
   "dependencies": {
     "axios": "^1.13.6",
     "cors": "^2.8.6",

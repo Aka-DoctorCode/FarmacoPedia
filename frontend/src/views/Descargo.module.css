@@ -1,86 +1,230 @@
+/* --------------------------------------------------------------
+    Contenedor Principal y Modal
+-------------------------------------------------------------- */
 #contenedor {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(30, 30, 30, 0.95);
-    position: fixed;
+    background-color: rgba(30, 30, 30, 0.85); /* #1e1e1e con opacidad */
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1;
+    z-index: 2000;
+    backdrop-filter: blur(4px);
 }
 
 #descargo {
-    height: 80%;
-    width: 70%;
-    background-color: rgb(240, 240, 240);
-    overflow: scroll;
+    background-color: #ffffff; /* #ffffff */
+    width: 90%;
+    max-width: 650px;
+    max-height: 85vh;
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
+/* --------------------------------------------------------------
+    Cabecera del Documento
+-------------------------------------------------------------- */
 #contenedorTitulo {
-    width: 100%;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-    margin-top: 10px;
-}
-
-#descargo {
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    justify-content: flex-start;
-    gap: 10px;
+    padding: 25px 20px;
+    background-color: #f8fafc; /* #f8fafc */
+    border-bottom: 1px solid #e2e8f0; /* #e2e8f0 */
+    text-align: center;
 }
 
 #titulo {
-    height: 40px;
-    width: 240px;
-    font-family: "Futura-Bold";
-    font-size: 30px;
-    text-align: center;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #0056b3; /* #0056b3 */
+    letter-spacing: -0.5px;
 }
 
+/* --------------------------------------------------------------
+    Cuerpo de Texto y Secciones
+-------------------------------------------------------------- */
 #principal {
-    width: 70%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    padding: 30px;
+    overflow-y: auto;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #334155; /* #334155 */
+    background-color: #ffffff; /* #ffffff */
+}
+
+.alertaEmergencia {
+    background-color: #fef2f2; /* #fef2f2 */
+    border: 1px solid #fecaca; /* #fecaca */
+    border-left: 5px solid #d9534f; /* #d9534f */
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+
+.alertaEmergencia strong {
+    color: #991b1b; /* #991b1b */
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.alertaEmergencia p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #b91c1c; /* #b91c1c */
 }
 
 .barra {
-    width: 110%;
-    height: 5px;
-    background-color: #1e1e1e;
-    border-radius: 10px;
+    height: 1px;
+    background-color: #e2e8f0; /* #e2e8f0 */
+    margin: 20px 0;
 }
 
-p {
-    text-align: justify;
-    font-family: 'Roboto';
-    font-size: 16px;
-    line-height: 1.5;
-}
-
-#boton {
-    width: 50%;
-    margin-bottom: 25px;
-    font-family: "Futura";
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 4px;
+.hint {
+    font-size: 0.85rem;
+    color: #0056b3; /* #0056b3 */
     text-align: center;
-    background-color: #34bfeb;
-    border: 0.5px solid #1e1e1e;
-    border-radius: 10px;
-    box-shadow: 1px 2px 0px rgba(30, 30, 30, 0.65);
+    margin-top: 20px;
+    font-weight: 500;
+    animation: pulse 2s infinite;
 }
 
-#boton:hover {
-    transform: translate(2px, 3px) scale(1.1);
-    box-shadow: 0px 0px rgba(30, 30, 30, 0.65);
+/* --------------------------------------------------------------
+    Footer y Controles de Aceptación
+-------------------------------------------------------------- */
+#footerDescargo {
+    padding: 25px;
+    background-color: #f8fafc; /* #f8fafc */
+    border-top: 1px solid #e2e8f0; /* #e2e8f0 */
+}
+
+.toggleContainer {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 25px;
+    cursor: pointer;
+}
+
+.toggleLabel {
+    font-size: 0.9rem;
+    color: #475569; /* #475569 */
+    line-height: 1.4;
+    user-select: none;
+}
+
+/* Estilos del Switch (Toggle) */
+.switch {
+    position: relative;
+    display: inline-block;
+    min-width: 44px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1; /* #cbd5e1 */
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #ffffff; /* #ffffff */
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+input:checked + .slider {
+    background-color: #0056b3; /* #0056b3 */
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #0056b3; /* #0056b3 */
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+input:disabled + .slider {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------
+    Botón de Acción
+-------------------------------------------------------------- */
+#boton {
+    width: 100%;
+    padding: 14px;
+    background-color: #0056b3; /* #0056b3 */
+    color: #ffffff; /* #ffffff */
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 86, 179, 0.2);
+}
+
+#boton:hover:not(:disabled) {
+    background-color: #004494; /* #004494 */
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(0, 86, 179, 0.25);
+}
+
+#boton:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.botonDisabled {
+    background-color: #94a3b8 !important; /* #94a3b8 */
+    color: #f1f5f9 !important; /* #f1f5f9 */
+    cursor: not-allowed;
+    box-shadow: none !important;
+}
+
+/* --------------------------------------------------------------
+    Animaciones
+-------------------------------------------------------------- */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+#descargo {
+    animation: fadeIn 0.3s ease-out;
 }

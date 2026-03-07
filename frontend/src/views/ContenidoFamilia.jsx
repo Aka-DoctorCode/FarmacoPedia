@@ -35,21 +35,29 @@ const ContenidoFamilia = () => {
             <section id={Styles.contenedor}>
                 <span id={Styles.tituloVista}>Selecciona una Familia</span>
                 <div id={Styles.lista}>
-                    {families.map((family, index) => (
-                        <button 
-                            key={index} 
-                            className={Styles.pildora}
-                            onClick={() => {
-                                // 2. Usamos las funciones del contexto correctamente
-                                setFamiliaSeleccionada(family);
-                                listaFamiliaOcultar();  // Equivale a setListaFamilia(false)
-                                listaFarmacosMostrar(); // Equivale a setListaFarmacos(true)
-                            }}
-                        >
-                            {/* Limitamos el texto si es muy largo para que no rompa el diseño */}
-                            {family.length > 25 ? `${family.substring(0, 25)}...` : family}
-                        </button>
-                    ))}
+                    {/* Filter to ensure we only map through valid strings */}
+                    {families
+                        .filter((family) => family !== null && family !== undefined)
+                        .map((family, index) => {
+                            // Since backend returns an array of strings, family is the text itself
+                            const displayName = String(family);
+
+                            return (
+                                <button 
+                                    key={index} 
+                                    className={Styles.pildora}
+                                    onClick={() => {
+                                        setFamiliaSeleccionada(family);
+                                        listaFamiliaOcultar();
+                                        listaFarmacosMostrar();
+                                    }}
+                                >
+                                    {displayName.length > 25 
+                                        ? `${displayName.substring(0, 25)}...` 
+                                        : displayName}
+                                </button>
+                            );
+                        })}
                 </div>
             </section>
         )

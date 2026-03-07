@@ -1,6 +1,6 @@
-// import { useContext } from 'react';
-// import { counterContext } from './context/counterContext.js';
-// import Descargo from './views/Descargo';
+import { useContext } from 'react';
+import { counterContext } from './context/counterContext.js';
+import Descargo from './views/Descargo';
 import Frame from './views/Frame';
 import Menu from './components/Menu';
 import BotonPill from './components/BontonPill';
@@ -11,13 +11,13 @@ import SearchOn from './components/SearchOn';
 import SearchOff from './components/SearchOff';
 import Footer from './components/Footer';
 const App = () => {
-	// const { descargoVisible, descargoOcultar } = useContext(counterContext);
+	const { descargoVisible, descargoOcultar } = useContext(counterContext);
 	const cargar = true;
 
 	return (
         <>
             <BotonPill />
-            {/* {descargoVisible && <Descargo ocultar={descargoOcultar} />} */}
+            {descargoVisible && <Descargo ocultar={descargoOcultar} />}
             <Frame
                 cargar={cargar}
                 showMenu={() => <Menu cargar={cargar} />}
