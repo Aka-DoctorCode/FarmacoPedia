@@ -1,46 +1,49 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import Styles from './GoogleAd.module.css';
 
-/**
- * Componente GoogleAd
- * * Permite renderizar bloques de anuncios de Google AdSense de forma dinámica.
- * Requiere el ID del cliente (adClient) y el ID del bloque (adSlot).
- */
 const GoogleAd = ({ 
-    adClient = "", // Tu ID de editor (pub-xxxxxxxxxxxxxxxx)
-    adSlot = "",   // ID del bloque de anuncio
+    adClient = "ca-pub-5200148569892616", 
+    adSlot = "",   
     adFormat = "auto", 
-    fullWidthResponsive = "true",
-    style = { display: 'block' } 
+    fullWidthResponsive = "true" 
 }) => {
-    
+    const initialized = useRef(false);
+
     useEffect(() => {
+        // Evitamos peticiones si no hay slot o si ya se inicializó el componente
+        if (!adSlot || initialized.current) return;
+
         try {
-            // Verificamos si la librería de Google Ads ya existe y ejecutamos el push
-            if (window.adsbygoogle) {
+            // Empujamos el anuncio al array global de Google
+            if (typeof window !== 'undefined' && window.adsbygoogle) {
                 (window.adsbygoogle = window.adsbygoogle || []).push({});
+                initialized.current = true;
             }
         } catch (error) {
-            // Registramos el error de forma silenciosa para no interrumpir la experiencia
-            console.error("Error al cargar Google Ads:", error.message);
+            console.error("Error al inicializar AdSense:", error.message);
         }
-    }, []);
+
+        // Limpieza al desmontar el componente
+        return () => {
+            initialized.current = false;
+        };
+    }, [adSlot]);
 
     return (
-        <div className="flex justify-center my-6 w-full overflow-hidden bg-gray-50 rounded-lg shadow-sm border border-gray-100">
-            {/* Contenedor del anuncio */}
+        <div className={Styles.contenedorPublicidad}>
+            {/* Etiqueta informativa de transparencia */}
+            <span className={Styles.etiquetaPublicidad}>
+                Publicidad
+            </span>
+
+            {/* Bloque de anuncio de Google */}
             <ins 
-                className="adsbygoogle"
-                style={style}
+                className={`adsbygoogle ${Styles.anuncioIns}`}
                 data-ad-client={adClient}
                 data-ad-slot={adSlot}
                 data-ad-format={adFormat}
                 data-full-width-responsive={fullWidthResponsive}
             ></ins>
-            
-            {/* Etiqueta informativa discreta para el usuario */}
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-white px-2 text-[10px] text-gray-400 uppercase tracking-widest">
-                Publicidad
-            </div>
         </div>
     );
 };
