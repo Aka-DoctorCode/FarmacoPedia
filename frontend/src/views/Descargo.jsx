@@ -8,9 +8,7 @@ export const Descargo = () => {
     const [hasScrolledToEnd, setHasScrolledToEnd] = useState(false);
     const scrollRef = useRef(null);
 
-    // --------------------------------------------------------------
-    // Lógica de LocalStorage con Expiración (1 hora)
-    // --------------------------------------------------------------
+    // LocalStorage Logic with Expiration (1 hour)
     useEffect(() => {
         const checkAcceptance = () => {
             const storedData = localStorage.getItem('farmacopedia_disclaimer_accepted');
@@ -33,13 +31,10 @@ export const Descargo = () => {
         }
     }, [descargoVisible, descargoOcultar]);
 
-    // --------------------------------------------------------------
-    // Manejo de Scroll para asegurar lectura
-    // --------------------------------------------------------------
+    // Scroll Handling to ensure reading
     const handleScroll = () => {
         if (scrollRef.current) {
             const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
-            // Tolerancia de 5px para dispositivos móviles
             if (scrollTop + clientHeight >= scrollHeight - 5) {
                 setHasScrolledToEnd(true);
             }
@@ -57,26 +52,25 @@ export const Descargo = () => {
 
     return (
         descargoVisible && (
-            <section id={Styles.contenedor}>
-                <main id={Styles.descargo}>
-                    <header id={Styles.contenedorTitulo}>
-                        <h1 id={Styles.titulo}>Terminos y Condiciones</h1>
-                    </header>
-
+            <section id={Styles.overlay}>
+                <div id={Styles.contenedor}>
+                    <h2 id={Styles.titulo}>Terminos y Condiciones</h2>
+                    <div className={Styles.alertaEmergencia}>
+                        <p>⚠️ ADVERTENCIA DE EMERGENCIA:</p>
+                        <p>Esta aplicación <span>NO</span> es un sistema 
+                            de respuesta ante emergencias. 
+                            Ante una situación crítica, contacte de 
+                            inmediato con los servicios de urgencia 
+                            médicos de su localidad.
+                        </p>
+                    </div>
+                </div>
+                {/* 
                     <div 
                         id={Styles.principal} 
                         ref={scrollRef} 
                         onScroll={handleScroll}
                     >
-                        <div className={Styles.alertaEmergencia}>
-                            <strong>⚠️ ADVERTENCIA DE EMERGENCIA:</strong>
-                            <p>
-                                Esta aplicación NO es un sistema de respuesta ante emergencias. 
-                                Ante una situación crítica, contacte de inmediato con los servicios 
-                                de urgencia médicos de su localidad.
-                            </p>
-                        </div>
-
                         <div className={Styles.barra}></div>
 
                         <p>
@@ -138,8 +132,7 @@ export const Descargo = () => {
                         >
                             Ingresar a la Plataforma
                         </button>
-                    </footer>
-                </main>
+                    </footer>  */}
             </section>
         )
     );

@@ -1,8 +1,52 @@
 @import './normalize.css';
 
+:root {
+  /* Colors - Light Mode */
+    --backgroundColor: rgba(230, 230, 230, 1);
+    --fontColor: #1e293b;
+    --headerColor: #0056b3;
+    /* --mainColor: #059669; */
+    /* --secondaryColor: #0284c7; */
+    --borderColor: rgb(20, 20, 20);
+    --borderRadiusSquare: 8px;
+    /* --borderRadiusPill: 20px; */
+    --shadowColor: rgba(0, 0, 0, 0.7);
+  /* Typography */
+    /* --mainFont: 'Inter', system-ui, sans-serif; */
+    --headingFont: 'Outfit', system-ui, sans-serif;
+    /* --fontSizeSm: 0.875rem; */
+    /* --fontSizeMd: 1rem; */
+    /* --fontSizeLg: 1.25rem; */
+    --fontSizeXl: 1.5rem;
+    /* --fontSize2Xl: 2rem; */
+    /* --fontWeightNormal:300; */
+    /* --fontWeightMedium: 500; */
+    /* --fontWeightBold: 700; */
+    --fontWeightBolder: 900;
+  /* Spacing */
+    /* --spaceXs: 0.25rem; */
+    /* --spaceSm: 0.5rem; */
+    --spaceMd: 1rem;
+    --spaceLg: 2rem;
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+    /* Colors - Dark Mode */
+        --backgroundColor: #0f172a;
+        --headerColor: #5fa4ee;
+        --fontColor: #f1f5f9;
+        --mainColor: #34d399;
+        --secondaryColor: #38bdf8;
+        --borderColor: #e2e8f0;
+    }
+}
+
 body,
 #root {
     height: 100vh;
-    font-family: 'Roboto', sans-serif;
+    font-family: var(--mainFont);
+    background-color: var(--backgroundColor);
+    color: var(--fontColor);
     box-sizing: border-box;
 }

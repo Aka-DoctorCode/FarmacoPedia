@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import axios from 'axios';
 import { counterContext } from '../context/counterContext.js';
 import Styles from './ContenidoFarmacos.module.css';
@@ -37,6 +38,10 @@ const ContenidoFarmacos = () => {
     return (
         listaFarmacos && (
             <section id={Styles.contenedor}>
+                <Helmet>
+                    <title>Selecciona un Farmaco | FarmacoPedia</title>
+                    <meta name="description" content="Selecciona un Farmaco" />
+                </Helmet>
                 <span id={Styles.tituloVista}>Listado de Fármacos</span>
                 
                 <div id={Styles.lista}>

@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import axios from 'axios';
 import { counterContext } from '../context/counterContext.js';
 import Styles from './FarmacosEnFamilia.module.css';
@@ -38,6 +39,10 @@ const FarmacosEnFamilia = () => {
     return (
         listaFamilia && (
             <section id={Styles.contenedor}>
+                <Helmet>
+                    <title>Fármacos en: {familiaSeleccionada} | FarmacoPedia</title>
+                    <meta name="description" content={`Fármacos en la categoría ${familiaSeleccionada}`} />
+                </Helmet>
                 <span id={Styles.tituloVista}>Fármacos en: {familiaSeleccionada}</span>
                 <div id={Styles.lista}>
                     {drugs.map((drug, index) => (

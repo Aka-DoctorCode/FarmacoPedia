@@ -8,7 +8,13 @@ import StateContext from './context/StateContext';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <HelmetProvider>
-        <BrowserRouter basename={import.meta.env.BASE_URL}>
+        <BrowserRouter 
+            basename={import.meta.env.BASE_URL}
+            future={{
+                v7_startTransition: true,
+                v7_relativeSplatPath: true,
+            }}
+        >
             <StateContext>
                 <Routes>
                     <Route path='/' element={<App />} />

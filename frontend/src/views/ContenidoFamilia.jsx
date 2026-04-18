@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import axios from 'axios';
 import { counterContext } from '../context/counterContext.js';
 import Styles from './ContenidoFamilia.module.css';
@@ -33,6 +34,10 @@ const ContenidoFamilia = () => {
     return (
         listaFamilia && (
             <section id={Styles.contenedor}>
+                <Helmet>
+                    <title>Selecciona una Familia | FarmacoPedia</title>
+                    <meta name="description" content="Selecciona una Familia" />
+                </Helmet>
                 <span id={Styles.tituloVista}>Selecciona una Familia</span>
                 <div id={Styles.lista}>
                     {/* Filter to ensure we only map through valid strings */}
