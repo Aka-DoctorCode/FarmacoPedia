@@ -1,68 +1,153 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { counterContext } from './counterContext.js';
+import { drugService } from '../services/drugService.js';
+import { translations } from '../utils/languageDictionary.js';
 
 const StateContext = ({ children }) => {
-    // ---------------------------------------------------------
-    // Estados Existentes (Mantenidos)
-    // ---------------------------------------------------------
-    const [descargoVisible, setDescargoVisible] = useState(() => {
-        return !document.cookie
-            .split(';')
-            .some((item) => item.trim() === 'farmacopedia_disclaimer_accepted=true');
+    // Theme Management
+    const [theme, setTheme] = useState(() => {
+        return localStorage.getItem('farmacopedia_theme') || 'dark';
     });
-    const [menu, setMenu] = useState(false);
-    const [busqueda, setBusqueda] = useState(false); // Corregido typo 'busquda'
-    const [listaFarmacos, setListaFarmacos] = useState(true);
-    const [listaFamilia, setListaFamilia] = useState(false);
 
-    // ---------------------------------------------------------
-    // 🆕 Nuevos Estados (Para que tus componentes no den error)
-    // ---------------------------------------------------------
-    const [familiaSeleccionada, setFamiliaSeleccionada] = useState(null);
-    const [farmacoSeleccionado, setFarmacoSeleccionado] = useState(null);
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('farmacopedia_theme', theme);
+    }, [theme]);
 
-    // ---------------------------------------------------------
-    // Funciones de Control
-    // ---------------------------------------------------------
-    const descargoOcultar = () => {
+    const toggleTheme = useCallback(() => {
+        setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+    }, []);
+
+    // Language Management
+    const [language, setLanguage] = useState(() => {
+        return localStorage.getItem('farmacopedia_language') || 'es';
+    });
+
+    useEffect(() => {
+        localStorage.setItem('farmacopedia_language', language);
+    }, [language]);
+
+    const toggleLanguage = useCallback(() => {
+        setLanguage((prev) => (prev === 'es' ? 'en' : 'es'));
+    }, []);
+
+    const t = translations[language] || translations.es;
+
+    // Disclaimer Acceptance
+    const [descargoVisible, setDescargoVisible] = useState(() => {
+        const stored = localStorage.getItem('farmacopedia_disclaimer_accepted');
+        if (!stored) return true;
+        try {
+            const { timestamp } = JSON.parse(stored);
+            const oneHour = 60 * 60 * 1000;
+            return Date.now() - timestamp >= oneHour;
+        } catch {
+            return true;
+        }
+    });
+
+    const acceptDisclaimer = useCallback(() => {
+        localStorage.setItem(
+            'farmacopedia_disclaimer_accepted',
+            JSON.stringify({ accepted: true, timestamp: Date.now() })
+        );
         setDescargoVisible(false);
-        document.cookie = 'farmacopedia_disclaimer_accepted=true; path=/; max-age=3600';
-    };
-    
-    const menuMostrar = () => setMenu(true);
-    const menuOcultar = () => setMenu(false);
-    
-    const busquedaMostrar = () => setBusqueda(true);
-    const busquedaOcultar = () => setBusqueda(false);
-    
-    const listaFarmacosMostrar = () => setListaFarmacos(true);
-    const listaFarmacosOcultar = () => setListaFarmacos(false);
-    
-    const listaFamiliaMostrar = () => setListaFamilia(true);
-    const listaFamiliaOcultar = () => setListaFamilia(false);
+    }, []);
+
+    // Navigation & Views
+    const [activeView, setActiveView] = useState('drugs'); // 'drugs' | 'families' | 'drugDetail'
+    const [selectedDrugName, setSelectedDrugName] = useState(null);
+    const [selectedDrugData, setSelectedDrugData] = useState(null);
+    const [isDrugLoading, setIsDrugLoading] = useState(false);
+    const [selectedFamily, setSelectedFamily] = useState(null);
+    const [isOffline, setIsOffline] = useState(false);
+
+    // Global Search Modal
+    const [searchModalOpen, setSearchModalOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+
+    // Load Drug Details
+    const openDrugDetail = useCallback(async (drug) => {
+        const drugName = typeof drug === 'string' ? drug : drug?.name;
+        if (!drugName) return;
+
+        setSelectedDrugName(drugName);
+        setActiveView('drugDetail');
+        setIsDrugLoading(true);
+
+        const result = await drugService.getDrugByName(drugName);
+        if (result.success) {
+            setSelectedDrugData(result.data);
+            if (result.isOffline) setIsOffline(true);
+        } else {
+            setSelectedDrugData(null);
+        }
+        setIsDrugLoading(false);
+    }, []);
+
+    const closeDrugDetail = useCallback(() => {
+        setSelectedDrugData(null);
+        setSelectedDrugName(null);
+        setActiveView('drugs');
+    }, []);
+
+    const navigateToDrugs = useCallback(() => {
+        setActiveView('drugs');
+        setSelectedFamily(null);
+    }, []);
+
+    const navigateToFamilies = useCallback((familyCategory = null) => {
+        setActiveView('families');
+        if (familyCategory) {
+            setSelectedFamily(familyCategory);
+        }
+    }, []);
+
+    // Legacy State Compatibility for Existing Handlers
+    const listaFarmacos = activeView === 'drugs';
+    const listaFamilia = activeView === 'families';
+    const listaFarmacosMostrar = navigateToDrugs;
+    const listaFarmacosOcultar = () => {};
+    const listaFamiliaMostrar = navigateToFamilies;
+    const listaFamiliaOcultar = () => {};
+    const descargoOcultar = acceptDisclaimer;
 
     return (
         <counterContext.Provider
             value={{
+                // Modern State & Methods
+                theme,
+                toggleTheme,
+                language,
+                toggleLanguage,
+                t,
                 descargoVisible,
+                acceptDisclaimer,
                 descargoOcultar,
-                menu,
-                menuMostrar,
-                menuOcultar,
-                busqueda, // Cambiado de busquda -> busqueda
-                busquedaMostrar,
-                busquedaOcultar,
+                activeView,
+                setActiveView,
+                selectedDrugName,
+                selectedDrugData,
+                isDrugLoading,
+                selectedFamily,
+                setSelectedFamily,
+                openDrugDetail,
+                closeDrugDetail,
+                navigateToDrugs,
+                navigateToFamilies,
+                searchModalOpen,
+                setSearchModalOpen,
+                searchQuery,
+                setSearchQuery,
+                isOffline,
+                setIsOffline,
+                // Legacy compatibility
                 listaFarmacos,
                 listaFarmacosMostrar,
                 listaFarmacosOcultar,
                 listaFamilia,
                 listaFamiliaMostrar,
-                listaFamiliaOcultar,
-                // 🆕 Exportamos los nuevos estados y sus funciones
-                familiaSeleccionada,
-                setFamiliaSeleccionada,
-                farmacoSeleccionado,
-                setFarmacoSeleccionado
+                listaFamiliaOcultar
             }}
         >
             {children}

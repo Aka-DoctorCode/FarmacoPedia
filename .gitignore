@@ -27,3 +27,7 @@ lerna-debug.log*
 *.sln
 *.sw?
 backend/src/jsonStructure.json
+dist
+dist-ssr
+/frontend/dist
+/frontend/dist-ssr

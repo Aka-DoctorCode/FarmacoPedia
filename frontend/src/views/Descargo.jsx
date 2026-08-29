@@ -1,140 +1,62 @@
-import { useContext, useEffect, useState, useRef } from 'react';
-import { counterContext } from '../context/counterContext';
-import Styles from './Descargo.module.css';
+import { useContext, useState } from 'react';
+import { counterContext } from '../context/counterContext.js';
+import styles from './Descargo.module.css';
 
 export const Descargo = () => {
-    const { descargoVisible, descargoOcultar } = useContext(counterContext);
+    const { descargoVisible, acceptDisclaimer, t } = useContext(counterContext);
     const [isAccepted, setIsAccepted] = useState(false);
-    const [hasScrolledToEnd, setHasScrolledToEnd] = useState(false);
-    const scrollRef = useRef(null);
 
-    // LocalStorage Logic with Expiration (1 hour)
-    useEffect(() => {
-        const checkAcceptance = () => {
-            const storedData = localStorage.getItem('farmacopedia_disclaimer_accepted');
-            if (storedData) {
-                const { timestamp } = JSON.parse(storedData);
-                const oneHour = 60 * 60 * 1000;
-                const now = new Date().getTime();
-
-                // Si no ha pasado una hora, ocultamos el descargo automáticamente
-                if (now - timestamp < oneHour) {
-                    descargoOcultar();
-                } else {
-                    localStorage.removeItem('farmacopedia_disclaimer_accepted');
-                }
-            }
-        };
-
-        if (descargoVisible) {
-            checkAcceptance();
-        }
-    }, [descargoVisible, descargoOcultar]);
-
-    // Scroll Handling to ensure reading
-    const handleScroll = () => {
-        if (scrollRef.current) {
-            const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
-            if (scrollTop + clientHeight >= scrollHeight - 5) {
-                setHasScrolledToEnd(true);
-            }
-        }
-    };
-
-    const handleAccept = () => {
-        const acceptanceData = {
-            accepted: true,
-            timestamp: new Date().getTime()
-        };
-        localStorage.setItem('farmacopedia_disclaimer_accepted', JSON.stringify(acceptanceData));
-        descargoOcultar();
-    };
+    if (!descargoVisible) return null;
 
     return (
-        descargoVisible && (
-            <section id={Styles.overlay}>
-                <div id={Styles.contenedor}>
-                    <h2 id={Styles.titulo}>Terminos y Condiciones</h2>
-                    <div className={Styles.alertaEmergencia}>
-                        <p>⚠️ ADVERTENCIA DE EMERGENCIA:</p>
-                        <p>Esta aplicación <span>NO</span> es un sistema 
-                            de respuesta ante emergencias. 
-                            Ante una situación crítica, contacte de 
-                            inmediato con los servicios de urgencia 
-                            médicos de su localidad.
-                        </p>
+        <div className={styles.overlay} role="dialog" aria-modal="true">
+            <div className={styles.modal}>
+                <h2 className={styles.title}>{t.disclaimerTitle}</h2>
+
+                <div className={styles.emergencyBanner}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                        <line x1="12" y1="9" x2="12" y2="13" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" />
+                    </svg>
+                    <div>
+                        <strong>{t.disclaimerEmergency}</strong>
+                        <p>{t.disclaimerEmergencyText}</p>
                     </div>
                 </div>
-                {/* 
-                    <div 
-                        id={Styles.principal} 
-                        ref={scrollRef} 
-                        onScroll={handleScroll}
-                    >
-                        <div className={Styles.barra}></div>
 
-                        <p>
-                            <strong>1. Ámbito Profesional:</strong> FarmacoPedia es una herramienta 
-                            exclusivamente informativa y educativa diseñada para profesionales de 
-                            la salud. Su uso no establece ni sustituye una relación médico-paciente.
-                        </p>
-
-                        <p>
-                            <strong>2. Evolución Científica:</strong> La farmacología es una ciencia 
-                            en cambio constante. Aunque nos esforzamos por la precisión, no garantizamos 
-                            que el contenido esté libre de errores tipográficos o sea el reflejo exacto 
-                            de la última actualización de guías clínicas internacionales.
-                        </p>
-
-                        <p>
-                            <strong>3. Responsabilidad Clínica:</strong> Es deber ineludible del facultativo 
-                            verificar dosis, contraindicaciones e interacciones con el etiquetado oficial 
-                            del fabricante (Prospecto/Ficha Técnica) antes de cualquier prescripción.
-                        </p>
-
-                        <p>
-                            <strong>4. Limitación de Daños:</strong> El autor y colaboradores no se hacen 
-                            responsables de daños directos, indirectos o incidentales derivados de 
-                            interpretaciones erróneas de los datos aquí expuestos.
-                        </p>
-
-                        <div className={Styles.barra}></div>
-                        
-                        {!hasScrolledToEnd && (
-                            <p className={Styles.hint}>
-                                * Por favor, lea todo el contenido para continuar.
-                            </p>
-                        )}
+                <div className={styles.termsContainer}>
+                    <div>
+                        <div className={styles.termSectionTitle}>{t.disclaimerProfessionalTitle}</div>
+                        <p>{t.disclaimerProfessionalText}</p>
                     </div>
+                    <div>
+                        <div className={styles.termSectionTitle}>{t.disclaimerEvolutionTitle}</div>
+                        <p>{t.disclaimerEvolutionText}</p>
+                    </div>
+                </div>
 
-                    <footer id={Styles.footerDescargo}>
-                        <div className={Styles.toggleContainer}>
-                            <label className={Styles.switch}>
-                                <input 
-                                    type="checkbox" 
-                                    disabled={!hasScrolledToEnd}
-                                    checked={isAccepted}
-                                    onChange={(e) => setIsAccepted(e.target.checked)}
-                                />
-                                <span className={Styles.slider}></span>
-                            </label>
-                            <span className={Styles.toggleLabel}>
-                                Confirmo que soy profesional de la salud y asumo la 
-                                responsabilidad clínica del uso de esta información.
-                            </span>
-                        </div>
+                <label className={styles.agreementRow}>
+                    <input
+                        type="checkbox"
+                        className={styles.checkbox}
+                        checked={isAccepted}
+                        onChange={(e) => setIsAccepted(e.target.checked)}
+                    />
+                    <span className={styles.agreementText}>
+                        {t.disclaimerConfirmCheckbox}
+                    </span>
+                </label>
 
-                        <button
-                            onClick={handleAccept}
-                            id={Styles.boton}
-                            disabled={!isAccepted || !hasScrolledToEnd}
-                            className={(!isAccepted || !hasScrolledToEnd) ? Styles.botonDisabled : ''}
-                        >
-                            Ingresar a la Plataforma
-                        </button>
-                    </footer>  */}
-            </section>
-        )
+                <button
+                    className={styles.acceptButton}
+                    disabled={!isAccepted}
+                    onClick={acceptDisclaimer}
+                >
+                    {t.disclaimerAcceptButton}
+                </button>
+            </div>
+        </div>
     );
 };
 

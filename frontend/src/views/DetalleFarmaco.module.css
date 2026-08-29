@@ -1,0 +1,398 @@
+.container {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 0 1.5rem 3rem;
+    animation: fadeIn var(--transitionNormal) ease-out;
+}
+
+.topBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.backButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bgCard);
+    border: 1px solid var(--borderGlass);
+    color: var(--textSecondary);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radiusPill);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transitionFast);
+}
+
+.backButton:hover {
+    color: var(--textPrimary);
+    border-color: var(--colorPrimary);
+    transform: translateX(-3px);
+}
+
+.headerCard {
+    background: var(--bgCard);
+    backdrop-filter: var(--backdropBlur);
+    -webkit-backdrop-filter: var(--backdropBlur);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusLg);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadowCard);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.headerCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--colorPrimary) 0%, var(--colorTeal) 50%, var(--colorInfo) 100%);
+}
+
+.drugTitleRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.drugName {
+    font-family: var(--fontHeading);
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--textPrimary);
+    text-transform: capitalize;
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.categoryBadges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.categoryBadge {
+    background: var(--colorInfoBg);
+    color: var(--colorInfo);
+    border: 1px solid rgba(129, 140, 248, 0.25);
+    padding: 0.3rem 0.8rem;
+    border-radius: var(--radiusPill);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.mechanismSnippet {
+    color: var(--textSecondary);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Tabs Navigation */
+.tabsNav {
+    display: flex;
+    gap: 0.5rem;
+    background: var(--bgCard);
+    padding: 0.35rem;
+    border-radius: var(--radiusMd);
+    border: 1px solid var(--borderGlass);
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+}
+
+.tabButton {
+    flex: 1;
+    min-width: 140px;
+    background: transparent;
+    border: none;
+    color: var(--textSecondary);
+    padding: 0.65rem 1rem;
+    border-radius: var(--radiusSm);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transitionFast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+.tabButton:hover {
+    color: var(--textPrimary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tabButtonActive {
+    background: var(--colorPrimary);
+    color: #ffffff;
+    box-shadow: 0 2px 10px var(--colorPrimaryGlow);
+}
+
+.tabButtonActive:hover {
+    background: var(--colorPrimaryDark);
+    color: #ffffff;
+}
+
+/* Tab Content Cards */
+.tabContent {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.sectionCard {
+    background: var(--bgCard);
+    backdrop-filter: var(--backdropBlur);
+    -webkit-backdrop-filter: var(--backdropBlur);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusMd);
+    padding: 1.5rem;
+    box-shadow: var(--shadowCard);
+}
+
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--borderGlass);
+}
+
+.sectionIcon {
+    color: var(--colorPrimary);
+    display: flex;
+    align-items: center;
+}
+
+.sectionTitle {
+    font-family: var(--fontHeading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--textPrimary);
+    margin: 0;
+}
+
+.plainText {
+    color: var(--textSecondary);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.bulletList {
+    margin: 0;
+    padding-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--textSecondary);
+    line-height: 1.5;
+}
+
+.bulletList li::marker {
+    color: var(--colorPrimary);
+}
+
+/* Presentations Grid */
+.presentationsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.presentationCard {
+    background: var(--bgGlass);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusSm);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.presentationTitle {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--textPrimary);
+}
+
+.dosageItemList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.dosageItem {
+    background: var(--bgInput);
+    border-radius: var(--radiusSm);
+    padding: 0.6rem 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.dosageAmount {
+    font-weight: 700;
+    font-family: var(--fontMono);
+    color: var(--colorPrimary);
+    font-size: 0.95rem;
+}
+
+.routeBadges {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+}
+
+.routeBadge {
+    background: var(--colorSuccessBg);
+    color: var(--colorSuccess);
+    font-size: 0.75rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radiusPill);
+    font-weight: 600;
+}
+
+.useInBadge {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radiusPill);
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--textSecondary);
+}
+
+/* Guidance Routes */
+.guidanceGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.guidanceCard {
+    background: var(--bgGlass);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusSm);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.guidanceRouteName {
+    font-weight: 700;
+    color: var(--textPrimary);
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--borderGlass);
+    padding-bottom: 0.35rem;
+}
+
+.guidanceItemTitle {
+    font-size: 0.8rem;
+    color: var(--textMuted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-top: 0.25rem;
+}
+
+/* Organ Adjustments Grid */
+.adjustmentsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+}
+
+.riskCard {
+    background: var(--bgGlass);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusSm);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.riskTitle {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--textPrimary);
+}
+
+.riskLevel {
+    font-weight: 600;
+    color: var(--colorWarning);
+    font-size: 0.875rem;
+}
+
+.riskAdjustment {
+    color: var(--textSecondary);
+    font-size: 0.85rem;
+    line-height: 1.45;
+}
+
+.alertBox {
+    background: var(--colorDangerBg);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    border-radius: var(--radiusSm);
+    padding: 0.85rem 1rem;
+    color: var(--colorDanger);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.loadingBox {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--textMuted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid rgba(14, 165, 233, 0.2);
+    border-top-color: var(--colorPrimary);
+    border-radius: 50%;
+    animation: spinLoader 0.8s linear infinite;
+}
+
+@media (max-width: 768px) {
+    .headerCard {
+        padding: 1.25rem;
+    }
+    .drugName {
+        font-size: 1.75rem;
+    }
+    .tabsNav {
+        padding: 0.25rem;
+    }
+    .tabButton {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+}

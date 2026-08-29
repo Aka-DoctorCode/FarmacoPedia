@@ -1,0 +1,187 @@
+.navHeader {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    width: 100%;
+    backdrop-filter: var(--backdropBlurHeavy);
+    -webkit-backdrop-filter: var(--backdropBlurHeavy);
+    background: var(--bgGlass);
+    border-bottom: 1px solid var(--borderGlass);
+    padding: 0.75rem 1.5rem;
+    transition: all var(--transitionNormal);
+}
+
+.navContainer {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+.brandGroup {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    text-align: left;
+}
+
+.brandIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radiusMd);
+    background: linear-gradient(135deg, var(--colorPrimary) 0%, var(--colorTeal) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadowGlow);
+    color: #ffffff;
+}
+
+.brandText {
+    display: flex;
+    flex-direction: column;
+}
+
+.brandTitle {
+    font-family: var(--fontHeading);
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--textPrimary);
+    line-height: 1.1;
+}
+
+.brandSubtitle {
+    font-size: 0.75rem;
+    color: var(--textMuted);
+    font-weight: 500;
+}
+
+.navigationNav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bgCard);
+    padding: 0.25rem;
+    border-radius: var(--radiusPill);
+    border: 1px solid var(--borderGlass);
+}
+
+.navButton {
+    background: transparent;
+    border: none;
+    color: var(--textSecondary);
+    padding: 0.45rem 1rem;
+    border-radius: var(--radiusPill);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transitionFast);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.navButton:hover {
+    color: var(--textPrimary);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.navButtonActive {
+    color: #ffffff;
+    background: var(--colorPrimary);
+    box-shadow: 0 2px 8px var(--colorPrimaryGlow);
+}
+
+.navButtonActive:hover {
+    background: var(--colorPrimaryDark);
+    color: #ffffff;
+}
+
+.rightControls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.searchTrigger {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bgInput);
+    border: 1px solid var(--borderGlass);
+    color: var(--textSecondary);
+    padding: 0.45rem 0.85rem;
+    border-radius: var(--radiusPill);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all var(--transitionFast);
+}
+
+.searchTrigger:hover {
+    border-color: var(--borderGlassHover);
+    color: var(--textPrimary);
+}
+
+.searchKbd {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.1rem 0.35rem;
+    border-radius: var(--radiusSm);
+    font-size: 0.7rem;
+    font-family: var(--fontMono);
+    color: var(--textMuted);
+}
+
+.iconButton {
+    background: var(--bgCard);
+    border: 1px solid var(--borderGlass);
+    color: var(--textSecondary);
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radiusPill);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transitionFast);
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.iconButton:hover {
+    color: var(--textPrimary);
+    border-color: var(--borderGlassHover);
+    transform: translateY(-1px);
+}
+
+.offlineBadge {
+    font-size: 0.7rem;
+    background: var(--colorWarningBg);
+    color: var(--colorWarning);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radiusPill);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+@media (max-width: 768px) {
+    .navContainer {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    .brandSubtitle {
+        display: none;
+    }
+    .searchTrigger span {
+        display: none;
+    }
+}

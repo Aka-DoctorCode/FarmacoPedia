@@ -1,47 +1,202 @@
-#contenedor {
+.container {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 0 1.5rem 3rem;
+    animation: fadeIn var(--transitionNormal) ease-out;
+}
+
+.heroHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.title {
+    font-family: var(--fontHeading);
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--textPrimary);
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.subtitle {
+    color: var(--textSecondary);
+    font-size: 1.05rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.searchBarWrapper {
+    max-width: 500px;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.searchIcon {
     position: absolute;
-    top: 100px;
-    width: auto;
-    height: auto;
-    padding: 0px 30px;
-    display: flex;
-    flex-direction: column;
-    /* padding-bottom: 145px; */
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--textMuted);
 }
 
-#tituloVista {
-    width: 70%;
-    text-align: left;
-    font-family: "Futura-Bold";
-    font-size: 30px;
-    margin-top: 20px;
-    margin-left: 20px;
-}
-
-#lista {
+.searchInput {
     width: 100%;
-    overflow-y: scroll;
-    max-height: 61vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 20px;
-    gap: 15px;
+    background: var(--bgInput);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusPill);
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    color: var(--textPrimary);
+    font-size: 0.95rem;
+    font-family: var(--fontSans);
+    transition: all var(--transitionFast);
 }
 
-.pildora {
-    width: 90%;
-    border: 1px solid rgba(30, 30, 30, 0.65);
-    border-radius: 25px;
-    box-shadow: inset 0px 4px 4px rgba(30, 30, 30, 0.25), 3px 2px rgba(30, 30, 30, 0.65);
-    font-family: "Futura";
-    letter-spacing: 2px;
-    font-size: 20px;
+.searchInput:focus {
+    border-color: var(--borderGlassFocus);
+    box-shadow: 0 0 12px var(--colorPrimaryGlow);
+}
+
+/* Accordion */
+.accordionList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.accordionItem {
+    background: var(--bgCard);
+    backdrop-filter: var(--backdropBlur);
+    -webkit-backdrop-filter: var(--backdropBlur);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusMd);
+    overflow: hidden;
+    transition: all var(--transitionFast);
+    box-shadow: var(--shadowCard);
+}
+
+.accordionItem:hover {
+    border-color: var(--borderGlassHover);
+}
+
+.accordionHeader {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    text-align: left;
+    color: var(--textPrimary);
+    gap: 1rem;
+}
+
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.familyIcon {
+    color: var(--colorPrimary);
+    display: flex;
+    align-items: center;
+}
+
+.familyName {
+    font-family: var(--fontHeading);
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: capitalize;
+    color: var(--textPrimary);
+}
+
+.headerRight {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.chevronIcon {
+    color: var(--textMuted);
+    transition: transform var(--transitionNormal);
+}
+
+.chevronOpen {
+    transform: rotate(180deg);
+}
+
+.accordionContent {
+    padding: 0 1.5rem 1.5rem;
+    border-top: 1px solid var(--borderGlass);
+    background: rgba(0, 0, 0, 0.15);
+    animation: fadeIn var(--transitionFast) ease-out;
+}
+
+.drugsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.drugButton {
+    background: var(--bgGlass);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusSm);
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all var(--transitionFast);
+    text-align: left;
+}
+
+.drugButton:hover {
+    background: var(--bgCardHover);
+    border-color: var(--colorPrimary);
+    transform: translateY(-2px);
+}
+
+.drugButtonName {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--textPrimary);
     text-transform: capitalize;
 }
 
-.pildora:hover {
-    transform: translate(2px, 3px) scale(1.1);
-    box-shadow: inset 0px 4px 2px rgba(30, 30, 30, 0.25), 0px 0px rgba(30, 30, 30, 0.65);
+.drugButtonArrow {
+    color: var(--colorPrimary);
+    font-size: 0.85rem;
+}
+
+.emptyCategory {
+    padding: 1rem;
+    text-align: center;
+    color: var(--textMuted);
+    font-size: 0.875rem;
+}
+
+.loadingBox {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--textMuted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid rgba(14, 165, 233, 0.2);
+    border-top-color: var(--colorPrimary);
+    border-radius: 50%;
+    animation: spinLoader 0.8s linear infinite;
 }
