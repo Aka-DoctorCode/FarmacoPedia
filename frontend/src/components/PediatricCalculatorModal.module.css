@@ -1,4 +1,5 @@
-/* Mobile-First Pediatric Calculator Modal */
+/* Pediatric Calculator Modal - Mobile-First Architecture */
+
 .overlay {
     position: fixed;
     inset: 0;
@@ -24,40 +25,40 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    max-height: 90vh;
-    max-height: 90dvh;
-    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    max-height: 92vh;
+    max-height: 92dvh;
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
     animation: slideUpSheet 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.dragHandle {
-    width: 42px;
+.modal::before {
+    content: '';
+    display: block;
+    width: 44px;
     height: 4px;
     border-radius: 2px;
     background: rgba(255, 255, 255, 0.25);
-    margin: 0.65rem auto 0.25rem;
+    margin: 0.6rem auto 0;
     flex-shrink: 0;
 }
 
-.header {
+.modalHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.85rem 1.25rem;
+    padding: 0.85rem 1.25rem 0.6rem;
     border-bottom: 1px solid var(--borderGlass);
-    gap: 1rem;
 }
 
-.headerTitleGroup {
+.titleGroup {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    min-width: 0;
 }
 
-.headerIconWrapper {
+.iconBadge {
     width: 38px;
     height: 38px;
     border-radius: var(--radiusMd);
@@ -70,34 +71,39 @@
     box-shadow: var(--shadowGlow);
 }
 
-.title {
-    font-size: 1.05rem;
+.modalTitle {
+    font-size: 1.1rem;
     font-weight: 700;
     color: var(--textPrimary);
-    line-height: 1.25;
+    line-height: 1.2;
     margin: 0;
-    overflow-wrap: anywhere;
 }
 
-.subtitle {
+.drugBadge {
+    display: inline-block;
     font-size: 0.75rem;
-    color: var(--textSecondary);
-    margin: 0.15rem 0 0 0;
+    font-weight: 700;
+    color: var(--colorPrimary);
+    background: var(--colorPrimaryBg);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radiusPill);
+    border: 1px solid rgba(13, 148, 136, 0.25);
+    margin-top: 0.2rem;
+    letter-spacing: 0.04em;
 }
 
 .closeButton {
-    width: 44px;
-    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radiusPill);
+    color: var(--textMuted);
     display: flex;
     align-items: center;
     justify-content: center;
-    background: transparent;
-    border: none;
-    color: var(--textSecondary);
-    border-radius: var(--radiusPill);
     cursor: pointer;
     transition: all var(--transitionFast);
-    flex-shrink: 0;
 }
 
 .closeButton:hover {
@@ -105,116 +111,108 @@
     background: rgba(255, 255, 255, 0.08);
 }
 
-.body {
+.modalBody {
     padding: 1rem 1.25rem;
     overflow-y: auto;
+    flex: 1;
     -webkit-overflow-scrolling: touch;
     display: flex;
     flex-direction: column;
-    gap: 1.15rem;
-    overscroll-behavior: contain;
+    gap: 0.9rem;
 }
 
-/* Inputs Grid */
-.inputsGrid {
+.warningAlert {
     display: flex;
-    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.65rem 0.85rem;
+    background: var(--colorWarningBg);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    border-radius: var(--radiusMd);
+    color: var(--colorWarning);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+.formGrid {
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 0.85rem;
 }
 
-.inputCard {
-    background: var(--bgCard);
-    border: 1px solid var(--borderGlass);
-    border-radius: var(--radiusMd);
-    padding: 0.85rem;
+.fieldGroup {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.35rem;
 }
 
 .labelRow {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.5rem;
 }
 
 .label {
-    font-size: 0.825rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: var(--textPrimary);
+    color: var(--textSecondary);
+}
+
+.modeToggle {
     display: flex;
-    align-items: center;
-    gap: 0.4rem;
-}
-
-.labelIcon {
-    font-size: 1rem;
-}
-
-.presetsLabel {
-    font-size: 0.725rem;
-    color: var(--textMuted);
-    font-weight: 500;
-}
-
-.presetsList {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-bottom: 0.25rem;
-}
-
-.presetBadge {
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--bgCard);
     border: 1px solid var(--borderGlass);
-    color: var(--colorPrimary);
     border-radius: var(--radiusPill);
-    padding: 0.25rem 0.65rem;
+    padding: 2px;
+}
+
+.modeButton {
+    border: none;
+    background: transparent;
     font-size: 0.75rem;
     font-weight: 600;
+    color: var(--textMuted);
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radiusPill);
     cursor: pointer;
     transition: all var(--transitionFast);
 }
 
-.presetBadge:hover {
-    border-color: var(--colorPrimary);
-    background: rgba(255, 255, 255, 0.12);
-}
-
-.presetBadgeActive {
+.modeButtonActive {
     background: var(--colorPrimary);
     color: #ffffff;
-    border-color: var(--colorPrimary);
+    box-shadow: 0 1px 4px var(--colorPrimaryGlow);
 }
 
-.inputWrapper {
+.inputWithSuffix {
     position: relative;
     display: flex;
     align-items: center;
-    width: 100%;
 }
 
-.textInput {
+.input {
     width: 100%;
-    background: var(--bgInput);
-    border: 1px solid var(--borderGlassHover);
-    color: var(--textPrimary);
+    min-height: 46px;
+    background: var(--bgCard);
+    border: 1px solid var(--borderGlass);
     border-radius: var(--radiusMd);
-    padding: 0.6rem 2.5rem 0.6rem 0.85rem;
-    font-size: 1rem; /* 16px to prevent iOS auto-zoom */
-    font-family: inherit;
+    padding: 0.65rem 4rem 0.65rem 0.85rem;
+    font-size: 1rem;
     font-weight: 600;
-    outline: none;
+    color: var(--textPrimary);
     transition: all var(--transitionFast);
+    -webkit-appearance: none;
+    appearance: none;
 }
 
-.textInput:focus {
+.input:focus {
+    outline: none;
     border-color: var(--colorPrimary);
     box-shadow: 0 0 0 2px var(--colorPrimaryGlow);
 }
 
-.inputUnit {
+.suffix {
     position: absolute;
     right: 0.85rem;
     font-size: 0.8rem;
@@ -223,69 +221,129 @@
     pointer-events: none;
 }
 
-.dosageInputRow {
+.sectionDivider {
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    align-items: center;
+    margin-top: 0.25rem;
 }
 
-.modeSelect,
+.sectionDividerText {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--textMuted);
+}
+
+.presetGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.presetPill {
+    background: var(--bgCard);
+    border: 1px solid var(--borderGlass);
+    color: var(--textSecondary);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.4rem 0.75rem;
+    border-radius: var(--radiusPill);
+    cursor: pointer;
+    transition: all var(--transitionFast);
+    white-space: nowrap;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+}
+
+.presetPill:hover {
+    border-color: var(--borderGlassHover);
+    color: var(--textPrimary);
+}
+
+.presetPillActive {
+    background: var(--colorPrimaryBg);
+    border-color: var(--colorPrimary);
+    color: var(--colorPrimary);
+    box-shadow: 0 0 0 1px var(--colorPrimary);
+}
+
+.customConcentrationRow {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.6rem;
+}
+
+.fieldGroupMini {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.miniLabel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--textMuted);
+}
+
+.inputMini {
+    width: 100%;
+    min-height: 42px;
+    background: var(--bgCard);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusMd);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--textPrimary);
+    transition: all var(--transitionFast);
+}
+
+.inputMini:focus {
+    outline: none;
+    border-color: var(--colorPrimary);
+    box-shadow: 0 0 0 2px var(--colorPrimaryGlow);
+}
+
+.slashSeparator {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--textMuted);
+    padding-bottom: 0.4rem;
+}
+
 .select {
     width: 100%;
-    background: var(--bgInput);
-    border: 1px solid var(--borderGlassHover);
-    color: var(--textPrimary);
+    min-height: 46px;
+    background: var(--bgCard);
+    border: 1px solid var(--borderGlass);
     border-radius: var(--radiusMd);
-    padding: 0.6rem 0.85rem;
-    font-size: 0.875rem;
+    padding: 0.65rem 0.85rem;
+    font-size: 0.92rem;
     font-weight: 600;
-    outline: none;
+    color: var(--textPrimary);
     cursor: pointer;
     transition: all var(--transitionFast);
 }
 
-.modeSelect:focus,
 .select:focus {
+    outline: none;
     border-color: var(--colorPrimary);
+    box-shadow: 0 0 0 2px var(--colorPrimaryGlow);
 }
 
-.concInputRow {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.slashDivider {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--textMuted);
-}
-
-/* Warnings */
-.alertWarning {
-    background: var(--colorWarningBg);
-    border: 1px solid rgba(245, 158, 11, 0.35);
-    color: var(--colorWarning);
-    border-radius: var(--radiusMd);
-    padding: 0.75rem 0.9rem;
-    font-size: 0.825rem;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    line-height: 1.4;
-}
-
-/* Results Card */
+/* Calculation Results Card */
 .resultsCard {
-    background: linear-gradient(135deg, rgba(14, 165, 233, 0.08) 0%, rgba(20, 184, 166, 0.08) 100%);
-    border: 1.5px solid var(--colorPrimary);
+    margin-top: 0.5rem;
+    background: linear-gradient(135deg, rgba(13, 148, 136, 0.12) 0%, rgba(15, 23, 42, 0.2) 100%);
+    border: 1px solid rgba(13, 148, 136, 0.35);
     border-radius: var(--radiusLg);
-    padding: 1.15rem;
+    padding: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    box-shadow: 0 4px 18px var(--colorPrimaryGlow);
+    gap: 0.75rem;
 }
 
 .resultsHeader {
@@ -293,189 +351,179 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.resultsTitleRow {
-    display: flex;
-    align-items: center;
     gap: 0.4rem;
-}
-
-.resultsIcon {
-    font-size: 1.15rem;
 }
 
 .resultsTitle {
     font-size: 0.95rem;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--textPrimary);
-    margin: 0;
 }
 
-.frequencyTag {
-    background: var(--colorPrimary);
-    color: #ffffff;
+.scheduleBadge {
     font-size: 0.75rem;
     font-weight: 700;
-    padding: 0.2rem 0.65rem;
+    color: var(--colorPrimary);
+    background: var(--colorPrimaryBg);
+    border: 1px solid rgba(13, 148, 136, 0.3);
+    padding: 0.2rem 0.6rem;
     border-radius: var(--radiusPill);
-    box-shadow: 0 2px 6px var(--colorPrimaryGlow);
 }
 
-.resultsGrid {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+.metricsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
 }
 
-.resultBox {
-    background: var(--bgCard);
-    border: 1px solid var(--borderGlass);
+.metricItemHighlight {
+    background: rgba(13, 148, 136, 0.18);
+    border: 1px solid rgba(13, 148, 136, 0.4);
     border-radius: var(--radiusMd);
     padding: 0.85rem;
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    align-items: center;
+    text-align: center;
 }
 
-.primaryResult {
-    background: rgba(14, 165, 233, 0.12);
-    border-color: var(--colorPrimary);
-}
-
-.resultLabel {
-    font-size: 0.775rem;
+.metricLabel {
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--textSecondary);
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
 
-.resultValueRow {
-    display: flex;
-    align-items: baseline;
-    gap: 0.35rem;
-}
-
-.resultNumberBig {
-    font-size: 2rem;
+.metricValueLarge {
+    font-size: 1.85rem;
     font-weight: 800;
+    color: var(--colorPrimary);
     font-family: var(--fontHeading);
-    color: var(--colorPrimary);
-    line-height: 1;
-}
-
-.resultUnitBig {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--colorPrimary);
-}
-
-.resultNumberMedium {
-    font-size: 1.45rem;
-    font-weight: 700;
-    color: var(--textPrimary);
     line-height: 1.1;
+    margin: 0.2rem 0;
 }
 
-.resultUnitMedium {
-    font-size: 0.9rem;
+.metricValue {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--textPrimary);
+    font-family: var(--fontHeading);
+    line-height: 1.2;
+    margin: 0.15rem 0;
+}
+
+.metricUnit {
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--textSecondary);
 }
 
-.resultSubValue {
+.metricSub {
     font-size: 0.8rem;
+    font-weight: 600;
     color: var(--textMuted);
-    font-weight: 500;
 }
 
-.emptyState {
+.metricItem {
     background: var(--bgCard);
-    border: 1px dashed var(--borderGlassHover);
+    border: 1px solid var(--borderGlass);
     border-radius: var(--radiusMd);
-    padding: 1.5rem 1rem;
+    padding: 0.65rem 0.85rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.dropsNote {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.76rem;
+    color: var(--textMuted);
+    margin: 0;
+    line-height: 1.35;
+}
+
+.emptyPrompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    color: var(--textSecondary);
-    font-size: 0.875rem;
+    padding: 1.5rem 1rem;
+    color: var(--textMuted);
+    border: 1px dashed var(--borderGlass);
+    border-radius: var(--radiusMd);
+    gap: 0.5rem;
+    font-size: 0.85rem;
 }
 
-.emptyIcon {
-    font-size: 1.6rem;
-    display: block;
-    margin-bottom: 0.4rem;
-}
-
-.disclaimerNote {
+.safetyFooter {
     display: flex;
     align-items: flex-start;
     gap: 0.5rem;
+    padding: 0.65rem 0.85rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radiusMd);
+    border: 1px solid var(--borderGlass);
     font-size: 0.75rem;
     color: var(--textMuted);
-    line-height: 1.45;
+    line-height: 1.4;
+    margin-top: 0.25rem;
 }
 
-/* Footer Controls */
-.footer {
+.safetyFooter p {
+    margin: 0;
+}
+
+.modalFooter {
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 0.75rem;
     padding: 0.75rem 1.25rem;
     border-top: 1px solid var(--borderGlass);
-    background: var(--bgCard);
+    background: var(--bgGlass);
 }
 
 .resetButton {
+    min-height: 44px;
+    padding: 0.5rem 1.1rem;
     background: transparent;
     border: 1px solid var(--borderGlass);
-    color: var(--textSecondary);
     border-radius: var(--radiusPill);
-    padding: 0.55rem 1.1rem;
+    color: var(--textSecondary);
     font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
-    min-height: 44px;
     transition: all var(--transitionFast);
 }
 
 .resetButton:hover {
+    background: rgba(255, 255, 255, 0.06);
     color: var(--textPrimary);
-    border-color: var(--borderGlassHover);
 }
 
-.closeActionButton {
+.doneButton {
+    min-height: 44px;
+    padding: 0.5rem 1.4rem;
     background: var(--colorPrimary);
-    color: #ffffff;
     border: none;
     border-radius: var(--radiusPill);
-    padding: 0.55rem 1.35rem;
-    font-size: 0.85rem;
+    color: #ffffff;
+    font-size: 0.88rem;
     font-weight: 700;
     cursor: pointer;
-    min-height: 44px;
-    box-shadow: 0 2px 8px var(--colorPrimaryGlow);
     transition: all var(--transitionFast);
+    box-shadow: 0 2px 8px var(--colorPrimaryGlow);
 }
 
-.closeActionButton:hover {
+.doneButton:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px var(--colorPrimaryGlow);
 }
 
-/* Animations */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes slideUpSheet {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
-}
-
-/* Progressive Expansion (Tablets & Desktop) */
+/* Progressive Enhancement - Tablet & Desktop (min-width: 768px) */
 @media (min-width: 768px) {
     .overlay {
         align-items: center;
@@ -483,47 +531,27 @@
     }
 
     .modal {
-        max-width: 620px;
         border-radius: var(--radiusLg);
         border-bottom: 1px solid var(--borderGlassHover);
+        max-width: 600px;
         max-height: 85vh;
-        animation: modalScaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         padding-bottom: 0;
     }
 
-    .dragHandle {
+    .modal::before {
         display: none;
     }
 
-    .inputsGrid {
-        display: grid;
+    .formGrid {
         grid-template-columns: 1fr 1fr;
-        gap: 0.85rem;
     }
 
-    .dosageInputRow {
-        flex-direction: row;
-        align-items: center;
+    .metricsGrid {
+        grid-template-columns: 1fr 1fr;
     }
 
-    .resultsGrid {
-        display: grid;
-        grid-template-columns: 1.2fr 1fr 1fr;
-        gap: 0.75rem;
-    }
-
-    .title {
-        font-size: 1.2rem;
-    }
-}
-
-@keyframes modalScaleIn {
-    from {
-        opacity: 0;
-        transform: scale(0.96) translateY(8px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
+    .metricItemHighlight {
+        grid-column: 1 / -1;
     }
 }
