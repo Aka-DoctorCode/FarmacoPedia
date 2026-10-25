@@ -88,7 +88,38 @@ export const translations = {
         // Footer
         footerNotice: 'ClickSalud FarmacoPedia — Base de datos farmacológica de acceso libre para fines educativos.',
         footerAllRights: 'Todos los derechos reservados.',
-        backendOfflineNotice: 'Modo Offline: Mostrando vademécum de demostración local.'
+        backendOfflineNotice: 'Modo Offline: Mostrando vademécum de demostración local.',
+
+        // Pediatric Calculator
+        pediatricCalculatorBtn: 'Calculadora Pediátrica',
+        pediatricCalculatorTitle: 'Calculadora de Dosis Pediátrica',
+        pediatricCalculatorSubtitle: 'Cálculo de posología, dosis por toma y volumen en niños.',
+        calcPatientWeight: 'Peso del paciente (kg)',
+        calcTargetDose: 'Dosis deseada',
+        calcDoseModePerDose: 'mg/kg por toma',
+        calcDoseModePerDay: 'mg/kg al día',
+        calcConcentration: 'Concentración de la presentación',
+        calcConcentrationMg: 'mg de fármaco',
+        calcConcentrationMl: 'en volumen (ml)',
+        calcFrequency: 'Frecuencia de tomas',
+        calcFrequencyEvery4h: 'Cada 4 horas (6 tomas/día)',
+        calcFrequencyEvery6h: 'Cada 6 horas (4 tomas/día)',
+        calcFrequencyEvery8h: 'Cada 8 horas (3 tomas/día)',
+        calcFrequencyEvery12h: 'Cada 12 horas (2 tomas/día)',
+        calcFrequencyEvery24h: 'Cada 24 horas (1 toma/día)',
+        calcResultsTitle: 'Desglose Posológico Calculado',
+        calcDosePerIntake: 'Dosis por toma',
+        calcDailyTotalDose: 'Dosis total diaria',
+        calcVolumePerIntake: 'Volumen por toma',
+        calcVolumeDailyTotal: 'Volumen total diario',
+        calcDropsEquivalent: 'Equivalencia en gotas',
+        calcDropsNote: 'Basado en estándar pediátrico (20 gotas ≈ 1 ml)',
+        calcAlertWeightHigh: 'Atención: peso mayor a 80 kg; evalúe considerar la dosis habitual de adulto.',
+        calcAlertWeightLow: 'Atención: peso menor a 1 kg (neonato); verifique pautas neonatales específicas.',
+        calcDisclaimerNote: 'Herramienta de asistencia al cálculo aritmético. El médico o prescriptor debe verificar siempre dosis máximas y contraindicaciones con la ficha oficial.',
+        calcClose: 'Cerrar calculadora',
+        calcReset: 'Reiniciar valores',
+        calcTakesPerDay: 'tomas al día'
     },
     en: {
         appName: 'ClickSalud FarmacoPedia',
@@ -179,6 +210,37 @@ export const translations = {
         // Footer
         footerNotice: 'ClickSalud FarmacoPedia — Open access clinical pharmacological knowledge base for educational use.',
         footerAllRights: 'All rights reserved.',
-        backendOfflineNotice: 'Offline Mode: Showing local clinical demonstration database.'
+        backendOfflineNotice: 'Offline Mode: Showing local clinical demonstration database.',
+
+        // Pediatric Calculator
+        pediatricCalculatorBtn: 'Pediatric Calculator',
+        pediatricCalculatorTitle: 'Pediatric Dosage Calculator',
+        pediatricCalculatorSubtitle: 'Posology, intake dosage, and liquid volume calculation for children.',
+        calcPatientWeight: 'Patient Weight (kg)',
+        calcTargetDose: 'Target Dosage',
+        calcDoseModePerDose: 'mg/kg per dose',
+        calcDoseModePerDay: 'mg/kg per day',
+        calcConcentration: 'Formulation Concentration',
+        calcConcentrationMg: 'Drug amount (mg)',
+        calcConcentrationMl: 'in volume (ml)',
+        calcFrequency: 'Administration Frequency',
+        calcFrequencyEvery4h: 'Every 4 hours (6 doses/day)',
+        calcFrequencyEvery6h: 'Every 6 hours (4 doses/day)',
+        calcFrequencyEvery8h: 'Every 8 hours (3 doses/day)',
+        calcFrequencyEvery12h: 'Every 12 hours (2 doses/day)',
+        calcFrequencyEvery24h: 'Every 24 hours (1 dose/day)',
+        calcResultsTitle: 'Calculated Posology Breakdown',
+        calcDosePerIntake: 'Dose per intake',
+        calcDailyTotalDose: 'Daily total dose',
+        calcVolumePerIntake: 'Volume per intake',
+        calcVolumeDailyTotal: 'Total daily volume',
+        calcDropsEquivalent: 'Drops equivalent',
+        calcDropsNote: 'Based on standard pediatric dropper (20 drops ≈ 1 ml)',
+        calcAlertWeightHigh: 'Notice: patient weight exceeds 80 kg; consider standard adult dosage.',
+        calcAlertWeightLow: 'Notice: patient weight under 1 kg (neonate); consult neonatal protocols.',
+        calcDisclaimerNote: 'Arithmetic calculation support tool. Prescribing clinicians must verify maximum dosages and contraindications against official datasheets.',
+        calcClose: 'Close calculator',
+        calcReset: 'Reset inputs',
+        calcTakesPerDay: 'doses per day'
     }
 };
