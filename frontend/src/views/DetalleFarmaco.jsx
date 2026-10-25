@@ -72,7 +72,27 @@ const DetalleFarmaco = () => {
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="m15 18-6-6 6-6" />
                     </svg>
-                    {t.backToCatalog}
+                    <span>{t.backToCatalog}</span>
+                </button>
+                <button
+                    type="button"
+                    className={styles.topBarCalcButton}
+                    onClick={() => setIsCalculatorOpen(true)}
+                    title={t.openPediatricCalculator || 'Calculadora Pediátrica'}
+                >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect width="16" height="20" x="4" y="2" rx="2" />
+                        <line x1="8" x2="16" y1="6" y2="6" />
+                        <line x1="16" x2="16" y1="14" y2="18" />
+                        <path d="M16 10h.01" />
+                        <path d="M12 10h.01" />
+                        <path d="M8 10h.01" />
+                        <path d="M12 14h.01" />
+                        <path d="M8 14h.01" />
+                        <path d="M12 18h.01" />
+                        <path d="M8 18h.01" />
+                    </svg>
+                    <span>{t.openPediatricCalculator || 'Calculadora Pediátrica'}</span>
                 </button>
             </div>
 
@@ -572,6 +592,7 @@ const DetalleFarmaco = () => {
                 isOpen={isCalculatorOpen}
                 onClose={() => setIsCalculatorOpen(false)}
                 drugName={drug.name}
+                drug={drug}
             />
         </section>
     );

@@ -156,25 +156,49 @@
     color: var(--textMuted);
 }
 
-.iconButton {
-    display: none;
+.mobileSearchButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+    border-radius: var(--radiusPill);
     background: var(--bgCard);
     border: 1px solid var(--borderGlass);
     color: var(--textSecondary);
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
+    cursor: pointer;
+    transition: all var(--transitionFast);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.mobileSearchButton:hover, .mobileSearchButton:active {
+    color: var(--textPrimary);
+    border-color: var(--colorPrimary);
+    background: var(--bgCardHover);
+}
+
+.iconButton {
+    display: flex;
+    background: var(--bgCard);
+    border: 1px solid var(--borderGlass);
+    color: var(--textSecondary);
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
     border-radius: var(--radiusPill);
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all var(--transitionFast);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 700;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.iconButton:hover {
+.iconButton:hover, .iconButton:active {
     color: var(--textPrimary);
     border-color: var(--borderGlassHover);
     transform: translateY(-1px);
@@ -222,12 +246,20 @@
         display: flex;
     }
 
+    .mobileSearchButton {
+        display: none;
+    }
+
     .searchTrigger {
         display: flex;
     }
 
     .iconButton {
-        display: flex;
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+        font-size: 0.9rem;
     }
 
     .rightControls {

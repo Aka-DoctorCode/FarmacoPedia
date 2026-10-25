@@ -21,6 +21,7 @@
     --colorPrimary: #0ea5e9;
     --colorPrimaryDark: #0284c7;
     --colorPrimaryGlow: rgba(14, 165, 233, 0.25);
+    --colorPrimaryBg: rgba(14, 165, 233, 0.12);
     --colorTeal: #14b8a6;
     --colorSuccess: #10b981;
     --colorSuccessBg: rgba(16, 185, 129, 0.12);
@@ -83,6 +84,7 @@
     --textSecondary: #475569;
     --textMuted: #94a3b8;
     --textAccent: #0284c7;
+    --colorPrimaryBg: rgba(14, 165, 233, 0.14);
 
     --borderGlass: rgba(15, 23, 42, 0.08);
     --borderGlassHover: rgba(14, 165, 233, 0.4);
@@ -132,6 +134,13 @@ button, a, input, select, textarea {
     min-height: calc(100vh - 200px);
     display: flex;
     flex-direction: column;
+    padding-bottom: calc(var(--bottomNavHeight) + env(safe-area-inset-bottom, 0px) + 1.25rem);
+}
+
+@media (min-width: 768px) {
+    .mainContent {
+        padding-bottom: 0;
+    }
 }
 
 /* Custom Scrollbar */
@@ -192,5 +201,16 @@ button, a, input, select, textarea {
     }
     to {
         transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
     }
 }

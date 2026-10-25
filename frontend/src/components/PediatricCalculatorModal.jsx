@@ -1,106 +1,147 @@
-import { useState, useEffect, useContext, useMemo } from 'react';
+import { useState, useEffect, useMemo, useContext, useCallback } from 'react';
 import { counterContext } from '../context/counterContext.js';
 import styles from './PediatricCalculatorModal.module.css';
 
-const PRESET_CONCENTRATIONS = [
-    { id: '100mg_1ml', label: '100 mg / 1 ml (Gotas)', mg: 100, ml: 1 },
-    { id: '125mg_5ml', label: '125 mg / 5 ml (Jarabe)', mg: 125, ml: 5 },
-    { id: '250mg_5ml', label: '250 mg / 5 ml (Jarabe)', mg: 250, ml: 5 },
-    { id: '200mg_5ml', label: '200 mg / 5 ml (Suspensión)', mg: 200, ml: 5 },
-    { id: '40mg_1ml', label: '40 mg / 1 ml (Gotas)', mg: 40, ml: 1 },
-    { id: '10mg_1ml', label: '10 mg / 1 ml (Solución)', mg: 10, ml: 1 },
+const FREQUENCY_OPTIONS = [
+    { hours: 4, labelKey: 'calcFrequencyEvery4h', takes: 6 },
+    { hours: 6, labelKey: 'calcFrequencyEvery6h', takes: 4 },
+    { hours: 8, labelKey: 'calcFrequencyEvery8h', takes: 3 },
+    { hours: 12, labelKey: 'calcFrequencyEvery12h', takes: 2 },
+    { hours: 24, labelKey: 'calcFrequencyEvery24h', takes: 1 }
 ];
 
-export const PediatricCalculatorModal = ({ isOpen, onClose, drugName = '' }) => {
+export const PediatricCalculatorModal = ({
+    isOpen,
+    onClose,
+    drugName = '',
+    drug = null
+}) => {
     const { t } = useContext(counterContext);
 
+    // Form inputs state
     const [weight, setWeight] = useState('');
-    const [targetDose, setTargetDose] = useState('');
+    const [doseValue, setDoseValue] = useState('');
     const [doseMode, setDoseMode] = useState('per_dose'); // 'per_dose' | 'per_day'
-    const [concentrationMg, setConcentrationMg] = useState('100');
-    const [concentrationMl, setConcentrationMl] = useState('1');
-    const [selectedPreset, setSelectedPreset] = useState('100mg_1ml');
-    const [intervalHours, setIntervalHours] = useState('8');
+    const [concMg, setConcMg] = useState('100');
+    const [concMl, setConcMl] = useState('1');
+    const [frequency, setFrequency] = useState(8);
 
-    // Handle Escape key
+    // Extract potential presets from drug data if available
+    const detectedPresets = useMemo(() => {
+        if (!drug || !drug.presentations) return [];
+        const presets = [];
+        const seen = new Set();
+
+        Object.keys(drug.presentations).forEach((name) => {
+            const match = name.match(/(\d+(?:\.\d+)?)\s*mg\s*\/\s*(\d+(?:\.\d+)?)\s*ml/i);
+            if (match) {
+                const mgVal = match[1];
+                const mlVal = match[2] || '1';
+                const key = `${mgVal}-${mlVal}`;
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    presets.push({
+                        label: `${mgVal} mg / ${mlVal} ml`,
+                        mg: mgVal,
+                        ml: mlVal
+                    });
+                }
+            }
+        });
+        return presets;
+    }, [drug]);
+
+    // Pre-fill initial dose and concentration if detected in pediatric guidance
     useEffect(() => {
-        if (!isOpen) return;
+        if (isOpen && drug?.dosageGuidance?.pediatric) {
+            const oralGuidelines = drug.dosageGuidance.pediatric.Oral?.guidelines || [];
+            const text = oralGuidelines.join(' ');
+            const numMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:a|-)\s*(\d+(?:\.\d+)?)\s*mg\/kg/i) || text.match(/(\d+(?:\.\d+)?)\s*mg\/kg/i);
+            if (numMatch && !doseValue) {
+                setDoseValue(numMatch[1]);
+            }
+            if (detectedPresets.length > 0 && concMg === '100' && concMl === '1') {
+                setConcMg(detectedPresets[0].mg);
+                setConcMl(detectedPresets[0].ml);
+            }
+        }
+    }, [isOpen, drug, detectedPresets, doseValue, concMg, concMl]);
 
+    // Keyboard ESC listener
+    useEffect(() => {
         const handleKeyDown = (e) => {
-            if (e.key === 'Escape') {
+            if (e.key === 'Escape' && isOpen) {
                 onClose();
             }
         };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
+        if (isOpen) {
+            window.addEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = 'hidden';
+        }
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = '';
+        };
     }, [isOpen, onClose]);
 
-    // Handle preset selection
-    const handleSelectPreset = (preset) => {
-        setSelectedPreset(preset.id);
-        setConcentrationMg(String(preset.mg));
-        setConcentrationMl(String(preset.ml));
-    };
-
-    const handleCustomConcentration = (type, val) => {
-        setSelectedPreset('custom');
-        if (type === 'mg') setConcentrationMg(val);
-        if (type === 'ml') setConcentrationMl(val);
-    };
-
-    const handleReset = () => {
+    // Handle Reset
+    const handleReset = useCallback(() => {
         setWeight('');
-        setTargetDose('');
+        setDoseValue('');
         setDoseMode('per_dose');
-        setConcentrationMg('100');
-        setConcentrationMl('1');
-        setSelectedPreset('100mg_1ml');
-        setIntervalHours('8');
-    };
+        setConcMg('100');
+        setConcMl('1');
+        setFrequency(8);
+    }, []);
 
-    // Numerical computations
+    // Mathematical calculations
     const calculation = useMemo(() => {
-        const w = parseFloat(weight);
-        const d = parseFloat(targetDose);
-        const cMg = parseFloat(concentrationMg);
-        const cMl = parseFloat(concentrationMl);
-        const intH = parseInt(intervalHours, 10) || 8;
+        const numWeight = parseFloat(weight);
+        const numDose = parseFloat(doseValue);
+        const numConcMg = parseFloat(concMg);
+        const numConcMl = parseFloat(concMl);
 
-        if (isNaN(w) || isNaN(d) || w <= 0 || d <= 0 || isNaN(cMg) || isNaN(cMl) || cMg <= 0 || cMl <= 0) {
+        if (
+            isNaN(numWeight) || numWeight <= 0 ||
+            isNaN(numDose) || numDose <= 0 ||
+            isNaN(numConcMg) || numConcMg <= 0 ||
+            isNaN(numConcMl) || numConcMl <= 0
+        ) {
             return null;
         }
 
-        const dosesPerDay = Math.max(1, Math.round(24 / intH));
-
-        let mgPerDose = 0;
-        let mgPerDay = 0;
+        const takesPerDay = 24 / frequency;
+        let dosePerIntakeMg = 0;
+        let dailyTotalMg = 0;
 
         if (doseMode === 'per_dose') {
-            mgPerDose = w * d;
-            mgPerDay = mgPerDose * dosesPerDay;
+            dosePerIntakeMg = numWeight * numDose;
+            dailyTotalMg = dosePerIntakeMg * takesPerDay;
         } else {
-            mgPerDay = w * d;
-            mgPerDose = mgPerDay / dosesPerDay;
+            dailyTotalMg = numWeight * numDose;
+            dosePerIntakeMg = dailyTotalMg / takesPerDay;
         }
 
-        const mlPerDose = (mgPerDose / cMg) * cMl;
-        const mlPerDay = mlPerDose * dosesPerDay;
-        const dropsPerDose = Math.round(mlPerDose * 20);
+        const mgPerMl = numConcMg / numConcMl;
+        const volumePerIntakeMl = dosePerIntakeMg / mgPerMl;
+        const volumeDailyTotalMl = dailyTotalMg / mgPerMl;
+
+        // Standard pediatric dropper: 20 drops = 1 ml
+        const dropsPerIntake = Math.round(volumePerIntakeMl * 20);
+        const dropsDailyTotal = Math.round(volumeDailyTotalMl * 20);
 
         return {
-            w,
-            d,
-            intH,
-            dosesPerDay,
-            mgPerDose: Number(mgPerDose.toFixed(2)),
-            mgPerDay: Number(mgPerDay.toFixed(2)),
-            mlPerDose: Number(mlPerDose.toFixed(2)),
-            mlPerDay: Number(mlPerDay.toFixed(2)),
-            dropsPerDose,
-            isWeightWarning: w < 1 || w > 80,
+            dosePerIntakeMg: parseFloat(dosePerIntakeMg.toFixed(2)),
+            dailyTotalMg: parseFloat(dailyTotalMg.toFixed(2)),
+            volumePerIntakeMl: parseFloat(volumePerIntakeMl.toFixed(2)),
+            volumeDailyTotalMl: parseFloat(volumeDailyTotalMl.toFixed(2)),
+            dropsPerIntake,
+            dropsDailyTotal,
+            takesPerDay,
+            isWeightHigh: numWeight > 80,
+            isWeightLow: numWeight < 1
         };
-    }, [weight, targetDose, doseMode, concentrationMg, concentrationMl, intervalHours]);
+    }, [weight, doseValue, doseMode, concMg, concMl, frequency]);
 
     if (!isOpen) return null;
 
@@ -115,11 +156,14 @@ export const PediatricCalculatorModal = ({ isOpen, onClose, drugName = '' }) => 
             aria-labelledby="pediatric-calc-title"
         >
             <div className={styles.modal}>
-                {/* Header */}
-                <div className={styles.modalHeader}>
-                    <div className={styles.titleGroup}>
-                        <div className={styles.iconBadge}>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                {/* Visual Drag Handle (Mobile only) */}
+                <div className={styles.dragHandle} aria-hidden="true" />
+
+                {/* Modal Header */}
+                <div className={styles.header}>
+                    <div className={styles.headerTitleGroup}>
+                        <div className={styles.headerIconWrapper}>
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                 <rect width="16" height="20" x="4" y="2" rx="2" />
                                 <line x1="8" x2="16" y1="6" y2="6" />
                                 <line x1="16" x2="16" y1="14" y2="18" />
@@ -133,21 +177,20 @@ export const PediatricCalculatorModal = ({ isOpen, onClose, drugName = '' }) => 
                             </svg>
                         </div>
                         <div>
-                            <h2 id="pediatric-calc-title" className={styles.modalTitle}>
+                            <h2 id="pediatric-calc-title" className={styles.title}>
                                 {t.pediatricCalculatorTitle || 'Calculadora de Dosis Pediátrica'}
+                                {drugName ? ` · ${drugName}` : ''}
                             </h2>
-                            {drugName && (
-                                <span className={styles.drugBadge}>
-                                    {drugName.toUpperCase()}
-                                </span>
-                            )}
+                            <p className={styles.subtitle}>
+                                {t.pediatricCalculatorSubtitle || 'Cálculo de posología, dosis por toma y volumen en niños.'}
+                            </p>
                         </div>
                     </div>
                     <button
                         className={styles.closeButton}
                         onClick={onClose}
-                        title={t.closeCalculator || 'Cerrar'}
-                        aria-label={t.closeCalculator || 'Cerrar'}
+                        title={t.calcClose || 'Cerrar'}
+                        aria-label={t.calcClose || 'Cerrar'}
                     >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <line x1="18" y1="6" x2="6" y2="18" />
@@ -156,270 +199,273 @@ export const PediatricCalculatorModal = ({ isOpen, onClose, drugName = '' }) => 
                     </button>
                 </div>
 
-                {/* Body Content */}
-                <div className={styles.modalBody}>
-                    {/* Weight warning alert */}
-                    {calculation && calculation.isWeightWarning && (
-                        <div className={styles.warningAlert}>
+                {/* Modal Scrollable Body */}
+                <div className={styles.body}>
+                    {/* Input Controls Grid */}
+                    <div className={styles.inputsGrid}>
+                        {/* 1. Patient Weight */}
+                        <div className={styles.inputCard}>
+                            <label className={styles.label} htmlFor="patient-weight">
+                                <span className={styles.labelIcon}>⚖️</span>
+                                {t.calcPatientWeight || 'Peso del paciente (kg)'}
+                            </label>
+                            <div className={styles.inputWrapper}>
+                                <input
+                                    id="patient-weight"
+                                    type="number"
+                                    step="0.1"
+                                    min="0.1"
+                                    max="150"
+                                    placeholder="Ej: 12.5"
+                                    className={styles.textInput}
+                                    value={weight}
+                                    onChange={(e) => setWeight(e.target.value)}
+                                    autoFocus
+                                />
+                                <span className={styles.inputUnit}>kg</span>
+                            </div>
+                        </div>
+
+                        {/* 2. Target Dosage */}
+                        <div className={styles.inputCard}>
+                            <label className={styles.label} htmlFor="target-dose">
+                                <span className={styles.labelIcon}>💊</span>
+                                {t.calcTargetDose || 'Dosis deseada'}
+                            </label>
+                            <div className={styles.dosageInputRow}>
+                                <div className={styles.inputWrapper}>
+                                    <input
+                                        id="target-dose"
+                                        type="number"
+                                        step="0.5"
+                                        min="0.1"
+                                        placeholder="Ej: 15"
+                                        className={styles.textInput}
+                                        value={doseValue}
+                                        onChange={(e) => setDoseValue(e.target.value)}
+                                    />
+                                    <span className={styles.inputUnit}>mg/kg</span>
+                                </div>
+                                <select
+                                    className={styles.modeSelect}
+                                    value={doseMode}
+                                    onChange={(e) => setDoseMode(e.target.value)}
+                                    aria-label="Modo de prescripción"
+                                >
+                                    <option value="per_dose">{t.calcDoseModePerDose || 'mg/kg por toma'}</option>
+                                    <option value="per_day">{t.calcDoseModePerDay || 'mg/kg al día'}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* 3. Formulation Concentration */}
+                        <div className={styles.inputCard}>
+                            <div className={styles.labelRow}>
+                                <label className={styles.label}>
+                                    <span className={styles.labelIcon}>🧪</span>
+                                    {t.calcConcentration || 'Concentración de la presentación'}
+                                </label>
+                                {detectedPresets.length > 0 && (
+                                    <span className={styles.presetsLabel}>Ficha técnica:</span>
+                                )}
+                            </div>
+
+                            {/* Concentration Presets if found in drug */}
+                            {detectedPresets.length > 0 && (
+                                <div className={styles.presetsList}>
+                                    {detectedPresets.map((preset, idx) => (
+                                        <button
+                                            key={idx}
+                                            type="button"
+                                            className={`${styles.presetBadge} ${concMg === preset.mg && concMl === preset.ml ? styles.presetBadgeActive : ''}`}
+                                            onClick={() => {
+                                                setConcMg(preset.mg);
+                                                setConcMl(preset.ml);
+                                            }}
+                                        >
+                                            {preset.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+
+                            <div className={styles.concInputRow}>
+                                <div className={styles.inputWrapper}>
+                                    <input
+                                        type="number"
+                                        min="0.1"
+                                        step="1"
+                                        placeholder="100"
+                                        className={styles.textInput}
+                                        value={concMg}
+                                        onChange={(e) => setConcMg(e.target.value)}
+                                        aria-label={t.calcConcentrationMg || 'mg de fármaco'}
+                                    />
+                                    <span className={styles.inputUnit}>mg</span>
+                                </div>
+                                <span className={styles.slashDivider}>/</span>
+                                <div className={styles.inputWrapper}>
+                                    <input
+                                        type="number"
+                                        min="0.1"
+                                        step="0.5"
+                                        placeholder="1"
+                                        className={styles.textInput}
+                                        value={concMl}
+                                        onChange={(e) => setConcMl(e.target.value)}
+                                        aria-label={t.calcConcentrationMl || 'en volumen (ml)'}
+                                    />
+                                    <span className={styles.inputUnit}>ml</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 4. Administration Frequency */}
+                        <div className={styles.inputCard}>
+                            <label className={styles.label} htmlFor="frequency-select">
+                                <span className={styles.labelIcon}>⏰</span>
+                                {t.calcFrequency || 'Frecuencia de tomas'}
+                            </label>
+                            <select
+                                id="frequency-select"
+                                className={styles.select}
+                                value={frequency}
+                                onChange={(e) => setFrequency(parseInt(e.target.value, 10))}
+                            >
+                                {FREQUENCY_OPTIONS.map((opt) => (
+                                    <option key={opt.hours} value={opt.hours}>
+                                        {t[opt.labelKey] || `Cada ${opt.hours} horas (${opt.takes} tomas/día)`}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* Weight Safety Alerts */}
+                    {calculation && calculation.isWeightHigh && (
+                        <div className={styles.alertWarning}>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
                                 <line x1="12" y1="9" x2="12" y2="13" />
-                                <line x1="12" y1="17" x2="12.01" y2="17" />
+                                <line x1="12" y1="16" x2="12.01" y2="16" />
                             </svg>
-                            <span>{t.weightWarningNotice || 'Aviso clínico: Peso fuera del rango pediátrico estándar habitual (1 a 80 kg). Verifique el valor ingresado.'}</span>
+                            <span>{t.calcAlertWeightHigh || 'Atención: peso mayor a 80 kg; evalúe considerar la dosis habitual de adulto.'}</span>
+                        </div>
+                    )}
+                    {calculation && calculation.isWeightLow && (
+                        <div className={styles.alertWarning}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="8" x2="12" y2="12" />
+                                <line x1="12" y1="16" x2="12.01" y2="16" />
+                            </svg>
+                            <span>{t.calcAlertWeightLow || 'Atención: peso menor a 1 kg (neonato); verifique pautas neonatales específicas.'}</span>
                         </div>
                     )}
 
-                    {/* Inputs Section */}
-                    <div className={styles.formGrid}>
-                        {/* Weight Field */}
-                        <div className={styles.fieldGroup}>
-                            <label className={styles.label} htmlFor="calc-weight">
-                                {t.patientWeight || 'Peso del paciente'}
-                            </label>
-                            <div className={styles.inputWithSuffix}>
-                                <input
-                                    id="calc-weight"
-                                    type="number"
-                                    step="0.1"
-                                    min="0.5"
-                                    max="120"
-                                    placeholder="Ej: 12"
-                                    value={weight}
-                                    onChange={(e) => setWeight(e.target.value)}
-                                    className={styles.input}
-                                />
-                                <span className={styles.suffix}>{t.weightUnit || 'kg'}</span>
-                            </div>
-                        </div>
-
-                        {/* Mode & Target Dose Field */}
-                        <div className={styles.fieldGroup}>
-                            <div className={styles.labelRow}>
-                                <label className={styles.label} htmlFor="calc-dose">
-                                    {t.targetDose || 'Dosis objetivo'}
-                                </label>
-                                <div className={styles.modeToggle}>
-                                    <button
-                                        type="button"
-                                        className={`${styles.modeButton} ${doseMode === 'per_dose' ? styles.modeButtonActive : ''}`}
-                                        onClick={() => setDoseMode('per_dose')}
-                                    >
-                                        / toma
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className={`${styles.modeButton} ${doseMode === 'per_day' ? styles.modeButtonActive : ''}`}
-                                        onClick={() => setDoseMode('per_day')}
-                                    >
-                                        / día
-                                    </button>
-                                </div>
-                            </div>
-                            <div className={styles.inputWithSuffix}>
-                                <input
-                                    id="calc-dose"
-                                    type="number"
-                                    step="0.5"
-                                    min="0.1"
-                                    placeholder={doseMode === 'per_dose' ? 'Ej: 15' : 'Ej: 60'}
-                                    value={targetDose}
-                                    onChange={(e) => setTargetDose(e.target.value)}
-                                    className={styles.input}
-                                />
-                                <span className={styles.suffix}>
-                                    {doseMode === 'per_dose' ? 'mg/kg/toma' : 'mg/kg/día'}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Concentration Section */}
-                    <div className={styles.sectionDivider}>
-                        <span className={styles.sectionDividerText}>
-                            {t.presentationConcentration || 'Concentración del medicamento'}
-                        </span>
-                    </div>
-
-                    {/* Concentration Quick Presets */}
-                    <div className={styles.presetGrid}>
-                        {PRESET_CONCENTRATIONS.map((preset) => (
-                            <button
-                                key={preset.id}
-                                type="button"
-                                className={`${styles.presetPill} ${selectedPreset === preset.id ? styles.presetPillActive : ''}`}
-                                onClick={() => handleSelectPreset(preset)}
-                            >
-                                {preset.label}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Custom Concentration inputs */}
-                    <div className={styles.customConcentrationRow}>
-                        <div className={styles.fieldGroupMini}>
-                            <label className={styles.miniLabel}>
-                                {t.substanceAmount || 'mg activo'}
-                            </label>
-                            <input
-                                type="number"
-                                step="1"
-                                min="1"
-                                value={concentrationMg}
-                                onChange={(e) => handleCustomConcentration('mg', e.target.value)}
-                                className={styles.inputMini}
-                                placeholder="mg"
-                            />
-                        </div>
-                        <span className={styles.slashSeparator}>/</span>
-                        <div className={styles.fieldGroupMini}>
-                            <label className={styles.miniLabel}>
-                                {t.solutionVolume || 'ml solución'}
-                            </label>
-                            <input
-                                type="number"
-                                step="0.5"
-                                min="0.1"
-                                value={concentrationMl}
-                                onChange={(e) => handleCustomConcentration('ml', e.target.value)}
-                                className={styles.inputMini}
-                                placeholder="ml"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Administration Interval */}
-                    <div className={styles.fieldGroup} style={{ marginTop: '1rem' }}>
-                        <label className={styles.label} htmlFor="calc-interval">
-                            {t.administrationInterval || 'Frecuencia de administración'}
-                        </label>
-                        <select
-                            id="calc-interval"
-                            value={intervalHours}
-                            onChange={(e) => setIntervalHours(e.target.value)}
-                            className={styles.select}
-                        >
-                            <option value="4">{t.every4Hours || 'Cada 4 horas (6 tomas/día)'}</option>
-                            <option value="6">{t.every6Hours || 'Cada 6 horas (4 tomas/día)'}</option>
-                            <option value="8">{t.every8Hours || 'Cada 8 horas (3 tomas/día)'}</option>
-                            <option value="12">{t.every12Hours || 'Cada 12 horas (2 tomas/día)'}</option>
-                            <option value="24">{t.every24Hours || 'Cada 24 horas (1 toma/día)'}</option>
-                        </select>
-                    </div>
-
-                    {/* Results Box */}
+                    {/* Calculation Results Card */}
                     {calculation ? (
                         <div className={styles.resultsCard}>
                             <div className={styles.resultsHeader}>
-                                <span className={styles.resultsTitle}>
-                                    {t.calcResultsTitle || 'Pauta Pediátrica Calculada'}
-                                </span>
-                                <span className={styles.scheduleBadge}>
-                                    {`Cada ${calculation.intH}h (${calculation.dosesPerDay} ${t.dosesPerDay || 'tomas/día'})`}
+                                <div className={styles.resultsTitleRow}>
+                                    <span className={styles.resultsIcon}>✨</span>
+                                    <h3 className={styles.resultsTitle}>
+                                        {t.calcResultsTitle || 'Desglose Posológico Calculado'}
+                                    </h3>
+                                </div>
+                                <span className={styles.frequencyTag}>
+                                    {calculation.takesPerDay} {t.calcTakesPerDay || 'tomas al día'} (c/{frequency}h)
                                 </span>
                             </div>
 
-                            <div className={styles.metricsGrid}>
-                                {/* Volume per dose */}
-                                <div className={styles.metricItemHighlight}>
-                                    <span className={styles.metricLabel}>
-                                        {t.volumePerAdministration || 'Volumen por toma'}
+                            <div className={styles.resultsGrid}>
+                                {/* Primary Result: Per Intake */}
+                                <div className={`${styles.resultBox} ${styles.primaryResult}`}>
+                                    <span className={styles.resultLabel}>
+                                        {t.calcDosePerIntake || 'Dosis por toma'}
                                     </span>
-                                    <span className={styles.metricValueLarge}>
-                                        {calculation.mlPerDose} <span className={styles.metricUnit}>ml</span>
-                                    </span>
-                                    <span className={styles.metricSub}>
-                                        {`${calculation.dropsPerDose} gotas`}
-                                    </span>
-                                </div>
-
-                                {/* Dose in mg per dose */}
-                                <div className={styles.metricItem}>
-                                    <span className={styles.metricLabel}>
-                                        {t.dosePerAdministration || 'Dosis por toma'}
-                                    </span>
-                                    <span className={styles.metricValue}>
-                                        {calculation.mgPerDose} <span className={styles.metricUnit}>mg</span>
-                                    </span>
-                                    <span className={styles.metricSub}>
-                                        {`${(calculation.mgPerDose / calculation.w).toFixed(1)} mg/kg`}
+                                    <div className={styles.resultValueRow}>
+                                        <span className={styles.resultNumberBig}>
+                                            {calculation.volumePerIntakeMl}
+                                        </span>
+                                        <span className={styles.resultUnitBig}>ml</span>
+                                    </div>
+                                    <span className={styles.resultSubValue}>
+                                        ({calculation.dosePerIntakeMg} mg / toma)
                                     </span>
                                 </div>
 
-                                {/* Total Daily Volume */}
-                                <div className={styles.metricItem}>
-                                    <span className={styles.metricLabel}>
-                                        {t.dailyTotalVolume || 'Volumen total diario'}
+                                {/* Drops Conversion */}
+                                <div className={styles.resultBox}>
+                                    <span className={styles.resultLabel}>
+                                        {t.calcDropsEquivalent || 'Equivalencia en gotas'}
                                     </span>
-                                    <span className={styles.metricValue}>
-                                        {calculation.mlPerDay} <span className={styles.metricUnit}>ml/día</span>
-                                    </span>
-                                    <span className={styles.metricSub}>
-                                        {`${calculation.dropsPerDose * calculation.dosesPerDay} gotas/día`}
+                                    <div className={styles.resultValueRow}>
+                                        <span className={styles.resultNumberMedium}>
+                                            {calculation.dropsPerIntake}
+                                        </span>
+                                        <span className={styles.resultUnitMedium}>gotas</span>
+                                    </div>
+                                    <span className={styles.resultSubValue}>
+                                        {t.calcDropsNote || 'Basado en estándar pediátrico (20 gotas ≈ 1 ml)'}
                                     </span>
                                 </div>
 
-                                {/* Total Daily mg */}
-                                <div className={styles.metricItem}>
-                                    <span className={styles.metricLabel}>
-                                        {t.dailyTotalDose || 'Dosis total diaria'}
+                                {/* Daily Total Active Ingredient */}
+                                <div className={styles.resultBox}>
+                                    <span className={styles.resultLabel}>
+                                        {t.calcDailyTotalDose || 'Dosis total diaria'}
                                     </span>
-                                    <span className={styles.metricValue}>
-                                        {calculation.mgPerDay} <span className={styles.metricUnit}>mg/día</span>
-                                    </span>
-                                    <span className={styles.metricSub}>
-                                        {`${(calculation.mgPerDay / calculation.w).toFixed(1)} mg/kg/día`}
+                                    <div className={styles.resultValueRow}>
+                                        <span className={styles.resultNumberMedium}>
+                                            {calculation.dailyTotalMg}
+                                        </span>
+                                        <span className={styles.resultUnitMedium}>mg/día</span>
+                                    </div>
+                                    <span className={styles.resultSubValue}>
+                                        {calculation.volumeDailyTotalMl} ml totales al día
                                     </span>
                                 </div>
                             </div>
-
-                            <p className={styles.dropsNote}>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <line x1="12" y1="16" x2="12" y2="12" />
-                                    <line x1="12" y1="8" x2="12.01" y2="8" />
-                                </svg>
-                                {t.dropsRatioNotice || 'Cálculo de gotas basado en gotero pediátrico estándar (20 gotas ≈ 1 ml).'}
-                            </p>
                         </div>
                     ) : (
-                        <div className={styles.emptyPrompt}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <circle cx="12" cy="12" r="10" />
-                                <path d="M12 8v4" />
-                                <path d="m9 16 3-2 3 2" />
-                            </svg>
-                            <p>{t.fillFieldsPrompt || 'Ingrese el peso y la dosis requerida para calcular la pauta líquida.'}</p>
+                        <div className={styles.emptyState}>
+                            <span className={styles.emptyIcon}>📝</span>
+                            <p>{t.fillFieldsPrompt || 'Ingrese el peso y la dosis en mg/kg para obtener el cálculo clínico.'}</p>
                         </div>
                     )}
 
-                    {/* Disclaimer Footnote */}
-                    <div className={styles.safetyFooter}>
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    {/* Disclaimer Note */}
+                    <div className={styles.disclaimerNote}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="12" y1="16" x2="12" y2="12" />
+                            <line x1="12" y1="8" x2="12.01" y2="8" />
                         </svg>
-                        <p>{t.calculatorSafetyNotice || 'Herramienta de soporte para el cálculo posológico. El profesional debe verificar siempre la indicación, peso y situación clínica antes de administrar el fármaco.'}</p>
+                        <span>{t.calcDisclaimerNote || 'Herramienta de asistencia al cálculo aritmético. El médico o prescriptor debe verificar siempre dosis máximas y contraindicaciones con la ficha oficial.'}</span>
                     </div>
                 </div>
 
-                {/* Footer Controls */}
-                <div className={styles.modalFooter}>
+                {/* Modal Footer Controls */}
+                <div className={styles.footer}>
                     <button
                         type="button"
                         className={styles.resetButton}
                         onClick={handleReset}
                     >
-                        {t.clearCalculator || 'Limpiar'}
+                        {t.calcReset || 'Reiniciar valores'}
                     </button>
                     <button
                         type="button"
-                        className={styles.doneButton}
+                        className={styles.closeActionButton}
                         onClick={onClose}
                     >
-                        {t.closeCalculator || 'Listo'}
+                        {t.calcClose || 'Cerrar calculadora'}
                     </button>
                 </div>
             </div>
         </div>
     );
 };
+
+export default PediatricCalculatorModal;

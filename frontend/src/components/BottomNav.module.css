@@ -25,33 +25,33 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.2rem;
-    min-width: var(--touchTargetMin, 44px);
-    min-height: var(--touchTargetMin, 44px);
-    padding: 0.4rem 0.2rem;
+    gap: 0.25rem;
+    min-width: 48px;
+    min-height: 48px;
+    padding: 0.35rem 0.5rem;
     background: transparent;
     border: none;
     color: var(--textSecondary);
     font-family: var(--fontSans);
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
-    border-radius: var(--radiusSm);
+    border-radius: var(--radiusMd);
     transition: all var(--transitionFast);
 }
 
 .navItem:active {
-    transform: scale(0.92);
+    transform: scale(0.94);
 }
 
 .iconWrapper {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: var(--radiusPill);
     transition: all var(--transitionFast);
 }
@@ -61,8 +61,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
-    line-height: 1.1;
-    font-size: 0.68rem;
+    line-height: 1.15;
+    font-size: 0.72rem;
     letter-spacing: -0.01em;
 }
 
@@ -71,13 +71,13 @@
 }
 
 .navItemActive .iconWrapper {
-    background: var(--colorPrimaryGlow);
+    background: var(--colorPrimaryBg);
     color: var(--colorPrimary);
 }
 
 .navItemActive .label {
     font-weight: 700;
-    color: var(--textPrimary);
+    color: var(--colorPrimary);
 }
 
 /* Progressive scaling: hidden on tablet and desktop (>= 768px) */

@@ -1,5 +1,17 @@
-/* Pediatric Calculator Modal - Mobile-First Architecture */
+/* Pediatric Calculator Modal - Mobile-First with Expansive Desktop Refinement */
 
+/* Hide native number input spinners across all browsers */
+.textInput[type=number]::-webkit-inner-spin-button,
+.textInput[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.textInput[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Base Mobile Overlay (Bottom Sheet) */
 .overlay {
     position: fixed;
     inset: 0;
@@ -33,34 +45,33 @@
     animation: slideUpSheet 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.modal::before {
-    content: '';
-    display: block;
+.dragHandle {
     width: 44px;
     height: 4px;
     border-radius: 2px;
     background: rgba(255, 255, 255, 0.25);
-    margin: 0.6rem auto 0;
+    margin: 0.65rem auto 0.25rem;
     flex-shrink: 0;
 }
 
-.modalHeader {
+/* Header */
+.header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.85rem 1.25rem 0.6rem;
+    padding: 0.85rem 1.25rem 0.65rem;
     border-bottom: 1px solid var(--borderGlass);
 }
 
-.titleGroup {
+.headerTitleGroup {
     display: flex;
     align-items: center;
     gap: 0.75rem;
 }
 
-.iconBadge {
-    width: 38px;
-    height: 38px;
+.headerIconWrapper {
+    width: 40px;
+    height: 40px;
     border-radius: var(--radiusMd);
     background: linear-gradient(135deg, var(--colorPrimary) 0%, var(--colorTeal) 100%);
     display: flex;
@@ -71,25 +82,20 @@
     box-shadow: var(--shadowGlow);
 }
 
-.modalTitle {
+.title {
     font-size: 1.1rem;
     font-weight: 700;
     color: var(--textPrimary);
     line-height: 1.2;
     margin: 0;
+    letter-spacing: -0.01em;
 }
 
-.drugBadge {
-    display: inline-block;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--colorPrimary);
-    background: var(--colorPrimaryBg);
-    padding: 0.15rem 0.5rem;
-    border-radius: var(--radiusPill);
-    border: 1px solid rgba(13, 148, 136, 0.25);
-    margin-top: 0.2rem;
-    letter-spacing: 0.04em;
+.subtitle {
+    font-size: 0.78rem;
+    color: var(--textMuted);
+    margin: 0.15rem 0 0 0;
+    line-height: 1.3;
 }
 
 .closeButton {
@@ -111,221 +117,208 @@
     background: rgba(255, 255, 255, 0.08);
 }
 
-.modalBody {
+/* Body Content */
+.body {
     padding: 1rem 1.25rem;
     overflow-y: auto;
     flex: 1;
     -webkit-overflow-scrolling: touch;
     display: flex;
     flex-direction: column;
-    gap: 0.9rem;
+    gap: 1rem;
 }
 
-.warningAlert {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.6rem;
-    padding: 0.65rem 0.85rem;
-    background: var(--colorWarningBg);
-    border: 1px solid rgba(245, 158, 11, 0.35);
-    border-radius: var(--radiusMd);
-    color: var(--colorWarning);
-    font-size: 0.85rem;
-    line-height: 1.4;
-    font-weight: 500;
-}
-
-.formGrid {
+/* Inputs Layout (Mobile: Single Column) */
+.inputsGrid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 0.85rem;
 }
 
-.fieldGroup {
+.inputCard {
+    background: var(--bgGlass);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusMd);
+    padding: 0.9rem 1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
+    gap: 0.5rem;
+    transition: border-color var(--transitionFast);
+}
+
+.inputCard:hover {
+    border-color: var(--borderGlassHover);
+}
+
+.label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--textSecondary);
+}
+
+.labelIcon {
+    font-size: 0.95rem;
+    display: inline-flex;
 }
 
 .labelRow {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.3rem;
 }
 
-.label {
-    font-size: 0.85rem;
+.presetsLabel {
+    font-size: 0.72rem;
     font-weight: 600;
-    color: var(--textSecondary);
+    color: var(--colorPrimary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
-.modeToggle {
-    display: flex;
-    background: var(--bgCard);
-    border: 1px solid var(--borderGlass);
-    border-radius: var(--radiusPill);
-    padding: 2px;
-}
-
-.modeButton {
-    border: none;
-    background: transparent;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--textMuted);
-    padding: 0.2rem 0.6rem;
-    border-radius: var(--radiusPill);
-    cursor: pointer;
-    transition: all var(--transitionFast);
-}
-
-.modeButtonActive {
-    background: var(--colorPrimary);
-    color: #ffffff;
-    box-shadow: 0 1px 4px var(--colorPrimaryGlow);
-}
-
-.inputWithSuffix {
+.inputWrapper {
     position: relative;
     display: flex;
     align-items: center;
+    width: 100%;
 }
 
-.input {
+.textInput {
     width: 100%;
     min-height: 46px;
-    background: var(--bgCard);
+    background: var(--bgInput);
     border: 1px solid var(--borderGlass);
     border-radius: var(--radiusMd);
-    padding: 0.65rem 4rem 0.65rem 0.85rem;
+    padding: 0.65rem 3.5rem 0.65rem 0.85rem;
     font-size: 1rem;
     font-weight: 600;
     color: var(--textPrimary);
     transition: all var(--transitionFast);
-    -webkit-appearance: none;
-    appearance: none;
 }
 
-.input:focus {
+.textInput:focus {
     outline: none;
     border-color: var(--colorPrimary);
     box-shadow: 0 0 0 2px var(--colorPrimaryGlow);
 }
 
-.suffix {
+.inputUnit {
     position: absolute;
     right: 0.85rem;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 600;
     color: var(--textMuted);
     pointer-events: none;
 }
 
-.sectionDivider {
+/* Dosage Input Row */
+.dosageInputRow {
     display: flex;
+    gap: 0.5rem;
     align-items: center;
-    margin-top: 0.25rem;
+    width: 100%;
 }
 
-.sectionDividerText {
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--textMuted);
+.dosageInputRow .inputWrapper {
+    flex: 1;
 }
 
-.presetGrid {
+.modeSelect {
+    min-height: 46px;
+    background: var(--bgInput);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusMd);
+    padding: 0.65rem 1.8rem 0.65rem 0.75rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--textPrimary);
+    cursor: pointer;
+    transition: all var(--transitionFast);
+    flex-shrink: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.6rem center;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.modeSelect:focus {
+    outline: none;
+    border-color: var(--colorPrimary);
+    box-shadow: 0 0 0 2px var(--colorPrimaryGlow);
+}
+
+/* Concentration Presets & Inputs */
+.presetsList {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.45rem;
+    gap: 0.4rem;
+    margin-bottom: 0.25rem;
 }
 
-.presetPill {
+.presetBadge {
     background: var(--bgCard);
     border: 1px solid var(--borderGlass);
     color: var(--textSecondary);
     font-size: 0.78rem;
     font-weight: 600;
-    padding: 0.4rem 0.75rem;
+    padding: 0.35rem 0.65rem;
     border-radius: var(--radiusPill);
     cursor: pointer;
     transition: all var(--transitionFast);
-    white-space: nowrap;
-    min-height: 36px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    min-height: 32px;
 }
 
-.presetPill:hover {
+.presetBadge:hover {
     border-color: var(--borderGlassHover);
     color: var(--textPrimary);
 }
 
-.presetPillActive {
+.presetBadgeActive {
     background: var(--colorPrimaryBg);
     border-color: var(--colorPrimary);
     color: var(--colorPrimary);
     box-shadow: 0 0 0 1px var(--colorPrimary);
 }
 
-.customConcentrationRow {
+.concInputRow {
     display: flex;
-    align-items: flex-end;
-    gap: 0.6rem;
-}
-
-.fieldGroupMini {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.miniLabel {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--textMuted);
-}
-
-.inputMini {
+    align-items: center;
+    gap: 0.45rem;
     width: 100%;
-    min-height: 42px;
-    background: var(--bgCard);
-    border: 1px solid var(--borderGlass);
-    border-radius: var(--radiusMd);
-    padding: 0.5rem 0.75rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--textPrimary);
-    transition: all var(--transitionFast);
 }
 
-.inputMini:focus {
-    outline: none;
-    border-color: var(--colorPrimary);
-    box-shadow: 0 0 0 2px var(--colorPrimaryGlow);
-}
-
-.slashSeparator {
+.slashDivider {
     font-size: 1.35rem;
     font-weight: 700;
     color: var(--textMuted);
-    padding-bottom: 0.4rem;
+    flex-shrink: 0;
 }
 
+/* Frequency Select */
 .select {
     width: 100%;
     min-height: 46px;
-    background: var(--bgCard);
+    background: var(--bgInput);
     border: 1px solid var(--borderGlass);
     border-radius: var(--radiusMd);
-    padding: 0.65rem 0.85rem;
-    font-size: 0.92rem;
+    padding: 0.65rem 2rem 0.65rem 0.85rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--textPrimary);
     cursor: pointer;
     transition: all var(--transitionFast);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
 .select:focus {
@@ -334,16 +327,30 @@
     box-shadow: 0 0 0 2px var(--colorPrimaryGlow);
 }
 
-/* Calculation Results Card */
+/* Safety Alerts */
+.alertWarning {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.75rem 0.9rem;
+    background: var(--colorWarningBg);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    border-radius: var(--radiusMd);
+    color: var(--colorWarning);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+/* Results Card */
 .resultsCard {
-    margin-top: 0.5rem;
-    background: linear-gradient(135deg, rgba(13, 148, 136, 0.12) 0%, rgba(15, 23, 42, 0.2) 100%);
-    border: 1px solid rgba(13, 148, 136, 0.35);
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(20, 184, 166, 0.08) 100%);
+    border: 1px solid rgba(14, 165, 233, 0.35);
     border-radius: var(--radiusLg);
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.85rem;
 }
 
 .resultsHeader {
@@ -351,132 +358,147 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.resultsTitleRow {
+    display: flex;
+    align-items: center;
     gap: 0.4rem;
+}
+
+.resultsIcon {
+    font-size: 1.1rem;
 }
 
 .resultsTitle {
     font-size: 0.95rem;
     font-weight: 700;
     color: var(--textPrimary);
+    margin: 0;
 }
 
-.scheduleBadge {
+.frequencyTag {
     font-size: 0.75rem;
     font-weight: 700;
     color: var(--colorPrimary);
     background: var(--colorPrimaryBg);
-    border: 1px solid rgba(13, 148, 136, 0.3);
-    padding: 0.2rem 0.6rem;
+    border: 1px solid rgba(14, 165, 233, 0.3);
+    padding: 0.2rem 0.65rem;
     border-radius: var(--radiusPill);
+    white-space: nowrap;
 }
 
-.metricsGrid {
+/* Results Grid (Mobile: Stacked) */
+.resultsGrid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 0.65rem;
 }
 
-.metricItemHighlight {
-    background: rgba(13, 148, 136, 0.18);
-    border: 1px solid rgba(13, 148, 136, 0.4);
+.resultBox {
+    background: var(--bgGlass);
+    border: 1px solid var(--borderGlass);
     border-radius: var(--radiusMd);
-    padding: 0.85rem;
+    padding: 0.85rem 1rem;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    gap: 0.25rem;
 }
 
-.metricLabel {
-    font-size: 0.75rem;
-    font-weight: 600;
+.primaryResult {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.22) 0%, rgba(20, 184, 166, 0.14) 100%);
+    border-color: rgba(14, 165, 233, 0.5);
+    box-shadow: 0 4px 16px -2px rgba(14, 165, 233, 0.2);
+}
+
+.resultLabel {
+    font-size: 0.72rem;
+    font-weight: 700;
     color: var(--textSecondary);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
 }
 
-.metricValueLarge {
-    font-size: 1.85rem;
+.resultValueRow {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+}
+
+.resultNumberBig {
+    font-size: 2rem;
     font-weight: 800;
     color: var(--colorPrimary);
     font-family: var(--fontHeading);
     line-height: 1.1;
-    margin: 0.2rem 0;
 }
 
-.metricValue {
-    font-size: 1.3rem;
+.resultUnitBig {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--colorPrimary);
+}
+
+.resultNumberMedium {
+    font-size: 1.55rem;
     font-weight: 800;
     color: var(--textPrimary);
     font-family: var(--fontHeading);
-    line-height: 1.2;
-    margin: 0.15rem 0;
+    line-height: 1.1;
 }
 
-.metricUnit {
-    font-size: 0.85rem;
+.resultUnitMedium {
+    font-size: 0.95rem;
     font-weight: 600;
     color: var(--textSecondary);
 }
 
-.metricSub {
+.resultSubValue {
     font-size: 0.8rem;
     font-weight: 600;
     color: var(--textMuted);
-}
-
-.metricItem {
-    background: var(--bgCard);
-    border: 1px solid var(--borderGlass);
-    border-radius: var(--radiusMd);
-    padding: 0.65rem 0.85rem;
-    display: flex;
-    flex-direction: column;
-}
-
-.dropsNote {
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
-    font-size: 0.76rem;
-    color: var(--textMuted);
-    margin: 0;
     line-height: 1.35;
 }
 
-.emptyPrompt {
+.emptyState {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 1.5rem 1rem;
+    padding: 1.75rem 1rem;
     color: var(--textMuted);
     border: 1px dashed var(--borderGlass);
     border-radius: var(--radiusMd);
     gap: 0.5rem;
-    font-size: 0.85rem;
+    font-size: 0.88rem;
 }
 
-.safetyFooter {
+.emptyIcon {
+    font-size: 1.6rem;
+}
+
+.emptyState p {
+    margin: 0;
+    max-width: 320px;
+}
+
+.disclaimerNote {
     display: flex;
     align-items: flex-start;
     gap: 0.5rem;
     padding: 0.65rem 0.85rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: var(--radiusMd);
+    background: rgba(255, 255, 255, 0.02);
     border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusMd);
     font-size: 0.75rem;
     color: var(--textMuted);
     line-height: 1.4;
-    margin-top: 0.25rem;
 }
 
-.safetyFooter p {
-    margin: 0;
-}
-
-.modalFooter {
+/* Modal Footer */
+.footer {
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -488,12 +510,12 @@
 
 .resetButton {
     min-height: 44px;
-    padding: 0.5rem 1.1rem;
+    padding: 0.55rem 1.2rem;
     background: transparent;
     border: 1px solid var(--borderGlass);
     border-radius: var(--radiusPill);
     color: var(--textSecondary);
-    font-size: 0.85rem;
+    font-size: 0.86rem;
     font-weight: 600;
     cursor: pointer;
     transition: all var(--transitionFast);
@@ -504,9 +526,9 @@
     color: var(--textPrimary);
 }
 
-.doneButton {
+.closeActionButton {
     min-height: 44px;
-    padding: 0.5rem 1.4rem;
+    padding: 0.55rem 1.5rem;
     background: var(--colorPrimary);
     border: none;
     border-radius: var(--radiusPill);
@@ -518,40 +540,203 @@
     box-shadow: 0 2px 8px var(--colorPrimaryGlow);
 }
 
-.doneButton:hover {
+.closeActionButton:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px var(--colorPrimaryGlow);
+    box-shadow: 0 4px 14px var(--colorPrimaryGlow);
 }
 
-/* Progressive Enhancement - Tablet & Desktop (min-width: 768px) */
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUpSheet {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+@keyframes modalScaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* ==========================================================================
+   Progressive Expansion for Desktop & Tablets (min-width: 768px)
+   ========================================================================== */
 @media (min-width: 768px) {
     .overlay {
         align-items: center;
-        padding: 1.5rem;
+        padding: 2rem 1.5rem;
     }
 
     .modal {
+        max-width: 780px;
         border-radius: var(--radiusLg);
+        border: 1px solid var(--borderGlassHover);
         border-bottom: 1px solid var(--borderGlassHover);
-        max-width: 600px;
-        max-height: 85vh;
-        animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.5), 0 0 30px var(--colorPrimaryGlow);
+        max-height: 88vh;
+        animation: modalScaleIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
         padding-bottom: 0;
     }
 
-    .modal::before {
+    .dragHandle {
         display: none;
     }
 
-    .formGrid {
-        grid-template-columns: 1fr 1fr;
+    .header {
+        padding: 1.15rem 1.75rem 0.9rem;
     }
 
-    .metricsGrid {
-        grid-template-columns: 1fr 1fr;
+    .title {
+        font-size: 1.25rem;
     }
 
-    .metricItemHighlight {
-        grid-column: 1 / -1;
+    .subtitle {
+        font-size: 0.85rem;
+    }
+
+    .body {
+        padding: 1.35rem 1.75rem;
+        gap: 1.2rem;
+    }
+
+    /* 2-Column Inputs Grid with Ample Room */
+    .inputsGrid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.15rem;
+    }
+
+    .inputCard {
+        padding: 1.1rem 1.25rem;
+        gap: 0.65rem;
+    }
+
+    .dosageInputRow {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .dosageInputRow .inputWrapper {
+        flex: 1 1 52%;
+    }
+
+    .modeSelect {
+        flex: 0 0 48%;
+        min-width: 145px;
+        font-size: 0.85rem;
+        padding-right: 2rem;
+        white-space: nowrap;
+    }
+
+    .select {
+        font-size: 0.92rem;
+        padding-right: 2.2rem;
+    }
+
+    /* 3-Column Results Card with Breathing Room */
+    .resultsCard {
+        padding: 1.25rem 1.5rem;
+        gap: 1rem;
+    }
+
+    .resultsTitle {
+        font-size: 1.05rem;
+    }
+
+    .frequencyTag {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.75rem;
+    }
+
+    .resultsGrid {
+        grid-template-columns: 1.25fr 1fr 1.05fr;
+        gap: 0.85rem;
+    }
+
+    .resultBox {
+        padding: 1rem 1.15rem;
+    }
+
+    .resultNumberBig {
+        font-size: 2.3rem;
+    }
+
+    .resultNumberMedium {
+        font-size: 1.75rem;
+    }
+
+    .resultSubValue {
+        font-size: 0.82rem;
+    }
+
+    .footer {
+        padding: 0.9rem 1.75rem;
+        gap: 1rem;
+    }
+
+    .resetButton {
+        padding: 0.6rem 1.4rem;
+        font-size: 0.9rem;
+    }
+
+    .closeActionButton {
+        padding: 0.6rem 1.75rem;
+        font-size: 0.92rem;
+    }
+}
+
+/* ==========================================================================
+   Large Desktop Screens (min-width: 1024px)
+   ========================================================================== */
+@media (min-width: 1024px) {
+    .modal {
+        max-width: 860px;
+    }
+
+    .inputsGrid {
+        gap: 1.35rem;
+    }
+
+    .inputCard {
+        padding: 1.2rem 1.35rem;
+    }
+
+    .dosageInputRow .inputWrapper {
+        flex: 1 1 54%;
+    }
+
+    .modeSelect {
+        flex: 0 0 46%;
+        min-width: 155px;
+        font-size: 0.88rem;
+    }
+
+    .select {
+        font-size: 0.94rem;
+    }
+
+    .resultsGrid {
+        grid-template-columns: 1.2fr 1fr 1.05fr;
+        gap: 1rem;
+    }
+
+    .resultBox {
+        padding: 1.15rem 1.25rem;
+    }
+
+    .resultNumberBig {
+        font-size: 2.5rem;
+    }
+
+    .resultNumberMedium {
+        font-size: 1.85rem;
     }
 }
