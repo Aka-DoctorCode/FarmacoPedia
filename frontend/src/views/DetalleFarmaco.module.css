@@ -135,39 +135,53 @@
 .atcBadges {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.35rem;
+    gap: 0.5rem;
     align-items: center;
 }
 
-.atcBadge {
+.atcBadgeGroup {
     display: inline-flex;
     align-items: center;
-    background: rgba(14, 165, 233, 0.12);
-    color: var(--colorPrimary);
-    border: 1px solid rgba(14, 165, 233, 0.35);
-    padding: 0.2rem 0.6rem;
-    border-radius: var(--radiusPill);
-    font-size: 0.75rem;
-    font-weight: 700;
-    font-family: var(--fontMono);
-    letter-spacing: 0.02em;
-}
-
-.categoryBadges {
-    display: flex;
+    gap: 0.4rem;
     flex-wrap: wrap;
-    gap: 0.35rem;
 }
 
-.categoryBadge {
-    background: var(--colorInfoBg);
-    color: var(--colorInfo);
-    border: 1px solid rgba(129, 140, 248, 0.25);
+.atcCodeBadge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(14, 165, 233, 0.14);
+    color: var(--colorPrimary);
+    border: 1px solid rgba(14, 165, 233, 0.4);
     padding: 0.25rem 0.65rem;
     border-radius: var(--radiusPill);
-    font-size: 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 800;
+    font-family: var(--fontMono);
+    letter-spacing: 0.03em;
+}
+
+.atcSubcategoryBadge {
+    display: inline-flex;
+    align-items: center;
+    background: var(--colorInfoBg);
+    color: var(--colorInfo);
+    border: 1px solid rgba(129, 140, 248, 0.35);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radiusPill);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.atcCategoryBadge {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bgGlass);
+    color: var(--textSecondary);
+    border: 1px solid var(--borderGlass);
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radiusPill);
+    font-size: 0.775rem;
     font-weight: 600;
-    text-transform: none;
 }
 
 .mechanismSnippet {

@@ -102,11 +102,14 @@ const drugSchema = new mongoose.Schema({
     },
     categories: { 
         type: [String], 
-        required: true, 
         index: true,
         match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ0-9\s\-()]+$/i
     },
-    atc: [atcEntrySchema],
+    atc: {
+        type: [atcEntrySchema],
+        required: true,
+        validate: [v => Array.isArray(v) && v.length > 0, "Al menos una clasificación ATC es requerida."]
+    },
     actionMechanism: {
         type: String,
         match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ0-9\,.;:()%+*/<>≤≥÷\s-]+$/i
@@ -229,11 +232,11 @@ app.get("/drugs", asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, count: drugList.length, data: drugList });
 }));
 
-// GET: All categories (Returns ATC Level 1 -> Level 2 hierarchical tree, or ?flat=true for legacy list)
+// GET: All categories (Returns ATC Level 1 -> Level 2 hierarchical tree, or ?flat=true for list of ATC subcategories)
 app.get("/drugs/families", asyncHandler(async (req, res) => {
     if (req.query.flat === 'true') {
-        const families = await Drug.distinct("categories");
-        return res.status(200).json({ success: true, data: families.sort() });
+        const subcategories = await Drug.distinct("atc.subcategoryName");
+        return res.status(200).json({ success: true, data: subcategories.filter(Boolean).sort() });
     }
 
     const pipeline = [
@@ -308,13 +311,20 @@ app.get("/drugs/atc/subcategories/:code", asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, count: drugs.length, data: drugs });
 }));
 
-// GET: Filter by category (legacy)
+// GET: Filter by category / subcategory
 app.get("/drugs/categories/:category", asyncHandler(async (req, res) => {
     const rawCategory = (req.params.category || "").trim();
     const escaped = rawCategory.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`^${escaped}$`, 'i');
     const drugs = await Drug.find({ 
-        categories: { $regex: new RegExp(`^${escaped}$`, 'i') } 
-    }, "name").sort({ name: 1 });
+        $or: [
+            { "atc.subcategoryName": regex },
+            { "atc.categoryName": regex },
+            { "atc.subcategoryCode": regex },
+            { "atc.categoryCode": regex },
+            { categories: regex }
+        ]
+    }, "name atc").sort({ name: 1 });
     if (drugs.length === 0) {
         return res.status(404).json({ success: false, error: "No drugs found for this category" });
     }

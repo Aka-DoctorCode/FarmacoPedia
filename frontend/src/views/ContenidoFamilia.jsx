@@ -2,7 +2,6 @@ import { useContext, useEffect, useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { counterContext } from '../context/counterContext.js';
 import { drugService } from '../services/drugService.js';
-import { formatCategory } from '../utils/formatCategory.js';
 import styles from './ContenidoFamilia.module.css';
 
 const ContenidoFamilia = () => {
@@ -109,7 +108,7 @@ const ContenidoFamilia = () => {
         if (!isTreeStructure) {
             return familiesData.filter((item) => {
                 if (typeof item !== 'string') return false;
-                return item.toLowerCase().includes(q) || formatCategory(item).toLowerCase().includes(q);
+                return item.toLowerCase().includes(q);
             });
         }
 
@@ -354,7 +353,7 @@ const ContenidoFamilia = () => {
                                     navigateToDrugs();
                                 }}
                             >
-                                <span className={styles.familyName}>{formatCategory(family)}</span>
+                                <span className={styles.familyName}>{family}</span>
                                 <span className={styles.drugButtonArrow}>→</span>
                             </button>
                         </div>

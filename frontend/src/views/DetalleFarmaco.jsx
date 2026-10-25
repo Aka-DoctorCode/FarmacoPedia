@@ -1,7 +1,6 @@
 import { useContext, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { counterContext } from '../context/counterContext.js';
-import { formatCategory } from '../utils/formatCategory.js';
 import { PediatricCalculatorModal } from '../components/PediatricCalculatorModal.jsx';
 import styles from './DetalleFarmaco.module.css';
 
@@ -104,27 +103,23 @@ const DetalleFarmaco = () => {
                         {drug.atc && drug.atc.length > 0 && (
                             <div className={styles.atcBadges}>
                                 {drug.atc.map((item, idx) => (
-                                    <span
-                                        key={idx}
-                                        className={styles.atcBadge}
-                                        title={`${item.categoryName || ''} → ${item.subcategoryName || ''}`}
-                                    >
-                                        ATC {item.code}
-                                        {item.subcategoryName ? ` • ${item.subcategoryName}` : ''}
-                                    </span>
+                                    <div key={idx} className={styles.atcBadgeGroup}>
+                                        <span className={styles.atcCodeBadge}>ATC {item.code}</span>
+                                        {item.subcategoryName && (
+                                            <span className={styles.atcSubcategoryBadge}>
+                                                {item.subcategoryName}
+                                            </span>
+                                        )}
+                                        {item.categoryName && (
+                                            <span className={styles.atcCategoryBadge}>
+                                                {item.categoryName}
+                                            </span>
+                                        )}
+                                    </div>
                                 ))}
                             </div>
                         )}
                     </div>
-                    {drug.categories && drug.categories.length > 0 && (
-                        <div className={styles.categoryBadges}>
-                            {drug.categories.map((category, idx) => (
-                                <span key={idx} className={styles.categoryBadge}>
-                                    {formatCategory(category)}
-                                </span>
-                            ))}
-                        </div>
-                    )}
                 </div>
                 {drug.actionMechanism && (
                     <p className={styles.mechanismSnippet}>{drug.actionMechanism}</p>

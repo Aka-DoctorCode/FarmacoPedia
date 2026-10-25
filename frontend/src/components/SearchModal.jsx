@@ -1,7 +1,6 @@
 import { useContext, useState, useEffect, useRef } from 'react';
 import { counterContext } from '../context/counterContext.js';
 import { drugService } from '../services/drugService.js';
-import { formatCategory } from '../utils/formatCategory.js';
 import styles from './SearchModal.module.css';
 
 const SearchModal = () => {
@@ -83,14 +82,13 @@ const SearchModal = () => {
         if (allDrugs && allDrugs.length > 0) {
             const filtered = allDrugs.filter((drug) => {
                 const nameMatch = drug.name?.toLowerCase().includes(trimmed);
-                const categoryMatch = drug.categories?.some((c) => c.toLowerCase().includes(trimmed));
                 const atcMatch = (drug.atc || []).some((a) =>
                     a.code?.toLowerCase().includes(trimmed) ||
                     a.subcategoryCode?.toLowerCase().includes(trimmed) ||
                     a.subcategoryName?.toLowerCase().includes(trimmed) ||
                     a.categoryName?.toLowerCase().includes(trimmed)
                 );
-                return nameMatch || categoryMatch || atcMatch;
+                return nameMatch || atcMatch;
             });
             setResults(filtered);
             return;
@@ -160,11 +158,11 @@ const SearchModal = () => {
                                             </span>
                                         )}
                                     </div>
-                                    {drug.categories && drug.categories.length > 0 && (
+                                    {drug.atc && drug.atc.length > 0 && (
                                         <div className={styles.resultCategories}>
-                                            {drug.categories.slice(0, 2).map((category, idx) => (
+                                            {drug.atc.map((item, idx) => (
                                                 <span key={idx} className={styles.resultBadge}>
-                                                    {formatCategory(category)}
+                                                    {item.subcategoryName || item.categoryName}
                                                 </span>
                                             ))}
                                         </div>

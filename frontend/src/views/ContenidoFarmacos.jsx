@@ -2,7 +2,6 @@ import { useContext, useEffect, useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { counterContext } from '../context/counterContext.js';
 import { drugService } from '../services/drugService.js';
-import { formatCategory } from '../utils/formatCategory.js';
 import styles from './ContenidoFarmacos.module.css';
 
 const ContenidoFarmacos = () => {
@@ -57,7 +56,7 @@ const ContenidoFarmacos = () => {
             }
             return {
                 id: cat,
-                label: formatCategory(cat),
+                label: cat,
                 filterKey: cat
             };
         });
@@ -67,12 +66,12 @@ const ContenidoFarmacos = () => {
         return drugs.filter((drug) => {
             const matchesCategory =
                 selectedCategory === 'all' ||
-                drug.categories?.some((cat) => cat.toLowerCase() === selectedCategory.toLowerCase()) ||
                 drug.atc?.some((a) => 
                     a.categoryCode?.toLowerCase() === selectedCategory.toLowerCase() ||
                     a.categoryName?.toLowerCase() === selectedCategory.toLowerCase() ||
                     a.subcategoryCode?.toLowerCase() === selectedCategory.toLowerCase() ||
-                    a.subcategoryName?.toLowerCase() === selectedCategory.toLowerCase()
+                    a.subcategoryName?.toLowerCase() === selectedCategory.toLowerCase() ||
+                    a.code?.toLowerCase() === selectedCategory.toLowerCase()
                 );
 
             const query = filterQuery.trim().toLowerCase();
@@ -80,12 +79,11 @@ const ContenidoFarmacos = () => {
                 !query ||
                 drug.name?.toLowerCase().includes(query) ||
                 drug.actionMechanism?.toLowerCase().includes(query) ||
-                drug.categories?.some((c) => c.toLowerCase().includes(query)) ||
                 drug.atc?.some((a) =>
                     a.code?.toLowerCase().includes(query) ||
                     a.subcategoryCode?.toLowerCase().includes(query) ||
                     a.subcategoryName?.toLowerCase().includes(query) ||
-                    a.categoryName?.toLowerCase().includes(query)
+                    a.categoryName?.toLowerCase() === query
                 );
 
             return matchesCategory && matchesQuery;
@@ -181,11 +179,11 @@ const ContenidoFarmacos = () => {
                                         </span>
                                     )}
                                 </div>
-                                {drug.categories && drug.categories.length > 0 && (
+                                {drug.atc && drug.atc.length > 0 && (
                                     <div className={styles.cardCategories}>
-                                        {drug.categories.map((c, idx) => (
+                                        {drug.atc.map((item, idx) => (
                                             <span key={idx} className={styles.categoryTag}>
-                                                {formatCategory(c)}
+                                                {item.subcategoryName || item.categoryName}
                                             </span>
                                         ))}
                                     </div>

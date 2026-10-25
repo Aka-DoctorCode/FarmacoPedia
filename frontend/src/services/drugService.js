@@ -105,12 +105,16 @@ class DrugService {
             throw new Error('Invalid backend response');
         } catch (error) {
             const matchedDrugs = this.fallbackDrugs
-                .filter((drug) => drug.categories.some((cat) => cat.toLowerCase() === categoryName.toLowerCase()))
+                .filter((drug) => (drug.atc || []).some((a) => 
+                    a.subcategoryName?.toLowerCase() === categoryName.toLowerCase() ||
+                    a.categoryName?.toLowerCase() === categoryName.toLowerCase() ||
+                    a.subcategoryCode?.toLowerCase() === categoryName.toLowerCase() ||
+                    a.categoryCode?.toLowerCase() === categoryName.toLowerCase()
+                ))
                 .map((drug) => ({
                     id: drug.name,
                     _id: drug.name,
                     name: drug.name,
-                    categories: drug.categories,
                     atc: drug.atc,
                     actionMechanism: drug.actionMechanism
                 }));
@@ -161,7 +165,6 @@ class DrugService {
 
         return this.fallbackDrugs.filter((drug) => {
             const nameMatch = drug.name.toLowerCase().includes(normalized);
-            const categoryMatch = drug.categories.some((cat) => cat.toLowerCase().includes(normalized));
             const atcMatch = (drug.atc || []).some((a) => 
                 a.code?.toLowerCase().includes(normalized) ||
                 a.subcategoryCode?.toLowerCase().includes(normalized) ||
@@ -170,7 +173,7 @@ class DrugService {
             );
             const mechanismMatch = drug.actionMechanism ? drug.actionMechanism.toLowerCase().includes(normalized) : false;
             const indicationMatch = drug.indications ? drug.indications.some((ind) => ind.toLowerCase().includes(normalized)) : false;
-            return nameMatch || categoryMatch || atcMatch || mechanismMatch || indicationMatch;
+            return nameMatch || atcMatch || mechanismMatch || indicationMatch;
         });
     }
 
