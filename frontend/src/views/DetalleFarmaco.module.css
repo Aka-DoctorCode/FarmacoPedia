@@ -153,6 +153,8 @@
     scroll-snap-type: x proximity;
     width: 100%;
     min-width: 0;
+    mask-image: linear-gradient(to right, black 88%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black 88%, transparent 100%);
 }
 
 .tabsNav::-webkit-scrollbar {
@@ -561,6 +563,8 @@
     .tabsNav {
         padding: 0.35rem;
         margin-bottom: 1.5rem;
+        mask-image: none;
+        -webkit-mask-image: none;
     }
 
     .tabButton {

@@ -102,6 +102,8 @@
     scroll-snap-type: x proximity;
     width: 100%;
     min-width: 0;
+    mask-image: linear-gradient(to right, black 88%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black 88%, transparent 100%);
 }
 
 .categoryChips::-webkit-scrollbar {
@@ -292,6 +294,11 @@
 
     .searchInputWrapper {
         max-width: 500px;
+    }
+
+    .categoryChips {
+        mask-image: none;
+        -webkit-mask-image: none;
     }
 
     .grid {
