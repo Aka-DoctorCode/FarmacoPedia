@@ -1,7 +1,8 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { counterContext } from '../context/counterContext.js';
 import { PediatricCalculatorModal } from '../components/PediatricCalculatorModal.jsx';
+import { getDrugAtcCode, parseAtcPath } from '../utils/atcTree.js';
 import styles from './DetalleFarmaco.module.css';
 
 const DetalleFarmaco = () => {
@@ -56,6 +57,24 @@ const DetalleFarmaco = () => {
         ? Object.entries(drug.dosageGuidance.pediatric)
         : [];
 
+    const effectiveAtc = useMemo(() => {
+        if (drug.atc && Array.isArray(drug.atc) && drug.atc.length > 0 && drug.atc[0].code) {
+            return drug.atc;
+        }
+        const code = getDrugAtcCode(drug);
+        if (code) {
+            const parsed = parseAtcPath(code);
+            return [{
+                code,
+                categoryCode: parsed.l1.code,
+                categoryName: parsed.l1.name,
+                subcategoryCode: parsed.l2 ? parsed.l2.code : code.substring(0, 3),
+                subcategoryName: parsed.l2 ? parsed.l2.name : 'Subgrupo Terapéutico'
+            }];
+        }
+        return [];
+    }, [drug]);
+
     return (
         <section className={styles.container}>
             <Helmet>
@@ -100,9 +119,9 @@ const DetalleFarmaco = () => {
                 <div className={styles.drugTitleRow}>
                     <div className={styles.nameAndAtcGroup}>
                         <h1 className={styles.drugName}>{drug.name}</h1>
-                        {drug.atc && drug.atc.length > 0 && (
+                        {effectiveAtc && effectiveAtc.length > 0 && (
                             <div className={styles.atcBadges}>
-                                {drug.atc.map((item, idx) => (
+                                {effectiveAtc.map((item, idx) => (
                                     <div key={idx} className={styles.atcBadgeGroup}>
                                         <span className={styles.atcCodeBadge}>ATC {item.code}</span>
                                         {item.subcategoryName && (

@@ -22,16 +22,20 @@ El sistema admite dos modalidades de ejecución:
 - **MODO A: MANUAL POR FÁRMACOS ESPECÍFICOS**
   Se activa cuando el operador proporciona una lista explícita de principios activos (por ejemplo: `["azitromicina", "losartan"]`). El flujo procesará únicamente los fármacos indicados.
   
-- **MODO B: AUTOMÁTICO DIARIO (10 NUEVOS + 3 AUDITORÍAS/ACTUALIZACIONES)**
-  Se activa en ejecuciones programadas (cron diario a las 12:00 PM vía `/schedule`). Procesa un total de **13 fármacos diarios** divididos en dos tareas:
+- **MODO B: AUTOMÁTICO PERIÓDICO (10 NUEVOS + 5 AUDITORÍAS/ACTUALIZACIONES)**
+  Se activa en ejecuciones programadas (cron cada 6 horas vía `/schedule`). Procesa un total de **15 fármacos por ciclo** divididos en dos tareas con reasignación dinámica:
   
-  **TAREA 1: 10 Fármacos Faltantes o Pendientes (Ingestión de Nuevas Fichas):**
+  **TAREA 1: Hasta 10 Fármacos Faltantes o Pendientes (Ingestión de Nuevas Fichas):**
   1. **Prioridad 1 (Búsquedas fallidas de usuarios):** Consulta `GET http://localhost:5174/pending-drugs?limit=10`. Si existen medicamentos solicitados por usuarios no encontrados en búsquedas previas, se seleccionan con máxima prioridad según su volumen de búsqueda (`searchCount`).
-  2. **Prioridad 2 (Catálogo esencial faltante):** Si faltan candidatos para completar los 10 del día, consulta la base de datos (`GET http://localhost:5174/drugs`) y selecciona principios activos faltantes de alto impacto terapéutico de la lista de medicamentos esenciales de la OMS (analgésicos, betalactámicos, macrólidos, IECAs, ARA-II, estatinas, antidiabéticos, broncodilatadores, antidepresivos, etc.).
+  2. **Prioridad 2 (Catálogo esencial faltante):** Si faltan candidatos para completar los 10 del ciclo, consulta la base de datos (`GET http://localhost:5174/drugs`) y selecciona principios activos faltantes de alto impacto terapéutico de la lista de medicamentos esenciales de la OMS y catálogo CIMA (analgésicos, betalactámicos, macrólidos, IECAs, ARA-II, estatinas, antidiabéticos, broncodilatadores, antidepresivos, etc.).
   
-  **TAREA 2: 3 Fármacos Existentes (Auditoría Continua y Actualización):**
-  - Consulta `GET http://localhost:5174/drugs` y toma los 3 fármacos con fecha de actualización más antigua (`updatedAt` ascendente) o con menor número de referencias actualizadas.
-  - Re-audita su información clínica, vigencia regulatoria en CIMA y actualiza sus fuentes bibliográficas para asegurar que cuenten con al menos 3 referencias con menos de 5 años de antigüedad (< 5 años).
+  **TAREA 2: Mínimo 5 Fármacos Existentes (Auditoría Profunda y Actualización Continua):**
+  - Consulta `GET http://localhost:5174/drugs` y toma los 5 fármacos con fecha de actualización más antigua (`updatedAt` ascendente) o con menor número de referencias actualizadas.
+  - **Profundización en la Investigación Clínica:** En cada auditoría, no conformarse con datos someros; se debe profundizar activamente en la literatura médica y guías clínicas para completar o enriquecer: mecanismo de acción biofisiológico exacto, posología diferenciada por kg/día, ajustes cuantitativos en ClCr y Child-Pugh, y protocolos de sobredosis y antídotos.
+  - **Enriquecimiento Bibliográfico:** Agregar y renovar referencias bibliográficas para garantizar que cada ficha cuente con mínimo 3 a 5 fuentes en formato APA 7.ª edición con menos de 5 años de antigüedad (< 5 años).
+
+  **REGLA DE REASIGNACIÓN DINÁMICA DE CUPOS:**
+  Una vez que se hayan registrado todos los fármacos de interés de CIMA o si la cola de nuevos fármacos pendientes está vacía / no hay nuevos candidatos, **la totalidad de los cupos no utilizados del ciclo se ceden automáticamente a la Tarea 2 de auditoría**, permitiendo auditar y enriquecer hasta 15 fármacos por ciclo.
 
 ---
 
@@ -232,8 +236,8 @@ El sistema admite dos modalidades de ejecución:
      * Si responde 404: ejecuta `POST http://localhost:5174/drugs`.
      * Si responde 200: ejecuta `PATCH http://localhost:5174/drugs/{name}`.
      * Si provenía de `/pending-drugs`, ejecuta `PATCH http://localhost:5174/pending-drugs/{name}/complete`.
-   - **Para los 3 fármacos auditados:**
-     * Ejecuta `PATCH http://localhost:5174/drugs/{name}` actualizando los datos clínicos y las referencias vigentes.
+   - **Para los fármacos auditados (mínimo 5, o hasta 15 si se cedieron cupos):**
+     * Ejecuta `PATCH http://localhost:5174/drugs/{name}` profundizando los datos clínicos y ampliando las referencias vigentes (< 5 años).
 
 3. **Manejo de Errores y Auto-Corrección:**
    - Si el backend responde `400 ValidationError`:
@@ -244,19 +248,20 @@ El sistema admite dos modalidades de ejecución:
 4. **Reporte Consolidado de Ejecución:**
    Emite un reporte con el siguiente formato:
    ```markdown
-   ### 📋 REPORTE DE EJECUCIÓN DIARIA - INGESTIÓN Y AUDITORÍA FARMACOPEDIA
+   ### 📋 REPORTE DE EJECUCIÓN - INGESTIÓN Y AUDITORÍA FARMACOPEDIA
    - **Fecha y Hora:** [Timestamp]
-   - **Nuevos Fármacos Ingeridos (Objetivo 10):** X/10
-   - **Fármacos Existentes Auditados y Actualizados (Objetivo 3):** Y/3
+   - **Nuevos Fármacos Ingeridos (Objetivo hasta 10):** X/10
+   - **Fármacos Existentes Auditados y Actualizados (Objetivo mínimo 5, o reasignados):** Y/(5 + cupos cedidos)
    
    #### 1. Fármacos Nuevos Publicados:
    - [Nombre] (`name`) | [Categorías] | [N.º Referencias APA < 5 años]
    
-   #### 2. Fármacos Auditados y Actualizados:
-   - [Nombre] (`name`) | [Cambios aplicados y referencias añadidas]
+   #### 2. Fármacos Auditados y Actualizados Profundamente:
+   - [Nombre] (`name`) | [Cambios aplicados, profundización clínica y referencias añadidas]
    
-   #### 3. Estado de la Cola de Pendientes:
+   #### 3. Estado de la Cola de Pendientes y Cupos:
    - Solicitudes de usuarios atendidas y marcadas como completadas: [Lista]
    - Pendientes restantes en cola: [N.º restante]
+   - Cupos cedidos a auditoría profunda: [N.º cupos transferidos si no hubo 10 nuevos]
    ```
 ```
