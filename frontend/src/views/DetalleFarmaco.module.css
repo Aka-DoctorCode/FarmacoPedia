@@ -381,6 +381,33 @@
     animation: spinLoader 0.8s linear infinite;
 }
 
+.referencesCard {
+    margin-top: 2rem;
+    background: var(--bgCard);
+    backdrop-filter: var(--backdropBlur);
+    -webkit-backdrop-filter: var(--backdropBlur);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusLg);
+    padding: 1.5rem;
+    box-shadow: var(--shadowCard);
+}
+
+.referenceItem {
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--textSecondary);
+    list-style-type: disc;
+}
+
+.referenceItem:last-child {
+    margin-bottom: 0;
+}
+
+.referenceText {
+    word-break: break-word;
+}
+
 @media (max-width: 768px) {
     .headerCard {
         padding: 1.25rem;

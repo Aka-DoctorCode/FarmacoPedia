@@ -14,7 +14,18 @@ const SearchModal = () => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
     const [allDrugs, setAllDrugs] = useState([]);
+    const [reportedQuery, setReportedQuery] = useState('');
+    const [isReporting, setIsReporting] = useState(false);
     const inputRef = useRef(null);
+
+    const handleRequestPriority = async () => {
+        const cleanQuery = query.trim().toLowerCase();
+        if (!cleanQuery) return;
+        setIsReporting(true);
+        await drugService.reportMissingDrug(cleanQuery);
+        setReportedQuery(cleanQuery);
+        setIsReporting(false);
+    };
 
     useEffect(() => {
         const loadCatalog = async () => {
@@ -32,6 +43,7 @@ const SearchModal = () => {
         } else {
             setQuery('');
             setResults([]);
+            setReportedQuery('');
         }
     }, [searchModalOpen]);
 
@@ -142,7 +154,26 @@ const SearchModal = () => {
                         ))
                     ) : (
                         <div className={styles.emptyState}>
-                            {t.emptyDrugsMessage}
+                            <p>{t.emptyDrugsMessage}</p>
+                            {query.trim().length >= 2 && (
+                                <div className={styles.priorityRequestBox}>
+                                    <p className={styles.priorityRequestSubtitle}>{t.requestPrioritySubtitle}</p>
+                                    {reportedQuery === query.trim().toLowerCase() ? (
+                                        <span className={styles.prioritySuccessBadge}>
+                                            ✓ {t.requestPrioritySuccess}
+                                        </span>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            className={styles.priorityRequestButton}
+                                            onClick={handleRequestPriority}
+                                            disabled={isReporting}
+                                        >
+                                            {isReporting ? '...' : t.requestPriorityButton}
+                                        </button>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

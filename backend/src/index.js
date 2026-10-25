@@ -116,13 +116,47 @@ const drugSchema = new mongoose.Schema({
     overdose: {
         type: String,
         match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ0-9\,.;:()%+*/<>≤≥÷\s-]+$/i
-    }
+    },
+    references: [{
+        type: String,
+        trim: true,
+        match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ0-9\s.,;:()—–\-_/&?="'#%ªº]+$/i
+    }]
 }, { timestamps: true, lean: true });
 
 // Compound index for optimized search
 drugSchema.index({ name: 1, categories: 1 });
 
 const Drug = mongoose.model("Drug", drugSchema);
+
+const pendingDrugSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        unique: true,
+        required: true,
+        trim: true,
+        lowercase: true,
+        index: true
+    },
+    searchCount: {
+        type: Number,
+        default: 1
+    },
+    status: {
+        type: String,
+        enum: ["pending", "in_progress", "completed"],
+        default: "pending",
+        index: true
+    },
+    lastSearchedAt: {
+        type: Date,
+        default: Date.now
+    }
+}, { timestamps: true, lean: true });
+
+pendingDrugSchema.index({ status: 1, searchCount: -1 });
+
+const PendingDrug = mongoose.model("PendingDrug", pendingDrugSchema);
 
 // --------------------------------------------------------------
 // Helpers
@@ -192,6 +226,50 @@ app.delete("/drugs/:name", asyncHandler(async (req, res) => {
         return res.status(404).json({ success: false, error: "Drug not found" });
     }
     res.status(200).json({ success: true, message: `Drug ${deletedDrug.name} deleted` });
+}));
+
+// --------------------------------------------------------------
+// Pending Drugs (Queue & Priorities) Routes
+// --------------------------------------------------------------
+
+// POST: Record a missing drug search or request
+app.post("/pending-drugs", asyncHandler(async (req, res) => {
+    const { name } = req.body;
+    if (!name || typeof name !== "string") {
+        return res.status(400).json({ success: false, error: "Name is required" });
+    }
+    const normalizedName = name.trim().toLowerCase();
+    const pending = await PendingDrug.findOneAndUpdate(
+        { name: normalizedName },
+        {
+            $inc: { searchCount: 1 },
+            $set: { lastSearchedAt: new Date(), status: "pending" }
+        },
+        { new: true, upsert: true }
+    );
+    res.status(200).json({ success: true, data: pending });
+}));
+
+// GET: Get prioritized pending drugs
+app.get("/pending-drugs", asyncHandler(async (req, res) => {
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const pendingList = await PendingDrug.find({ status: "pending" })
+        .sort({ searchCount: -1, lastSearchedAt: -1 })
+        .limit(limit);
+    res.status(200).json({ success: true, count: pendingList.length, data: pendingList });
+}));
+
+// PATCH: Mark pending drug as completed
+app.patch("/pending-drugs/:name/complete", asyncHandler(async (req, res) => {
+    const updated = await PendingDrug.findOneAndUpdate(
+        { name: req.params.name.toLowerCase() },
+        { status: "completed" },
+        { new: true }
+    );
+    if (!updated) {
+        return res.status(404).json({ success: false, error: "Pending drug record not found" });
+    }
+    res.status(200).json({ success: true, data: updated });
 }));
 
 // --------------------------------------------------------------

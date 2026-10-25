@@ -51,7 +51,7 @@ const Footer = () => {
                 </div>
 
                 <div className={styles.copyrightRow}>
-                    <span>© {new Date().getFullYear()} FarmacoPedia.</span>
+                    <span>© {new Date().getFullYear()} {t.appName}.</span>
                     <span className={styles.authorHighlight}>Dr. Francisco Molina (Aka-DoctorCode).</span>
                     <span>{t.footerAllRights}</span>
                 </div>

@@ -40,7 +40,7 @@ const FarmacosEnFamilia = () => {
         listaFamilia && (
             <section id={Styles.contenedor}>
                 <Helmet>
-                    <title>Fármacos en: {familiaSeleccionada} | FarmacoPedia</title>
+                    <title>Fármacos en: {familiaSeleccionada} | ClickSalud FarmacoPedia</title>
                     <meta name="description" content={`Fármacos en la categoría ${familiaSeleccionada}`} />
                 </Helmet>
                 <span id={Styles.tituloVista}>Fármacos en: {familiaSeleccionada}</span>

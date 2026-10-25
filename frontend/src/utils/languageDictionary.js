@@ -1,6 +1,6 @@
 export const translations = {
     es: {
-        appName: 'FarmacoPedia',
+        appName: 'ClickSalud FarmacoPedia',
         appTagline: 'Enciclopedia Farmacológica y Vademécum Clínico',
         navDrugs: 'Fármacos',
         navFamilies: 'Familias',
@@ -54,6 +54,11 @@ export const translations = {
         sectionInteractions: 'Interacciones Medicamentosas Relevantes',
         sectionAdverseReactions: 'Reacciones Adversas',
         sectionOverdose: 'Manejo de Sobredosis y Toxicidad',
+        sectionReferences: 'Referencias Bibliográficas (APA)',
+        requestPriorityTitle: 'Fármaco no encontrado',
+        requestPrioritySubtitle: '¿Deseas solicitar que se investigue e incorpore con alta prioridad?',
+        requestPriorityButton: 'Solicitar inclusión prioritaria',
+        requestPrioritySuccess: '¡Solicitud registrada! Se priorizará en la próxima investigación.',
         
         // Tags & Labels
         level: 'Nivel',
@@ -72,19 +77,19 @@ export const translations = {
         disclaimerEmergency: 'ADVERTENCIA DE EMERGENCIA',
         disclaimerEmergencyText: 'Esta aplicación NO es un sistema de respuesta ante emergencias. En situaciones críticas, comuníquese de inmediato con los servicios médicos de urgencia.',
         disclaimerProfessionalTitle: '1. Uso Exclusivo Informativo:',
-        disclaimerProfessionalText: 'FarmacoPedia es una herramienta formativa e informativa para profesionales de la salud. Su uso no sustituye el juicio clínico ni la relación médico-paciente.',
+        disclaimerProfessionalText: 'ClickSalud FarmacoPedia es una herramienta formativa e informativa para profesionales de la salud. Su uso no sustituye el juicio clínico ni la relación médico-paciente.',
         disclaimerEvolutionTitle: '2. Verificación Farmacológica:',
         disclaimerEvolutionText: 'El prescriptor debe cotejar dosis, posología y contraindicaciones con las fichas técnicas oficiales del fabricante y guías actualizadas antes de administrar cualquier fármaco.',
         disclaimerConfirmCheckbox: 'Confirmo que soy profesional de la salud y asumo la responsabilidad del uso de esta información.',
         disclaimerAcceptButton: 'Aceptar y Continuar',
         
         // Footer
-        footerNotice: 'FarmacoPedia — Base de datos farmacológica de acceso libre para fines educativos.',
+        footerNotice: 'ClickSalud FarmacoPedia — Base de datos farmacológica de acceso libre para fines educativos.',
         footerAllRights: 'Todos los derechos reservados.',
         backendOfflineNotice: 'Modo Offline: Mostrando vademécum de demostración local.'
     },
     en: {
-        appName: 'FarmacoPedia',
+        appName: 'ClickSalud FarmacoPedia',
         appTagline: 'Pharmacology Encyclopedia and Clinical Vademecum',
         navDrugs: 'Drugs',
         navFamilies: 'Families',
@@ -138,6 +143,11 @@ export const translations = {
         sectionInteractions: 'Drug Interactions',
         sectionAdverseReactions: 'Adverse Reactions',
         sectionOverdose: 'Overdose & Toxicity Management',
+        sectionReferences: 'Bibliographic References (APA)',
+        requestPriorityTitle: 'Drug Not Found',
+        requestPrioritySubtitle: 'Would you like to request high-priority investigation and inclusion?',
+        requestPriorityButton: 'Request priority inclusion',
+        requestPrioritySuccess: 'Request registered! It will be prioritized in the next investigation.',
         
         // Tags & Labels
         level: 'Level',
@@ -156,14 +166,14 @@ export const translations = {
         disclaimerEmergency: 'EMERGENCY NOTICE',
         disclaimerEmergencyText: 'This application is NOT an emergency response system. In critical situations, contact local emergency medical services immediately.',
         disclaimerProfessionalTitle: '1. Informational Purpose Only:',
-        disclaimerProfessionalText: 'FarmacoPedia is an educational and reference tool for healthcare professionals. It does not replace clinical judgment or the doctor-patient relationship.',
+        disclaimerProfessionalText: 'ClickSalud FarmacoPedia is an educational and reference tool for healthcare professionals. It does not replace clinical judgment or the doctor-patient relationship.',
         disclaimerEvolutionTitle: '2. Pharmacological Verification:',
         disclaimerEvolutionText: 'Prescribers must verify dosages, posology, and contraindications against official manufacturer datasheets before administering any drug.',
         disclaimerConfirmCheckbox: 'I confirm that I am a healthcare professional and assume responsibility for using this information.',
         disclaimerAcceptButton: 'Accept and Continue',
         
         // Footer
-        footerNotice: 'FarmacoPedia — Open access clinical pharmacological knowledge base for educational use.',
+        footerNotice: 'ClickSalud FarmacoPedia — Open access clinical pharmacological knowledge base for educational use.',
         footerAllRights: 'All rights reserved.',
         backendOfflineNotice: 'Offline Mode: Showing local clinical demonstration database.'
     }

@@ -80,6 +80,25 @@ class DrugService {
         }
     }
 
+    async reportMissingDrug(drugName) {
+        try {
+            const response = await axios.post(`${this.apiBaseUrl}/pending-drugs`, { name: drugName }, { timeout: 3000 });
+            return response.data;
+        } catch (error) {
+            console.warn('Could not report missing drug to backend:', error.message);
+            return { success: false };
+        }
+    }
+
+    async getPendingDrugs(limit = 10) {
+        try {
+            const response = await axios.get(`${this.apiBaseUrl}/pending-drugs?limit=${limit}`, { timeout: 3000 });
+            return response.data;
+        } catch (error) {
+            return { success: false, data: [] };
+        }
+    }
+
     searchFallback(queryText) {
         const normalized = queryText.toLowerCase().trim();
         if (!normalized) return [];
@@ -154,7 +173,11 @@ class DrugService {
                 contraindications: ['Hipersensibilidad al paracetamol', 'Insuficiencia hepatocelular grave', 'Hepatitis virica activa'],
                 interactions: ['Alcohol incrementa riesgo de toxicidad hepatica', 'Anticoagulantes orales (warfarina) con uso prolongado'],
                 adverseReactions: ['Elevacion asintomatica de transaminasas', 'Reacciones cutaneas raras', 'Trombocitopenia infrecuente'],
-                overdose: 'Administrar N-acetilcisteina dentro de las primeras 8-10 horas. Medir niveles sericos mediante normograma de Rumack-Matthew.'
+                overdose: 'Administrar N-acetilcisteina dentro de las primeras 8-10 horas. Medir niveles sericos mediante normograma de Rumack-Matthew.',
+                references: [
+                    'Agencia Española de Medicamentos y Productos Sanitarios. (2023). Ficha técnica Paracetamol 500 mg comprimidos. Centro de Información Online de Medicamentos (CIMA). https://cima.aemps.es',
+                    'Brunton, L. L., Hilal-Dandan, R., & Knollmann, B. C. (2018). Goodman & Gilman: Las bases farmacológicas de la terapéutica (13.ª ed.). McGraw-Hill.'
+                ]
             },
             {
                 name: 'ibuprofeno',
@@ -204,7 +227,11 @@ class DrugService {
                 contraindications: ['Ulcera peptica activa', 'Antecedente de hemorragia digestiva', 'Tercer trimestre de gestacion'],
                 interactions: ['IECA y ARA-II disminuyen efecto antihipertensivo', 'Aspirina y anticoagulantes potencian riesgo hemorragico'],
                 adverseReactions: ['Dispepsia', 'Gastritis erosiva', 'Retencion hidrica', 'Hipertension arterial'],
-                overdose: 'Lavado gastrico y carbon activado precoz. Tratamiento de soporte hemodinamico y correccion hidroelectrolitica.'
+                overdose: 'Lavado gastrico y carbon activado precoz. Tratamiento de soporte hemodinamico y correccion hidroelectrolitica.',
+                references: [
+                    'Agencia Española de Medicamentos y Productos Sanitarios. (2023). Ficha técnica Ibuprofeno 400 mg cápsulas blandas. CIMA. https://cima.aemps.es',
+                    'Rainsford, K. D. (2015). Ibuprofen: Pharmacology, therapeutics and side effects. Springer International Publishing.'
+                ]
             },
             {
                 name: 'amoxicilina',
@@ -254,7 +281,11 @@ class DrugService {
                 contraindications: ['Alergia confirmada a penicilinas o betalactamicos', 'Mononucleosis infecciosa (riesgo de exantema)'],
                 interactions: ['Metotrexato (disminuye eliminacion renal)', 'Anticonceptivos orales (potencial reduccion de eficacia)'],
                 adverseReactions: ['Diarrea asociada a antibioticos', 'Exantema maculopapular', 'Nauseas', 'Candidiasis mucocutanea'],
-                overdose: 'Medidas de sosten e hidratacion adecuada. Hemodializable en casos graves.'
+                overdose: 'Medidas de sosten e hidratacion adecuada. Hemodializable en casos graves.',
+                references: [
+                    'Agencia Española de Medicamentos y Productos Sanitarios. (2022). Ficha técnica Amoxicilina 500 mg cápsulas. CIMA. https://cima.aemps.es',
+                    'World Health Organization. (2023). The selection and use of essential medicines: Report of the WHO Expert Committee on Selection and Use of Essential Medicines. WHO Technical Report Series.'
+                ]
             },
             {
                 name: 'omeprazol',
@@ -304,7 +335,11 @@ class DrugService {
                 contraindications: ['Hipersensibilidad a benzimidazoles', 'Coadministracion con nelfinavir o rilpivirina'],
                 interactions: ['Clopidogrel (disminuye activacion de profarmaco)', 'Ketoconazol (disminuye absorcion)', 'Digoxina (aumenta niveles)'],
                 adverseReactions: ['Cefalea', 'Flatulencia', 'Dolor abdominal', 'Estrenimiento o diarrea transitoria'],
-                overdose: 'Tratamiento sintomatico. No se conocen efectos graves por sobredosis puntual.'
+                overdose: 'Tratamiento sintomatico. No se conocen efectos graves por sobredosis puntual.',
+                references: [
+                    'Agencia Española de Medicamentos y Productos Sanitarios. (2023). Ficha técnica Omeprazol 20 mg cápsulas duras gastrorresistentes. CIMA. https://cima.aemps.es',
+                    'Strand, D. S., Kim, D., & Peura, D. A. (2017). 25 years of proton pump inhibitors: A comprehensive review. Gut and Liver, 11(1), 27-37.'
+                ]
             }
         ];
     }

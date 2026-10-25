@@ -6,12 +6,12 @@ import { translations } from '../utils/languageDictionary.js';
 const StateContext = ({ children }) => {
     // Theme Management
     const [theme, setTheme] = useState(() => {
-        return localStorage.getItem('farmacopedia_theme') || 'dark';
+        return localStorage.getItem('clicksalud_farmacopedia_theme') || localStorage.getItem('farmacopedia_theme') || 'dark';
     });
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('farmacopedia_theme', theme);
+        localStorage.setItem('clicksalud_farmacopedia_theme', theme);
     }, [theme]);
 
     const toggleTheme = useCallback(() => {
@@ -20,11 +20,11 @@ const StateContext = ({ children }) => {
 
     // Language Management
     const [language, setLanguage] = useState(() => {
-        return localStorage.getItem('farmacopedia_language') || 'es';
+        return localStorage.getItem('clicksalud_farmacopedia_language') || localStorage.getItem('farmacopedia_language') || 'es';
     });
 
     useEffect(() => {
-        localStorage.setItem('farmacopedia_language', language);
+        localStorage.setItem('clicksalud_farmacopedia_language', language);
     }, [language]);
 
     const toggleLanguage = useCallback(() => {
@@ -35,7 +35,7 @@ const StateContext = ({ children }) => {
 
     // Disclaimer Acceptance
     const [descargoVisible, setDescargoVisible] = useState(() => {
-        const stored = localStorage.getItem('farmacopedia_disclaimer_accepted');
+        const stored = localStorage.getItem('clicksalud_farmacopedia_disclaimer_accepted') || localStorage.getItem('farmacopedia_disclaimer_accepted');
         if (!stored) return true;
         try {
             const { timestamp } = JSON.parse(stored);
@@ -48,7 +48,7 @@ const StateContext = ({ children }) => {
 
     const acceptDisclaimer = useCallback(() => {
         localStorage.setItem(
-            'farmacopedia_disclaimer_accepted',
+            'clicksalud_farmacopedia_disclaimer_accepted',
             JSON.stringify({ accepted: true, timestamp: Date.now() })
         );
         setDescargoVisible(false);

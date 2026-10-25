@@ -6,7 +6,6 @@ import styles from './DetalleFarmaco.module.css';
 const DetalleFarmaco = () => {
     const {
         selectedDrugData,
-        selectedDrugName,
         isDrugLoading,
         closeDrugDetail,
         t
@@ -58,7 +57,7 @@ const DetalleFarmaco = () => {
     return (
         <section className={styles.container}>
             <Helmet>
-                <title>{`${drug.name.toUpperCase()} - Ficha Técnica | FarmacoPedia`}</title>
+                <title>{`${drug.name.toUpperCase()} - Ficha Técnica | ${t.appName}`}</title>
                 <meta
                     name="description"
                     content={`Ficha farmacológica completa de ${drug.name}: dosis, mecanismo, contraindicaciones y ajustes.`}
@@ -492,6 +491,29 @@ const DetalleFarmaco = () => {
                             <p className={styles.plainText}>{t.noData}</p>
                         )}
                     </div>
+                </div>
+            )}
+
+            {/* Bottom Section: Bibliographic References (APA) */}
+            {drug.references && drug.references.length > 0 && (
+                <div className={styles.referencesCard}>
+                    <div className={styles.sectionHeader}>
+                        <span className={styles.sectionIcon}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+                                <path d="M6 6h10" />
+                                <path d="M6 10h10" />
+                            </svg>
+                        </span>
+                        <h2 className={styles.sectionTitle}>{t.sectionReferences || 'Referencias Bibliográficas (APA)'}</h2>
+                    </div>
+                    <ul className={styles.bulletList}>
+                        {drug.references.map((refItem, idx) => (
+                            <li key={idx} className={styles.referenceItem}>
+                                <span className={styles.referenceText}>{refItem}</span>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
             )}
         </section>

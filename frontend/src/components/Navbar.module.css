@@ -178,6 +178,9 @@
         flex-wrap: wrap;
         gap: 0.75rem;
     }
+    .brandTitle {
+        font-size: 1.15rem;
+    }
     .brandSubtitle {
         display: none;
     }

@@ -14,7 +14,7 @@ const Frame = ({
 		<>
 			<section id={Styles.marco}>
 				<header id={Styles.cabezera}>
-					<h1 id={Styles.titulo}>FarmacoPedia</h1>
+					<h1 id={Styles.titulo}>ClickSalud FarmacoPedia</h1>
 				</header>
 				<main id={Styles.bordes}>
 					<div className={Styles.bordesLaterales} id={Styles.izquierda} />
