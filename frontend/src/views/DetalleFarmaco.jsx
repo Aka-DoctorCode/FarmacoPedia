@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { counterContext } from '../context/counterContext.js';
 import { formatCategory } from '../utils/formatCategory.js';
+import PediatricCalculatorModal from '../components/PediatricCalculatorModal.jsx';
 import styles from './DetalleFarmaco.module.css';
 
 const DetalleFarmaco = () => {
@@ -13,6 +14,7 @@ const DetalleFarmaco = () => {
     } = useContext(counterContext);
 
     const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'dosage' | 'risks' | 'safety'
+    const [calculatorOpen, setCalculatorOpen] = useState(false);
 
     if (isDrugLoading) {
         return (
@@ -311,9 +313,9 @@ const DetalleFarmaco = () => {
                     )}
 
                     {/* Pediatric Dosage Guidance */}
-                    {pediatricGuidanceEntries.length > 0 && (
-                        <div className={styles.sectionCard}>
-                            <div className={styles.sectionHeader}>
+                    <div className={styles.sectionCard}>
+                        <div className={styles.sectionHeaderBetween}>
+                            <div className={styles.sectionHeaderLeft}>
                                 <span className={styles.sectionIcon}>
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <circle cx="12" cy="8" r="5" />
@@ -322,6 +324,28 @@ const DetalleFarmaco = () => {
                                 </span>
                                 <h2 className={styles.sectionTitle}>{t.sectionPediatricGuidance}</h2>
                             </div>
+                            <button
+                                type="button"
+                                className={styles.calculatorButton}
+                                onClick={() => setCalculatorOpen(true)}
+                                title={t.pediatricCalculatorBtn}
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                    <rect width="16" height="20" x="4" y="2" rx="2" />
+                                    <line x1="8" x2="16" y1="6" y2="6" />
+                                    <line x1="16" x2="16" y1="14" y2="18" />
+                                    <path d="M16 10h.01" />
+                                    <path d="M12 10h.01" />
+                                    <path d="M8 10h.01" />
+                                    <path d="M12 14h.01" />
+                                    <path d="M8 14h.01" />
+                                    <path d="M12 18h.01" />
+                                    <path d="M8 18h.01" />
+                                </svg>
+                                <span>{t.pediatricCalculatorBtn}</span>
+                            </button>
+                        </div>
+                        {pediatricGuidanceEntries.length > 0 ? (
                             <div className={styles.guidanceGrid}>
                                 {pediatricGuidanceEntries.map(([routeName, guideData], idx) => (
                                     <div key={idx} className={styles.guidanceCard}>
@@ -349,8 +373,10 @@ const DetalleFarmaco = () => {
                                     </div>
                                 ))}
                             </div>
-                        </div>
-                    )}
+                        ) : (
+                            <p className={styles.plainText}>{t.noData}</p>
+                        )}
+                    </div>
                 </div>
             )}
 
@@ -541,6 +567,14 @@ const DetalleFarmaco = () => {
                     </div>
                 </div>
             )}
+
+            {/* Pediatric Dosage Calculator Modal (Overlay) */}
+            <PediatricCalculatorModal
+                isOpen={calculatorOpen}
+                onClose={() => setCalculatorOpen(false)}
+                drugName={drug.name}
+                drug={drug}
+            />
         </section>
     );
 };
