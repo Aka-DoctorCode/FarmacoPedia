@@ -18,6 +18,7 @@ const BottomNav = () => {
     const isSearchActive = searchModalOpen;
 
     const handleDrugsClick = () => {
+        if (searchModalOpen) setSearchModalOpen(false);
         if (activeView === 'drugs') {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
@@ -26,6 +27,7 @@ const BottomNav = () => {
     };
 
     const handleFamiliesClick = () => {
+        if (searchModalOpen) setSearchModalOpen(false);
         if (activeView === 'families' && !selectedFamily) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {

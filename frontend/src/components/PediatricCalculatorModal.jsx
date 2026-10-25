@@ -220,7 +220,6 @@ export const PediatricCalculatorModal = ({
                                     className={styles.textInput}
                                     value={weight}
                                     onChange={(e) => setWeight(e.target.value)}
-                                    autoFocus
                                 />
                                 <span className={styles.inputUnit}>kg</span>
                             </div>

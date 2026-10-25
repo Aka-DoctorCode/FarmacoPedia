@@ -6,7 +6,7 @@
     -webkit-backdrop-filter: var(--backdropBlur);
     background: var(--bgGlass);
     border-top: 1px solid var(--borderGlass);
-    padding: 2rem calc(1rem + env(safe-area-inset-right, 0px)) calc(2rem + env(safe-area-inset-bottom, 0px)) calc(1rem + env(safe-area-inset-left, 0px));
+    padding: 2rem calc(1rem + env(safe-area-inset-right, 0px)) calc(var(--bottomNavHeight) + env(safe-area-inset-bottom, 0px) + 1.5rem) calc(1rem + env(safe-area-inset-left, 0px));
 }
 
 .footerContent {

@@ -41,12 +41,17 @@ const SearchModal = () => {
 
     useEffect(() => {
         if (searchModalOpen) {
+            document.body.style.overflow = 'hidden';
             setTimeout(() => inputRef.current?.focus(), 50);
         } else {
+            document.body.style.overflow = '';
             setQuery('');
             setResults([]);
             setReportedQuery('');
         }
+        return () => {
+            document.body.style.overflow = '';
+        };
     }, [searchModalOpen]);
 
     // Keyboard shortcut handler (Cmd/Ctrl + K or /)

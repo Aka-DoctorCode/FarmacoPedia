@@ -134,13 +134,6 @@ button, a, input, select, textarea {
     min-height: calc(100vh - 200px);
     display: flex;
     flex-direction: column;
-    padding-bottom: calc(var(--bottomNavHeight) + env(safe-area-inset-bottom, 0px) + 1.25rem);
-}
-
-@media (min-width: 768px) {
-    .mainContent {
-        padding-bottom: 0;
-    }
 }
 
 /* Custom Scrollbar */

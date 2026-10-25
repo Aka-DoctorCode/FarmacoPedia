@@ -1,10 +1,21 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { counterContext } from '../context/counterContext.js';
 import styles from './Descargo.module.css';
 
 export const Descargo = () => {
     const { descargoVisible, acceptDisclaimer, t } = useContext(counterContext);
     const [isAccepted, setIsAccepted] = useState(false);
+
+    useEffect(() => {
+        if (descargoVisible) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [descargoVisible]);
 
     if (!descargoVisible) return null;
 
