@@ -22,10 +22,18 @@ El sistema admite dos modalidades de ejecución:
 - **MODO A: MANUAL POR FÁRMACOS ESPECÍFICOS**
   Se activa cuando el operador proporciona una lista explícita de principios activos (por ejemplo: `["azitromicina", "losartan"]`). El flujo procesará únicamente los fármacos indicados.
   
-- **MODO B: AUTOMÁTICO DIARIO (5 FÁRMACOS PRIORITARIOS)**
-  Se activa en ejecuciones programadas (cron diario vía `/schedule` o comando sin parámetros). Procesa exactamente 5 fármacos prioritarios siguiendo este orden:
-  1. **Prioridad 1 (Búsquedas fallidas de usuarios):** Consulta `GET http://localhost:10000/pending-drugs?limit=5`. Si existen medicamentos solicitados por usuarios no encontrados en búsquedas previas, se seleccionan con máxima prioridad según su volumen de búsqueda (`searchCount`).
-  2. **Prioridad 2 (Catálogo esencial faltante):** Si faltan candidatos para completar los 5 del día, consulta la base de datos de ClickSalud FarmacoPedia (`GET http://localhost:10000/drugs`) y selecciona principios activos faltantes de alto impacto terapéutico de la lista de medicamentos esenciales de la OMS (analgésicos, betalactámicos, macrólidos, IECAs, ARA-II, estatinas, antidiabéticos, broncodilatadores, etc.).
+- **MODO B: AUTOMÁTICO DIARIO (10 FÁRMACOS NUEVOS + 3 AUDITADOS/ACTUALIZADOS)**
+  Se activa en ejecuciones programadas (cron diario vía `/schedule` o sidecar a las 12:00 PM). Cada jornada realiza dos tareas consecutivas:
+
+  * **FASE 1 — INGESTIÓN DE 10 FÁRMACOS NUEVOS:**
+    1. **Prioridad 1 (Búsquedas fallidas de usuarios):** Consulta `GET http://localhost:5174/pending-drugs?limit=10`. Si existen medicamentos solicitados por usuarios no encontrados previamente, se seleccionan con máxima prioridad según su volumen de búsqueda (`searchCount`).
+    2. **Prioridad 2 (Catálogo esencial faltante):** Si faltan candidatos para completar los 10 nuevos del día, consulta la base de datos de FarmacoPedia (`GET http://localhost:5174/drugs`) y selecciona principios activos faltantes de alto impacto terapéutico de la lista de medicamentos esenciales de la OMS (analgésicos, betalactámicos, macrólidos, fluoroquinolonas, antihipertensivos, estatinas, antidiabéticos, broncodilatadores, antihistamínicos, etc.).
+
+  * **FASE 2 — AUDITORÍA Y ACTUALIZACIÓN DE 3 FÁRMACOS EXISTENTES:**
+    1. Selecciona 3 medicamentos ya indexados en la base de datos de FarmacoPedia (priorizando aquellos con fecha de actualización más antigua o sin fuentes APA completas).
+    2. Re-audita su estado en CIMA para validar que sigan comercializados y sin alertas de seguridad recientes.
+    3. Actualiza y enriquece sus secciones clínicas, posologías pediátricas/adultas y fuentes APA 7.ª edición.
+    4. Aplica la actualización mediante `PATCH http://localhost:5174/drugs/{name}`.
 
 ---
 
@@ -211,17 +219,17 @@ El sistema admite dos modalidades de ejecución:
 **Objetivo:** Verificar disponibilidad del backend local, realizar operaciones seguras de `POST` o `PATCH`, actualizar la cola de fármacos pendientes y emitir el informe final de ejecución.
 
 1. **Comprobación de Conectividad con el Backend:**
-   - Verifica que el backend esté respondiendo en `http://localhost:10000/drugs`.
+   - Verifica que el backend esté respondiendo en `http://localhost:5174/drugs`.
    - Si no está activo, inicia el servicio antes de continuar (`npm start` o `node src/index.js` en `backend/`).
 
 2. **Ejecución de Upsert:**
    Para cada fármaco recibido del Agente 2:
-   - Realiza un `GET http://localhost:10000/drugs/{name}`.
+   - Realiza un `GET http://localhost:5174/drugs/{name}`.
    - **Si responde 404 (Fármaco no existe):**
-     * Ejecuta `POST http://localhost:10000/drugs` con el JSON en el `body`.
+     * Ejecuta `POST http://localhost:5174/drugs` con el JSON en el `body`.
      * Valida código de respuesta `201 Created`.
    - **Si responde 200 (Fármaco ya existe):**
-     * Ejecuta `PATCH http://localhost:10000/drugs/{name}` con el JSON en el `body`.
+     * Ejecuta `PATCH http://localhost:5174/drugs/{name}` con el JSON en el `body`.
      * Valida código de respuesta `200 OK`.
 
 3. **Manejo de Errores y Auto-Corrección:**
@@ -232,7 +240,7 @@ El sistema admite dos modalidades de ejecución:
 
 4. **Cierre de la Cola de Pendientes (Prioridad Resuelta):**
    - Si el fármaco procesado fue tomado de la cola de búsquedas pendientes (`/pending-drugs`), ejecuta:
-     `PATCH http://localhost:10000/pending-drugs/{name}/complete`
+     `PATCH http://localhost:5174/pending-drugs/{name}/complete`
    - Esto actualiza su estatus a `completed`, evitando reprocesarlo en la siguiente jornada.
 
 5. **Reporte Consolidado de Ejecución:**
