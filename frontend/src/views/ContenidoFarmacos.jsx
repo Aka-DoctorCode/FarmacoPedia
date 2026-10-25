@@ -8,6 +8,7 @@ import styles from './ContenidoFarmacos.module.css';
 const ContenidoFarmacos = () => {
     const {
         openDrugDetail,
+        selectedFamily,
         setSelectedFamily,
         setIsOffline,
         t
@@ -15,9 +16,15 @@ const ContenidoFarmacos = () => {
 
     const [drugs, setDrugs] = useState([]);
     const [categories, setCategories] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState('all');
+    const [selectedCategory, setSelectedCategory] = useState(selectedFamily || 'all');
     const [filterQuery, setFilterQuery] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        if (selectedFamily) {
+            setSelectedCategory(selectedFamily);
+        }
+    }, [selectedFamily]);
 
     useEffect(() => {
         const loadData = async () => {
@@ -39,18 +46,47 @@ const ContenidoFarmacos = () => {
         loadData();
     }, [setIsOffline]);
 
+    const categoryList = useMemo(() => {
+        return categories.map((cat) => {
+            if (typeof cat === 'object' && cat !== null) {
+                return {
+                    id: cat.categoryCode,
+                    label: `[${cat.categoryCode}] ${cat.categoryName}`,
+                    filterKey: cat.categoryCode
+                };
+            }
+            return {
+                id: cat,
+                label: formatCategory(cat),
+                filterKey: cat
+            };
+        });
+    }, [categories]);
+
     const filteredDrugs = useMemo(() => {
         return drugs.filter((drug) => {
             const matchesCategory =
                 selectedCategory === 'all' ||
-                drug.categories?.some((cat) => cat.toLowerCase() === selectedCategory.toLowerCase());
+                drug.categories?.some((cat) => cat.toLowerCase() === selectedCategory.toLowerCase()) ||
+                drug.atc?.some((a) => 
+                    a.categoryCode?.toLowerCase() === selectedCategory.toLowerCase() ||
+                    a.categoryName?.toLowerCase() === selectedCategory.toLowerCase() ||
+                    a.subcategoryCode?.toLowerCase() === selectedCategory.toLowerCase() ||
+                    a.subcategoryName?.toLowerCase() === selectedCategory.toLowerCase()
+                );
 
             const query = filterQuery.trim().toLowerCase();
             const matchesQuery =
                 !query ||
                 drug.name?.toLowerCase().includes(query) ||
                 drug.actionMechanism?.toLowerCase().includes(query) ||
-                drug.categories?.some((c) => c.toLowerCase().includes(query));
+                drug.categories?.some((c) => c.toLowerCase().includes(query)) ||
+                drug.atc?.some((a) =>
+                    a.code?.toLowerCase().includes(query) ||
+                    a.subcategoryCode?.toLowerCase().includes(query) ||
+                    a.subcategoryName?.toLowerCase().includes(query) ||
+                    a.categoryName?.toLowerCase().includes(query)
+                );
 
             return matchesCategory && matchesQuery;
         });
@@ -83,7 +119,7 @@ const ContenidoFarmacos = () => {
                     <input
                         className={styles.searchInput}
                         type="text"
-                        placeholder={t.searchPlaceholder}
+                        placeholder="Buscar por fármaco, categoría o código ATC (ej. N02, C09)..."
                         value={filterQuery}
                         onChange={(e) => setFilterQuery(e.target.value)}
                     />
@@ -97,14 +133,14 @@ const ContenidoFarmacos = () => {
                     >
                         {t.allCategories}
                     </button>
-                    {categories.map((cat, idx) => (
+                    {categoryList.map((cat) => (
                         <button
-                            key={idx}
+                            key={cat.id}
                             type="button"
-                            className={`${styles.chipButton} ${selectedCategory === cat ? styles.chipButtonActive : ''}`}
-                            onClick={() => setSelectedCategory(cat)}
+                            className={`${styles.chipButton} ${selectedCategory === cat.filterKey ? styles.chipButtonActive : ''}`}
+                            onClick={() => setSelectedCategory(cat.filterKey)}
                         >
-                            {formatCategory(cat)}
+                            {cat.label}
                         </button>
                     ))}
                 </div>
@@ -137,7 +173,14 @@ const ContenidoFarmacos = () => {
                             }}
                         >
                             <div className={styles.cardHeader}>
-                                <h3 className={styles.cardTitle}>{drug.name}</h3>
+                                <div className={styles.cardTitleGroup}>
+                                    <h3 className={styles.cardTitle}>{drug.name}</h3>
+                                    {drug.atc && drug.atc.length > 0 && (
+                                        <span className={styles.cardAtcPill}>
+                                            {drug.atc[0].code}
+                                        </span>
+                                    )}
+                                </div>
                                 {drug.categories && drug.categories.length > 0 && (
                                     <div className={styles.cardCategories}>
                                         {drug.categories.map((c, idx) => (

@@ -80,18 +80,24 @@ const SearchModal = () => {
             return;
         }
 
-        const fallbackResults = drugService.searchFallback(trimmed);
-        if (fallbackResults.length > 0) {
-            setResults(fallbackResults);
+        if (allDrugs && allDrugs.length > 0) {
+            const filtered = allDrugs.filter((drug) => {
+                const nameMatch = drug.name?.toLowerCase().includes(trimmed);
+                const categoryMatch = drug.categories?.some((c) => c.toLowerCase().includes(trimmed));
+                const atcMatch = (drug.atc || []).some((a) =>
+                    a.code?.toLowerCase().includes(trimmed) ||
+                    a.subcategoryCode?.toLowerCase().includes(trimmed) ||
+                    a.subcategoryName?.toLowerCase().includes(trimmed) ||
+                    a.categoryName?.toLowerCase().includes(trimmed)
+                );
+                return nameMatch || categoryMatch || atcMatch;
+            });
+            setResults(filtered);
             return;
         }
 
-        const filtered = allDrugs.filter((drug) => {
-            const nameMatch = drug.name?.toLowerCase().includes(trimmed);
-            const categoryMatch = drug.categories?.some((c) => c.toLowerCase().includes(trimmed));
-            return nameMatch || categoryMatch;
-        });
-        setResults(filtered);
+        const fallbackResults = drugService.searchFallback(trimmed);
+        setResults(fallbackResults);
     }, [query, allDrugs]);
 
     if (!searchModalOpen) return null;
@@ -117,7 +123,7 @@ const SearchModal = () => {
                         type="text"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        placeholder={t.searchPlaceholder}
+                        placeholder="Buscar por fármaco, indicación o código ATC (ej. N02, B01)..."
                     />
                     <button
                         type="button"
@@ -146,7 +152,14 @@ const SearchModal = () => {
                                 }}
                             >
                                 <div className={styles.resultTitleRow}>
-                                    <span className={styles.resultName}>{drug.name}</span>
+                                    <div className={styles.resultNameAndAtc}>
+                                        <span className={styles.resultName}>{drug.name}</span>
+                                        {drug.atc && drug.atc.length > 0 && (
+                                            <span className={styles.atcResultBadge}>
+                                                {drug.atc[0].code}
+                                            </span>
+                                        )}
+                                    </div>
                                     {drug.categories && drug.categories.length > 0 && (
                                         <div className={styles.resultCategories}>
                                             {drug.categories.slice(0, 2).map((category, idx) => (

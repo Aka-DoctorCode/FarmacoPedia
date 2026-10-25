@@ -99,7 +99,23 @@ const DetalleFarmaco = () => {
             {/* Header Card */}
             <div className={styles.headerCard}>
                 <div className={styles.drugTitleRow}>
-                    <h1 className={styles.drugName}>{drug.name}</h1>
+                    <div className={styles.nameAndAtcGroup}>
+                        <h1 className={styles.drugName}>{drug.name}</h1>
+                        {drug.atc && drug.atc.length > 0 && (
+                            <div className={styles.atcBadges}>
+                                {drug.atc.map((item, idx) => (
+                                    <span
+                                        key={idx}
+                                        className={styles.atcBadge}
+                                        title={`${item.categoryName || ''} → ${item.subcategoryName || ''}`}
+                                    >
+                                        ATC {item.code}
+                                        {item.subcategoryName ? ` • ${item.subcategoryName}` : ''}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                     {drug.categories && drug.categories.length > 0 && (
                         <div className={styles.categoryBadges}>
                             {drug.categories.map((category, idx) => (

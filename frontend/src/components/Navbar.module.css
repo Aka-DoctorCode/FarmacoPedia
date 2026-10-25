@@ -128,38 +128,6 @@
     gap: 0.5rem;
 }
 
-/* Search trigger and icon buttons hidden on mobile base (served by BottomNav) */
-.searchTrigger {
-    display: none;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--bgInput);
-    border: 1px solid var(--borderGlass);
-    color: var(--textSecondary);
-    padding: 0.45rem 0.85rem;
-    border-radius: var(--radiusPill);
-    font-size: 0.85rem;
-    cursor: pointer;
-    min-height: var(--touchTargetMin, 44px);
-    transition: all var(--transitionFast);
-}
-
-.searchTrigger:hover {
-    border-color: var(--borderGlassHover);
-    color: var(--textPrimary);
-}
-
-.searchKbd {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 0.1rem 0.35rem;
-    border-radius: var(--radiusSm);
-    font-size: 0.7rem;
-    font-family: var(--fontMono);
-    color: var(--textMuted);
-}
-
-
-
 .iconButton {
     display: flex;
     background: var(--bgCard);
@@ -224,11 +192,6 @@
     }
 
     .navigationNav {
-        display: flex;
-    }
-
-
-    .searchTrigger {
         display: flex;
     }
 

@@ -19,6 +19,7 @@ class DrugService {
                 _id: drug.name,
                 name: drug.name,
                 categories: drug.categories,
+                atc: drug.atc,
                 actionMechanism: drug.actionMechanism
             }));
             return { success: true, data: namesOnly, isOffline: true };
@@ -33,11 +34,65 @@ class DrugService {
             }
             throw new Error('Invalid backend response');
         } catch (error) {
-            const categoriesSet = new Set();
+            const categoryMap = new Map();
             this.fallbackDrugs.forEach((drug) => {
-                drug.categories.forEach((category) => categoriesSet.add(category));
+                (drug.atc || []).forEach((atc) => {
+                    if (!categoryMap.has(atc.categoryCode)) {
+                        categoryMap.set(atc.categoryCode, {
+                            categoryCode: atc.categoryCode,
+                            categoryName: atc.categoryName,
+                            subcategories: new Map(),
+                            totalDrugs: 0
+                        });
+                    }
+                    const cat = categoryMap.get(atc.categoryCode);
+                    if (!cat.subcategories.has(atc.subcategoryCode)) {
+                        cat.subcategories.set(atc.subcategoryCode, {
+                            subcategoryCode: atc.subcategoryCode,
+                            subcategoryName: atc.subcategoryName,
+                            count: 0,
+                            drugs: []
+                        });
+                    }
+                    const sub = cat.subcategories.get(atc.subcategoryCode);
+                    if (!sub.drugs.some((d) => d.name === drug.name)) {
+                        sub.drugs.push({ name: drug.name, atcCode: atc.code });
+                        sub.count++;
+                        cat.totalDrugs++;
+                    }
+                });
             });
-            return { success: true, data: Array.from(categoriesSet).sort(), isOffline: true };
+            const tree = Array.from(categoryMap.values()).map((c) => ({
+                ...c,
+                subcategories: Array.from(c.subcategories.values()).sort((a, b) => a.subcategoryCode.localeCompare(b.subcategoryCode))
+            })).sort((a, b) => a.categoryCode.localeCompare(b.categoryCode));
+            return { success: true, data: tree, isOffline: true };
+        }
+    }
+
+    async getDrugsByAtcSubcategory(subcategoryCode) {
+        try {
+            const response = await axios.get(`${this.apiBaseUrl}/drugs/atc/subcategories/${encodeURIComponent(subcategoryCode)}`, { timeout: 3000 });
+            if (response.data && response.data.success && Array.isArray(response.data.data)) {
+                return { success: true, data: response.data.data, isOffline: false };
+            }
+            throw new Error('Invalid backend response');
+        } catch (error) {
+            if (error.response?.status === 404) {
+                return { success: true, data: [], isOffline: false };
+            }
+            const codeUpper = (subcategoryCode || '').toUpperCase();
+            const matchedDrugs = this.fallbackDrugs
+                .filter((drug) => (drug.atc || []).some((a) => a.subcategoryCode?.toUpperCase() === codeUpper))
+                .map((drug) => ({
+                    id: drug.name,
+                    _id: drug.name,
+                    name: drug.name,
+                    categories: drug.categories,
+                    atc: drug.atc,
+                    actionMechanism: drug.actionMechanism
+                }));
+            return { success: true, data: matchedDrugs, isOffline: true };
         }
     }
 
@@ -56,6 +111,7 @@ class DrugService {
                     _id: drug.name,
                     name: drug.name,
                     categories: drug.categories,
+                    atc: drug.atc,
                     actionMechanism: drug.actionMechanism
                 }));
             return { success: true, data: matchedDrugs, isOffline: true };
@@ -106,9 +162,15 @@ class DrugService {
         return this.fallbackDrugs.filter((drug) => {
             const nameMatch = drug.name.toLowerCase().includes(normalized);
             const categoryMatch = drug.categories.some((cat) => cat.toLowerCase().includes(normalized));
+            const atcMatch = (drug.atc || []).some((a) => 
+                a.code?.toLowerCase().includes(normalized) ||
+                a.subcategoryCode?.toLowerCase().includes(normalized) ||
+                a.subcategoryName?.toLowerCase().includes(normalized) ||
+                a.categoryName?.toLowerCase().includes(normalized)
+            );
             const mechanismMatch = drug.actionMechanism ? drug.actionMechanism.toLowerCase().includes(normalized) : false;
             const indicationMatch = drug.indications ? drug.indications.some((ind) => ind.toLowerCase().includes(normalized)) : false;
-            return nameMatch || categoryMatch || mechanismMatch || indicationMatch;
+            return nameMatch || categoryMatch || atcMatch || mechanismMatch || indicationMatch;
         });
     }
 
@@ -117,6 +179,15 @@ class DrugService {
             {
                 name: 'paracetamol',
                 categories: ['analgesicos', 'antipireticos'],
+                atc: [
+                    {
+                        code: 'N02BE01',
+                        categoryCode: 'N',
+                        categoryName: 'Sistema Nervioso',
+                        subcategoryCode: 'N02',
+                        subcategoryName: 'Analgésicos'
+                    }
+                ],
                 actionMechanism: 'Inhibicion de la sintesis de prostaglandinas en el sistema nervioso central y bloqueo del impulso doloroso periférico.',
                 indications: ['Tratamiento sintomatico del dolor leve a moderado', 'Fiebre de origen diverso'],
                 presentations: {
@@ -182,6 +253,15 @@ class DrugService {
             {
                 name: 'ibuprofeno',
                 categories: ['antiinflamatorios no esteroideos', 'analgesicos', 'antipireticos'],
+                atc: [
+                    {
+                        code: 'M01AE01',
+                        categoryCode: 'M',
+                        categoryName: 'Sistema Musculoesquelético',
+                        subcategoryCode: 'M01',
+                        subcategoryName: 'Productos Antiinflamatorios y Antirreumáticos'
+                    }
+                ],
                 actionMechanism: 'Inhibicion no selectiva de las isoformas COX-1 y COX-2 de la ciclooxigenasa, reduciendo la formacion de prostaglandinas.',
                 indications: ['Dolor inflamatorio articular y muscular', 'Dismenorrea primaria', 'Cefalea tensional', 'Cuadros febriles'],
                 presentations: {
@@ -236,6 +316,15 @@ class DrugService {
             {
                 name: 'amoxicilina',
                 categories: ['antibioticos', 'betalactamicos', 'penicilinas'],
+                atc: [
+                    {
+                        code: 'J01CA04',
+                        categoryCode: 'J',
+                        categoryName: 'Antiinfecciosos para Uso Sistémico',
+                        subcategoryCode: 'J01',
+                        subcategoryName: 'Antibacterianos para Uso Sistémico'
+                    }
+                ],
                 actionMechanism: 'Inhibe la sintesis de la pared celular bacteriana al unirse a las proteinas fijadoras de penicilina (PBP).',
                 indications: ['Faringoamigdalitis estreptococica', 'Otitis media aguda', 'Neumonia adquirida en comunidad', 'Infecciones urinarias no complicadas'],
                 presentations: {
@@ -290,6 +379,15 @@ class DrugService {
             {
                 name: 'omeprazol',
                 categories: ['inhibidores de bomba de protones', 'antiulcerosos'],
+                atc: [
+                    {
+                        code: 'A02BC01',
+                        categoryCode: 'A',
+                        categoryName: 'Tracto Alimentario y Metabolismo',
+                        subcategoryCode: 'A02',
+                        subcategoryName: 'Agentes para el Tratamiento de Alteraciones Causadas por Ácidos'
+                    }
+                ],
                 actionMechanism: 'Bloqueo irreversible de la enzima H+/K+ ATPasa en la celula parietal gastrica suprime la secrecion acida basal y estimulada.',
                 indications: ['Enfermedad por reflujo gastroesofagico', 'Ulcera gastrica y duodenal', 'Erradicacion de Helicobacter pylori', 'Profilaxis de gastrolesion por AINEs'],
                 presentations: {

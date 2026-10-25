@@ -6,13 +6,10 @@ const Navbar = () => {
     const {
         theme,
         toggleTheme,
-        language,
-        toggleLanguage,
         t,
         activeView,
         navigateToDrugs,
         navigateToFamilies,
-        setSearchModalOpen,
         isOffline
     } = useContext(counterContext);
 
@@ -68,30 +65,6 @@ const Navbar = () => {
                             <span>●</span> Offline Mode
                         </div>
                     )}
-
-                    <button
-                        type="button"
-                        className={styles.searchTrigger}
-                        onClick={() => setSearchModalOpen(true)}
-                        title={t.searchTooltip}
-                    >
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="11" cy="11" r="8" />
-                            <path d="m21 21-4.3-4.3" />
-                        </svg>
-                        <span>{t.navSearch}</span>
-                        <kbd className={styles.searchKbd}>/</kbd>
-                    </button>
-
-
-                    <button
-                        type="button"
-                        className={styles.iconButton}
-                        onClick={toggleLanguage}
-                        title={`Cambiar a ${language === 'es' ? 'English' : 'Español'}`}
-                    >
-                        {language.toUpperCase()}
-                    </button>
 
                     <button
                         type="button"

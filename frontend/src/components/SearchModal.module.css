@@ -140,12 +140,32 @@
     flex-wrap: wrap;
 }
 
+.resultNameAndAtc {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .resultName {
     font-family: var(--fontHeading);
     font-size: 1.05rem;
     font-weight: 700;
     color: var(--textPrimary);
     text-transform: capitalize;
+}
+
+.atcResultBadge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.72rem;
+    font-family: var(--fontMono);
+    font-weight: 700;
+    color: var(--colorPrimary);
+    background: rgba(14, 165, 233, 0.12);
+    border: 1px solid rgba(14, 165, 233, 0.3);
+    padding: 0.12rem 0.45rem;
+    border-radius: var(--radiusPill);
+    white-space: nowrap;
 }
 
 .resultCategories {

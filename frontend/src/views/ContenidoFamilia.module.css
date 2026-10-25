@@ -1,4 +1,4 @@
-/* Mobile-First Families Accordion View */
+/* Mobile-First Families Nested Accordion View */
 .container {
     width: 100%;
     max-width: 100%;
@@ -55,7 +55,7 @@
     border-radius: var(--radiusPill);
     padding: 0.7rem 1rem 0.7rem 2.75rem;
     color: var(--textPrimary);
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-family: var(--fontSans);
     transition: all var(--transitionFast);
 }
@@ -65,11 +65,11 @@
     box-shadow: 0 0 12px var(--colorPrimaryGlow);
 }
 
-/* Accordion */
+/* Accordion Level 1 (Anatomical Category) */
 .accordionList {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.85rem;
     width: 100%;
 }
 
@@ -91,7 +91,7 @@
 
 .accordionHeader {
     width: 100%;
-    min-height: 48px;
+    min-height: 52px;
     background: transparent;
     border: none;
     padding: 1rem 1.15rem;
@@ -103,20 +103,39 @@
     color: var(--textPrimary);
     gap: 0.75rem;
     -webkit-tap-highlight-color: transparent;
+    transition: background var(--transitionFast);
+}
+
+.accordionHeader:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.headerActive {
+    background: rgba(14, 165, 233, 0.08);
 }
 
 .headerLeft {
     display: flex;
     align-items: center;
-    gap: 0.65rem;
+    gap: 0.75rem;
     flex: 1;
     min-width: 0;
 }
 
-.familyIcon {
-    color: var(--colorPrimary);
-    display: flex;
+.categoryCodeBadge {
+    display: inline-flex;
     align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: var(--radiusSm);
+    background: linear-gradient(135deg, var(--colorPrimary) 0%, var(--colorTeal) 100%);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 1rem;
+    font-family: var(--fontMono);
+    box-shadow: 0 2px 6px var(--colorPrimaryGlow);
     flex-shrink: 0;
 }
 
@@ -134,41 +153,165 @@
 .headerRight {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.65rem;
     flex-shrink: 0;
+}
+
+.countBadge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--textSecondary);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--borderGlass);
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radiusPill);
+    white-space: nowrap;
 }
 
 .chevronIcon {
     color: var(--textMuted);
     transition: transform var(--transitionNormal);
+    flex-shrink: 0;
+}
+
+.chevronSmall {
+    color: var(--textMuted);
+    transition: transform var(--transitionNormal);
+    flex-shrink: 0;
 }
 
 .chevronOpen {
     transform: rotate(180deg);
 }
 
-.accordionContent {
-    padding: 0 1rem 1.25rem;
+/* Level 1 Content (Subcategories Container) */
+.categoryContent {
+    padding: 0.85rem 0.95rem 1.15rem;
     border-top: 1px solid var(--borderGlass);
-    background: rgba(0, 0, 0, 0.15);
+    background: rgba(0, 0, 0, 0.16);
     animation: fadeIn var(--transitionFast) ease-out;
     width: 100%;
 }
 
-/* Drugs Grid inside Accordion: Mobile Base is Single Column */
+.subcategoriesList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    width: 100%;
+}
+
+/* Level 2 Subcategory Item */
+.subcategoryItem {
+    background: var(--bgGlass);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusSm);
+    overflow: hidden;
+    transition: all var(--transitionFast);
+}
+
+.subcategoryItem:hover {
+    border-color: var(--borderGlassHover);
+}
+
+.subcategoryHeader {
+    width: 100%;
+    min-height: 44px;
+    background: transparent;
+    border: none;
+    padding: 0.75rem 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    text-align: left;
+    color: var(--textPrimary);
+    gap: 0.5rem;
+    -webkit-tap-highlight-color: transparent;
+    transition: background var(--transitionFast);
+}
+
+.subcategoryHeader:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.subHeaderActive {
+    background: rgba(20, 184, 166, 0.08);
+}
+
+.subHeaderLeft {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.atcSubCodeBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radiusSm);
+    background: rgba(14, 165, 233, 0.15);
+    border: 1px solid rgba(14, 165, 233, 0.35);
+    color: var(--colorPrimary);
+    font-weight: 700;
+    font-size: 0.8rem;
+    font-family: var(--fontMono);
+    flex-shrink: 0;
+}
+
+.subcategoryName {
+    font-size: 0.925rem;
+    font-weight: 600;
+    color: var(--textPrimary);
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.subHeaderRight {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.subCountBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 0.4rem;
+    border-radius: var(--radiusPill);
+    background: rgba(255, 255, 255, 0.09);
+    color: var(--textSecondary);
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* Level 2 Content (Drugs Grid) */
+.subcategoryContent {
+    padding: 0 0.85rem 0.85rem;
+    border-top: 1px dashed var(--borderGlass);
+    background: rgba(0, 0, 0, 0.2);
+    animation: fadeIn var(--transitionFast) ease-out;
+}
+
 .drugsGrid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0.65rem;
-    margin-top: 0.85rem;
+    gap: 0.55rem;
+    margin-top: 0.75rem;
     width: 100%;
 }
 
 .drugButton {
-    background: var(--bgGlass);
+    background: var(--bgCard);
     border: 1px solid var(--borderGlass);
     border-radius: var(--radiusSm);
-    padding: 0.75rem 1rem;
+    padding: 0.7rem 0.95rem;
     min-height: var(--touchTargetMin, 44px);
     display: flex;
     align-items: center;
@@ -178,36 +321,71 @@
     text-align: left;
     width: 100%;
     -webkit-tap-highlight-color: transparent;
+    gap: 0.75rem;
 }
 
 .drugButton:hover {
     background: var(--bgCardHover);
     border-color: var(--colorPrimary);
-    transform: translateY(-2px);
+    transform: translateY(-1px);
+}
+
+.drugButtonInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex: 1;
+    min-width: 0;
+    flex-wrap: wrap;
 }
 
 .drugButtonName {
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.925rem;
     color: var(--textPrimary);
     text-transform: capitalize;
-    min-width: 0;
     overflow-wrap: anywhere;
     word-break: break-word;
 }
 
+.drugAtcPill {
+    font-size: 0.72rem;
+    font-family: var(--fontMono);
+    font-weight: 700;
+    color: var(--colorTeal);
+    background: rgba(20, 184, 166, 0.12);
+    border: 1px solid rgba(20, 184, 166, 0.3);
+    padding: 0.15rem 0.45rem;
+    border-radius: var(--radiusPill);
+    white-space: nowrap;
+}
+
 .drugButtonArrow {
     color: var(--colorPrimary);
-    font-size: 0.85rem;
+    font-size: 0.9rem;
+    font-weight: 700;
     flex-shrink: 0;
-    margin-left: 0.5rem;
+}
+
+.emptyBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    background: var(--bgGlass);
+    border: 1px dashed var(--borderGlass);
+    border-radius: var(--radiusMd);
+    text-align: center;
+    color: var(--textMuted);
+    margin: 1.5rem 0;
 }
 
 .emptyCategory {
-    padding: 1rem;
+    padding: 0.85rem;
     text-align: center;
     color: var(--textMuted);
-    font-size: 0.875rem;
+    font-size: 0.85rem;
 }
 
 .loadingBox {
@@ -251,35 +429,30 @@
     }
 
     .searchBarWrapper {
-        max-width: 500px;
+        max-width: 540px;
         margin-bottom: 2rem;
     }
 
     .accordionList {
-        gap: 0.85rem;
-    }
-
-    .accordionHeader {
-        padding: 1.25rem 1.5rem;
         gap: 1rem;
     }
 
-    .headerLeft {
-        gap: 0.75rem;
+    .accordionHeader {
+        padding: 1.15rem 1.4rem;
     }
 
     .familyName {
         font-size: 1.2rem;
     }
 
-    .accordionContent {
-        padding: 0 1.5rem 1.5rem;
+    .categoryContent {
+        padding: 1.15rem 1.35rem 1.35rem;
     }
 
     .drugsGrid {
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         gap: 0.75rem;
-        margin-top: 1rem;
+        margin-top: 0.85rem;
     }
 }
 
@@ -292,7 +465,7 @@
     }
 }
 
-/* Progressive Scaling: Large Screens (>= 1440px) */
+/* Large Screens (>= 1440px) */
 @media (min-width: 1440px) {
     .container {
         max-width: 1360px;

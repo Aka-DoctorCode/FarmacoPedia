@@ -64,6 +64,32 @@ const routeGuidanceSchema = new mongoose.Schema({
     }]
 }, { _id: false });
 
+const atcEntrySchema = new mongoose.Schema({
+    code: { 
+        type: String, 
+        trim: true, 
+        uppercase: true 
+    },
+    categoryCode: { 
+        type: String, 
+        trim: true, 
+        uppercase: true 
+    },
+    categoryName: { 
+        type: String, 
+        trim: true 
+    },
+    subcategoryCode: { 
+        type: String, 
+        trim: true, 
+        uppercase: true 
+    },
+    subcategoryName: { 
+        type: String, 
+        trim: true 
+    }
+}, { _id: false });
+
 const drugSchema = new mongoose.Schema({
     name: { 
         type: String, 
@@ -80,6 +106,7 @@ const drugSchema = new mongoose.Schema({
         index: true,
         match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ0-9\s\-()]+$/i
     },
+    atc: [atcEntrySchema],
     actionMechanism: {
         type: String,
         match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ0-9\,.;:()%+*/<>≤≥÷\s-]+$/i
@@ -124,8 +151,11 @@ const drugSchema = new mongoose.Schema({
     }]
 }, { timestamps: true, lean: true });
 
-// Compound index for optimized search
+// Compound indexes for optimized search and ATC queries
 drugSchema.index({ name: 1, categories: 1 });
+drugSchema.index({ "atc.code": 1 });
+drugSchema.index({ "atc.subcategoryCode": 1 });
+drugSchema.index({ "atc.categoryCode": 1 });
 
 const Drug = mongoose.model("Drug", drugSchema);
 
@@ -176,19 +206,109 @@ app.post("/drugs", asyncHandler(async (req, res) => {
     res.status(201).json({ success: true, data: newDrug });
 }));
 
-// GET: All drug names
+// GET: All drug names (supports ?q= or ?search= by name, category, or ATC)
 app.get("/drugs", asyncHandler(async (req, res) => {
-    const drugList = await Drug.find({}, "name").sort({ name: 1 });
+    const { q, search } = req.query;
+    const queryTerm = (q || search || "").trim();
+    let filter = {};
+    if (queryTerm) {
+        const escaped = queryTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(escaped, 'i');
+        filter = {
+            $or: [
+                { name: regex },
+                { "atc.code": regex },
+                { "atc.subcategoryCode": regex },
+                { "atc.subcategoryName": regex },
+                { "atc.categoryName": regex },
+                { categories: regex }
+            ]
+        };
+    }
+    const drugList = await Drug.find(filter, "name categories atc").sort({ name: 1 });
     res.status(200).json({ success: true, count: drugList.length, data: drugList });
 }));
 
-// GET: All categories
+// GET: All categories (Returns ATC Level 1 -> Level 2 hierarchical tree, or ?flat=true for legacy list)
 app.get("/drugs/families", asyncHandler(async (req, res) => {
-    const families = await Drug.distinct("categories");
-    res.status(200).json({ success: true, data: families.sort() });
+    if (req.query.flat === 'true') {
+        const families = await Drug.distinct("categories");
+        return res.status(200).json({ success: true, data: families.sort() });
+    }
+
+    const pipeline = [
+        { $unwind: "$atc" },
+        {
+            $group: {
+                _id: {
+                    categoryCode: "$atc.categoryCode",
+                    categoryName: "$atc.categoryName",
+                    subcategoryCode: "$atc.subcategoryCode",
+                    subcategoryName: "$atc.subcategoryName",
+                    name: "$name"
+                },
+                atcCode: { $first: "$atc.code" }
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    categoryCode: "$_id.categoryCode",
+                    categoryName: "$_id.categoryName",
+                    subcategoryCode: "$_id.subcategoryCode",
+                    subcategoryName: "$_id.subcategoryName"
+                },
+                drugCount: { $sum: 1 },
+                drugs: { $push: { name: "$_id.name", atcCode: "$atcCode" } }
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    categoryCode: "$_id.categoryCode",
+                    categoryName: "$_id.categoryName"
+                },
+                subcategories: {
+                    $push: {
+                        subcategoryCode: "$_id.subcategoryCode",
+                        subcategoryName: "$_id.subcategoryName",
+                        count: "$drugCount",
+                        drugs: "$drugs"
+                    }
+                },
+                totalDrugs: { $sum: "$drugCount" }
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                categoryCode: "$_id.categoryCode",
+                categoryName: "$_id.categoryName",
+                subcategories: 1,
+                totalDrugs: 1
+            }
+        },
+        { $sort: { categoryCode: 1 } }
+    ];
+
+    const tree = await Drug.aggregate(pipeline);
+    tree.forEach(cat => {
+        cat.subcategories.sort((a, b) => a.subcategoryCode.localeCompare(b.subcategoryCode));
+    });
+
+    res.status(200).json({ success: true, data: tree });
 }));
 
-// GET: Filter by category
+// GET: Filter by ATC subcategory code (e.g. N02, J01)
+app.get("/drugs/atc/subcategories/:code", asyncHandler(async (req, res) => {
+    const rawCode = (req.params.code || "").trim().toUpperCase();
+    const drugs = await Drug.find({ 
+        "atc.subcategoryCode": rawCode 
+    }, "name categories atc actionMechanism").sort({ name: 1 });
+    res.status(200).json({ success: true, count: drugs.length, data: drugs });
+}));
+
+// GET: Filter by category (legacy)
 app.get("/drugs/categories/:category", asyncHandler(async (req, res) => {
     const rawCategory = (req.params.category || "").trim();
     const escaped = rawCategory.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
