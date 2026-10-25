@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { counterContext } from '../context/counterContext.js';
 import { drugService } from '../services/drugService.js';
+import { formatCategory } from '../utils/formatCategory.js';
 import styles from './ContenidoFamilia.module.css';
 
 const ContenidoFamilia = () => {
@@ -35,6 +36,8 @@ const ContenidoFamilia = () => {
         if (selectedFamily) {
             setOpenFamily(selectedFamily);
             loadDrugsForCategory(selectedFamily);
+        } else {
+            setOpenFamily(null);
         }
     }, [selectedFamily]);
 
@@ -60,9 +63,11 @@ const ContenidoFamilia = () => {
         }
     };
 
-    const filteredFamilies = families.filter((family) =>
-        family ? family.toLowerCase().includes(searchQuery.trim().toLowerCase()) : false
-    );
+    const filteredFamilies = families.filter((family) => {
+        if (!family) return false;
+        const q = searchQuery.trim().toLowerCase();
+        return family.toLowerCase().includes(q) || formatCategory(family).toLowerCase().includes(q);
+    });
 
     return (
         <section className={styles.container}>
@@ -105,6 +110,7 @@ const ContenidoFamilia = () => {
                         return (
                             <div key={index} className={styles.accordionItem}>
                                 <button
+                                    type="button"
                                     className={styles.accordionHeader}
                                     onClick={() => toggleAccordion(family)}
                                     aria-expanded={isOpen}
@@ -115,7 +121,7 @@ const ContenidoFamilia = () => {
                                                 <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" />
                                             </svg>
                                         </span>
-                                        <span className={styles.familyName}>{family}</span>
+                                        <span className={styles.familyName}>{formatCategory(family)}</span>
                                     </div>
                                     <div className={styles.headerRight}>
                                         <svg
@@ -143,8 +149,12 @@ const ContenidoFamilia = () => {
                                                 {drugsInCategory.map((drug, drugIdx) => (
                                                     <button
                                                         key={drugIdx}
+                                                        type="button"
                                                         className={styles.drugButton}
-                                                        onClick={() => openDrugDetail(drug)}
+                                                        onClick={() => {
+                                                            setSelectedFamily(family);
+                                                            openDrugDetail(drug);
+                                                        }}
                                                     >
                                                         <span className={styles.drugButtonName}>
                                                             {drug.name}

@@ -9,9 +9,9 @@ export const Descargo = () => {
     if (!descargoVisible) return null;
 
     return (
-        <div className={styles.overlay} role="dialog" aria-modal="true">
+        <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="disclaimer-title">
             <div className={styles.modal}>
-                <h2 className={styles.title}>{t.disclaimerTitle}</h2>
+                <h2 id="disclaimer-title" className={styles.title}>{t.disclaimerTitle}</h2>
 
                 <div className={styles.emergencyBanner}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
@@ -49,6 +49,7 @@ export const Descargo = () => {
                 </label>
 
                 <button
+                    type="button"
                     className={styles.acceptButton}
                     disabled={!isAccepted}
                     onClick={acceptDisclaimer}

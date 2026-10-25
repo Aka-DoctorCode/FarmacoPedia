@@ -1,0 +1,88 @@
+.bottomNav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background: var(--bgModal);
+    backdrop-filter: var(--backdropBlurHeavy);
+    -webkit-backdrop-filter: var(--backdropBlurHeavy);
+    border-top: 1px solid var(--borderGlass);
+    padding-top: 0.35rem;
+    padding-bottom: calc(0.35rem + env(safe-area-inset-bottom, 0px));
+    padding-left: calc(0.25rem + env(safe-area-inset-left, 0px));
+    padding-right: calc(0.25rem + env(safe-area-inset-right, 0px));
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
+    transition: background var(--transitionFast);
+}
+
+.navItem {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    min-width: var(--touchTargetMin, 44px);
+    min-height: var(--touchTargetMin, 44px);
+    padding: 0.4rem 0.2rem;
+    background: transparent;
+    border: none;
+    color: var(--textSecondary);
+    font-family: var(--fontSans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    border-radius: var(--radiusSm);
+    transition: all var(--transitionFast);
+}
+
+.navItem:active {
+    transform: scale(0.92);
+}
+
+.iconWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radiusPill);
+    transition: all var(--transitionFast);
+}
+
+.label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    line-height: 1.1;
+    font-size: 0.68rem;
+    letter-spacing: -0.01em;
+}
+
+.navItemActive {
+    color: var(--colorPrimary);
+}
+
+.navItemActive .iconWrapper {
+    background: var(--colorPrimaryGlow);
+    color: var(--colorPrimary);
+}
+
+.navItemActive .label {
+    font-weight: 700;
+    color: var(--textPrimary);
+}
+
+/* Progressive scaling: hidden on tablet and desktop (>= 768px) */
+@media (min-width: 768px) {
+    .bottomNav {
+        display: none;
+    }
+}

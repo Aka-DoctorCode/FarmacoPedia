@@ -88,8 +88,13 @@ const StateContext = ({ children }) => {
     const closeDrugDetail = useCallback(() => {
         setSelectedDrugData(null);
         setSelectedDrugName(null);
-        setActiveView('drugs');
-    }, []);
+        if (selectedFamily) {
+            setActiveView('families');
+        } else {
+            setActiveView('drugs');
+            setSelectedFamily(null);
+        }
+    }, [selectedFamily]);
 
     const navigateToDrugs = useCallback(() => {
         setActiveView('drugs');
@@ -98,9 +103,7 @@ const StateContext = ({ children }) => {
 
     const navigateToFamilies = useCallback((familyCategory = null) => {
         setActiveView('families');
-        if (familyCategory) {
-            setSelectedFamily(familyCategory);
-        }
+        setSelectedFamily(familyCategory || null);
     }, []);
 
     // Legacy State Compatibility for Existing Handlers

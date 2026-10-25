@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { counterContext } from '../context/counterContext.js';
+import { formatCategory } from '../utils/formatCategory.js';
 import styles from './DetalleFarmaco.module.css';
 
 const DetalleFarmaco = () => {
@@ -28,7 +29,7 @@ const DetalleFarmaco = () => {
         return (
             <div className={styles.container}>
                 <div className={styles.topBar}>
-                    <button className={styles.backButton} onClick={closeDrugDetail}>
+                    <button type="button" className={styles.backButton} onClick={closeDrugDetail}>
                         ← {t.backToCatalog}
                     </button>
                 </div>
@@ -65,7 +66,7 @@ const DetalleFarmaco = () => {
             </Helmet>
 
             <div className={styles.topBar}>
-                <button className={styles.backButton} onClick={closeDrugDetail}>
+                <button type="button" className={styles.backButton} onClick={closeDrugDetail}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="m15 18-6-6 6-6" />
                     </svg>
@@ -81,7 +82,7 @@ const DetalleFarmaco = () => {
                         <div className={styles.categoryBadges}>
                             {drug.categories.map((category, idx) => (
                                 <span key={idx} className={styles.categoryBadge}>
-                                    {category}
+                                    {formatCategory(category)}
                                 </span>
                             ))}
                         </div>
@@ -95,6 +96,7 @@ const DetalleFarmaco = () => {
             {/* Navigation Tabs */}
             <div className={styles.tabsNav} role="tablist">
                 <button
+                    type="button"
                     className={`${styles.tabButton} ${activeTab === 'overview' ? styles.tabButtonActive : ''}`}
                     onClick={() => setActiveTab('overview')}
                     role="tab"
@@ -108,6 +110,7 @@ const DetalleFarmaco = () => {
                     {t.tabOverview}
                 </button>
                 <button
+                    type="button"
                     className={`${styles.tabButton} ${activeTab === 'dosage' ? styles.tabButtonActive : ''}`}
                     onClick={() => setActiveTab('dosage')}
                     role="tab"
@@ -120,6 +123,7 @@ const DetalleFarmaco = () => {
                     {t.tabDosage}
                 </button>
                 <button
+                    type="button"
                     className={`${styles.tabButton} ${activeTab === 'risks' ? styles.tabButtonActive : ''}`}
                     onClick={() => setActiveTab('risks')}
                     role="tab"
@@ -133,6 +137,7 @@ const DetalleFarmaco = () => {
                     {t.tabRisks}
                 </button>
                 <button
+                    type="button"
                     className={`${styles.tabButton} ${activeTab === 'safety' ? styles.tabButtonActive : ''}`}
                     onClick={() => setActiveTab('safety')}
                     role="tab"
@@ -142,6 +147,20 @@ const DetalleFarmaco = () => {
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
                     </svg>
                     {t.tabSafety}
+                </button>
+                <button
+                    type="button"
+                    className={`${styles.tabButton} ${activeTab === 'references' ? styles.tabButtonActive : ''}`}
+                    onClick={() => setActiveTab('references')}
+                    role="tab"
+                    aria-selected={activeTab === 'references'}
+                >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+                        <path d="M6 6h10" />
+                        <path d="M6 10h10" />
+                    </svg>
+                    {t.tabReferences}
                 </button>
             </div>
 
@@ -494,26 +513,32 @@ const DetalleFarmaco = () => {
                 </div>
             )}
 
-            {/* Bottom Section: Bibliographic References (APA) */}
-            {drug.references && drug.references.length > 0 && (
-                <div className={styles.referencesCard}>
-                    <div className={styles.sectionHeader}>
-                        <span className={styles.sectionIcon}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
-                                <path d="M6 6h10" />
-                                <path d="M6 10h10" />
-                            </svg>
-                        </span>
-                        <h2 className={styles.sectionTitle}>{t.sectionReferences || 'Referencias Bibliográficas (APA)'}</h2>
+            {/* Tab 5: References & Sources (Dedicated Tab) */}
+            {activeTab === 'references' && (
+                <div className={styles.tabContent}>
+                    <div className={styles.sectionCard}>
+                        <div className={styles.sectionHeader}>
+                            <span className={styles.sectionIcon}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+                                    <path d="M6 6h10" />
+                                    <path d="M6 10h10" />
+                                </svg>
+                            </span>
+                            <h2 className={styles.sectionTitle}>{t.sectionReferences || 'Referencias Bibliográficas (APA)'}</h2>
+                        </div>
+                        {drug.references && drug.references.length > 0 ? (
+                            <ul className={styles.bulletList}>
+                                {drug.references.map((refItem, idx) => (
+                                    <li key={idx} className={styles.referenceItem}>
+                                        <span className={styles.referenceText}>{refItem}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className={styles.plainText}>{t.noData}</p>
+                        )}
                     </div>
-                    <ul className={styles.bulletList}>
-                        {drug.references.map((refItem, idx) => (
-                            <li key={idx} className={styles.referenceItem}>
-                                <span className={styles.referenceText}>{refItem}</span>
-                            </li>
-                        ))}
-                    </ul>
                 </div>
             )}
         </section>

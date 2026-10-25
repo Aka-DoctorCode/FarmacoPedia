@@ -101,7 +101,7 @@ const drugsToIngest = [
   },
   {
     name: 'losartan',
-    categories: ['antihipertensivos', 'antagonistas de receptores de angiotensina ii'],
+    categories: ['antihipertensivos', 'antagonistas de receptores de angiotensina II (ARA-II)'],
     actionMechanism: 'Bloqueo selectivo y competitivo de los receptores AT1 de la angiotensina II evitando la vasoconstriccion y la liberacion de aldosterona.',
     indications: [
       'Hipertension arterial esencial',
@@ -399,7 +399,7 @@ const drugsToIngest = [
   },
   {
     name: 'salbutamol',
-    categories: ['broncodilatadores', 'agonistas beta dos adrenergicos selectivos'],
+    categories: ['broncodilatadores', 'agonistas beta-2 adrenérgicos selectivos'],
     actionMechanism: 'Estimulacion selectiva de los receptores beta dos adrenergicos del musculo liso bronquial activando la adenilato ciclasa y provocando broncodilatacion rapida.',
     indications: [
       'Alivio y prevencion del broncoespasmo en asma bronquial',

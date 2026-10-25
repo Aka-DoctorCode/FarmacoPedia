@@ -1,6 +1,7 @@
 import { useContext, useState, useEffect, useRef } from 'react';
 import { counterContext } from '../context/counterContext.js';
 import { drugService } from '../services/drugService.js';
+import { formatCategory } from '../utils/formatCategory.js';
 import styles from './SearchModal.module.css';
 
 const SearchModal = () => {
@@ -8,6 +9,7 @@ const SearchModal = () => {
         searchModalOpen,
         setSearchModalOpen,
         openDrugDetail,
+        setSelectedFamily,
         t
     } = useContext(counterContext);
 
@@ -113,6 +115,7 @@ const SearchModal = () => {
                         placeholder={t.searchPlaceholder}
                     />
                     <button
+                        type="button"
                         className={styles.closeButton}
                         onClick={() => setSearchModalOpen(false)}
                         aria-label="Cerrar"
@@ -129,8 +132,10 @@ const SearchModal = () => {
                         results.map((drug) => (
                             <button
                                 key={drug.id || drug._id || drug.name}
+                                type="button"
                                 className={styles.resultCard}
                                 onClick={() => {
+                                    setSelectedFamily(null);
                                     setSearchModalOpen(false);
                                     openDrugDetail(drug);
                                 }}
@@ -141,14 +146,14 @@ const SearchModal = () => {
                                         <div className={styles.resultCategories}>
                                             {drug.categories.slice(0, 2).map((category, idx) => (
                                                 <span key={idx} className={styles.resultBadge}>
-                                                    {category}
+                                                    {formatCategory(category)}
                                                 </span>
                                             ))}
                                         </div>
                                     )}
                                 </div>
                                 {drug.actionMechanism && (
-                                    <p className={styles.resultSnippet}>{drug.actionMechanism}</p>
+                                    <span className={styles.resultSnippet}>{drug.actionMechanism}</span>
                                 )}
                             </button>
                         ))

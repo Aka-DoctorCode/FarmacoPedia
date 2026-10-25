@@ -1,7 +1,9 @@
+/* Mobile-First Drug Detail View */
 .container {
-    max-width: 1100px;
-    margin: 2rem auto;
-    padding: 0 1.5rem 3rem;
+    width: 100%;
+    max-width: 100%;
+    margin: 1rem auto;
+    padding: 0 calc(1rem + env(safe-area-inset-right, 0px)) 2rem calc(1rem + env(safe-area-inset-left, 0px));
     animation: fadeIn var(--transitionNormal) ease-out;
 }
 
@@ -9,9 +11,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .backButton {
@@ -21,12 +23,14 @@
     background: var(--bgCard);
     border: 1px solid var(--borderGlass);
     color: var(--textSecondary);
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1.1rem;
+    min-height: var(--touchTargetMin, 44px);
     border-radius: var(--radiusPill);
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
     transition: all var(--transitionFast);
+    -webkit-tap-highlight-color: transparent;
 }
 
 .backButton:hover {
@@ -40,13 +44,13 @@
     backdrop-filter: var(--backdropBlur);
     -webkit-backdrop-filter: var(--backdropBlur);
     border: 1px solid var(--borderGlass);
-    border-radius: var(--radiusLg);
-    padding: 2rem;
-    margin-bottom: 1.5rem;
+    border-radius: var(--radiusMd);
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
     box-shadow: var(--shadowCard);
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.85rem;
     position: relative;
     overflow: hidden;
 }
@@ -66,72 +70,87 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .drugName {
     font-family: var(--fontHeading);
-    font-size: 2.25rem;
+    font-size: 1.65rem;
     font-weight: 800;
     color: var(--textPrimary);
     text-transform: capitalize;
     margin: 0;
     letter-spacing: -0.02em;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .categoryBadges {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.35rem;
 }
 
 .categoryBadge {
     background: var(--colorInfoBg);
     color: var(--colorInfo);
     border: 1px solid rgba(129, 140, 248, 0.25);
-    padding: 0.3rem 0.8rem;
+    padding: 0.25rem 0.65rem;
     border-radius: var(--radiusPill);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    text-transform: capitalize;
+    text-transform: none;
 }
 
 .mechanismSnippet {
     color: var(--textSecondary);
-    font-size: 1rem;
-    line-height: 1.6;
+    font-size: 0.95rem;
+    line-height: 1.55;
     margin: 0;
 }
 
-/* Tabs Navigation */
+/* Tabs Navigation: Segmented Control with Horizontal Touch Scrolling on Mobile */
 .tabsNav {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.35rem;
     background: var(--bgCard);
     padding: 0.35rem;
     border-radius: var(--radiusMd);
     border: 1px solid var(--borderGlass);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+    width: 100%;
+    min-width: 0;
+}
+
+.tabsNav::-webkit-scrollbar {
+    display: none;
 }
 
 .tabButton {
-    flex: 1;
-    min-width: 140px;
+    flex: 0 0 auto;
+    min-width: auto;
+    min-height: var(--touchTargetMin, 44px);
     background: transparent;
     border: none;
     color: var(--textSecondary);
-    padding: 0.65rem 1rem;
+    padding: 0.55rem 0.85rem;
     border-radius: var(--radiusSm);
-    font-size: 0.9rem;
+    font-size: 0.825rem;
     font-weight: 600;
     cursor: pointer;
     transition: all var(--transitionFast);
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
     white-space: nowrap;
+    scroll-snap-align: start;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .tabButton:hover {
@@ -154,7 +173,8 @@
 .tabContent {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
+    width: 100%;
 }
 
 .sectionCard {
@@ -163,16 +183,18 @@
     -webkit-backdrop-filter: var(--backdropBlur);
     border: 1px solid var(--borderGlass);
     border-radius: var(--radiusMd);
-    padding: 1.5rem;
+    padding: 1.15rem;
     box-shadow: var(--shadowCard);
+    width: 100%;
+    overflow-x: hidden;
 }
 
 .sectionHeader {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
+    margin-bottom: 0.85rem;
+    padding-bottom: 0.65rem;
     border-bottom: 1px solid var(--borderGlass);
 }
 
@@ -180,11 +202,12 @@
     color: var(--colorPrimary);
     display: flex;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .sectionTitle {
     font-family: var(--fontHeading);
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: var(--textPrimary);
     margin: 0;
@@ -194,6 +217,8 @@
     color: var(--textSecondary);
     line-height: 1.6;
     margin: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .bulletList {
@@ -204,32 +229,36 @@
     gap: 0.5rem;
     color: var(--textSecondary);
     line-height: 1.5;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .bulletList li::marker {
     color: var(--colorPrimary);
 }
 
-/* Presentations Grid */
+/* Presentations Grid: Mobile Base is Single Column */
 .presentationsGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1rem;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    width: 100%;
 }
 
 .presentationCard {
     background: var(--bgGlass);
     border: 1px solid var(--borderGlass);
     border-radius: var(--radiusSm);
-    padding: 1rem;
+    padding: 0.85rem;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.65rem;
+    width: 100%;
 }
 
 .presentationTitle {
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: var(--textPrimary);
 }
 
@@ -237,6 +266,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    width: 100%;
 }
 
 .dosageItem {
@@ -248,13 +278,16 @@
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 0.5rem;
+    width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .dosageAmount {
     font-weight: 700;
     font-family: var(--fontMono);
     color: var(--colorPrimary);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
 }
 
 .routeBadges {
@@ -266,47 +299,49 @@
 .routeBadge {
     background: var(--colorSuccessBg);
     color: var(--colorSuccess);
-    font-size: 0.75rem;
+    font-size: 0.725rem;
     padding: 0.15rem 0.5rem;
     border-radius: var(--radiusPill);
     font-weight: 600;
 }
 
 .useInBadge {
-    font-size: 0.75rem;
+    font-size: 0.725rem;
     padding: 0.15rem 0.5rem;
     border-radius: var(--radiusPill);
     background: rgba(255, 255, 255, 0.08);
     color: var(--textSecondary);
 }
 
-/* Guidance Routes */
+/* Guidance Routes: Mobile Base is Single Column */
 .guidanceGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1rem;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    width: 100%;
 }
 
 .guidanceCard {
     background: var(--bgGlass);
     border: 1px solid var(--borderGlass);
     border-radius: var(--radiusSm);
-    padding: 1rem;
+    padding: 0.85rem;
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
+    gap: 0.5rem;
+    width: 100%;
 }
 
 .guidanceRouteName {
     font-weight: 700;
     color: var(--textPrimary);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     border-bottom: 1px solid var(--borderGlass);
     padding-bottom: 0.35rem;
 }
 
 .guidanceItemTitle {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--textMuted);
     font-weight: 600;
     text-transform: uppercase;
@@ -314,39 +349,42 @@
     margin-top: 0.25rem;
 }
 
-/* Organ Adjustments Grid */
+/* Organ Adjustments Grid: Mobile Base is Single Column */
 .adjustmentsGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1rem;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    width: 100%;
 }
 
 .riskCard {
     background: var(--bgGlass);
     border: 1px solid var(--borderGlass);
     border-radius: var(--radiusSm);
-    padding: 1rem;
+    padding: 0.85rem;
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
+    width: 100%;
 }
 
 .riskTitle {
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: var(--textPrimary);
 }
 
 .riskLevel {
     font-weight: 600;
     color: var(--colorWarning);
-    font-size: 0.875rem;
+    font-size: 0.85rem;
 }
 
 .riskAdjustment {
     color: var(--textSecondary);
-    font-size: 0.85rem;
+    font-size: 0.825rem;
     line-height: 1.45;
+    overflow-wrap: break-word;
 }
 
 .alertBox {
@@ -358,8 +396,19 @@
     display: flex;
     align-items: flex-start;
     gap: 0.6rem;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     line-height: 1.4;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.alertBox svg {
+    flex-shrink: 0;
+}
+
+.alertBox > div {
+    min-width: 0;
+    flex: 1;
 }
 
 .loadingBox {
@@ -382,22 +431,26 @@
 }
 
 .referencesCard {
-    margin-top: 2rem;
+    margin-top: 1.5rem;
     background: var(--bgCard);
     backdrop-filter: var(--backdropBlur);
     -webkit-backdrop-filter: var(--backdropBlur);
     border: 1px solid var(--borderGlass);
-    border-radius: var(--radiusLg);
-    padding: 1.5rem;
+    border-radius: var(--radiusMd);
+    padding: 1.15rem;
     box-shadow: var(--shadowCard);
+    width: 100%;
+    overflow-x: hidden;
 }
 
 .referenceItem {
     line-height: 1.6;
     margin-bottom: 0.75rem;
-    font-size: 0.875rem;
+    font-size: 0.825rem;
     color: var(--textSecondary);
     list-style-type: disc;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .referenceItem:last-child {
@@ -406,20 +459,87 @@
 
 .referenceText {
     word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
-@media (max-width: 768px) {
+/* Progressive Scaling: Tablet (>= 768px) */
+@media (min-width: 768px) {
+    .container {
+        padding: 0 calc(1.5rem + env(safe-area-inset-right, 0px)) 2.5rem calc(1.5rem + env(safe-area-inset-left, 0px));
+        margin: 1.5rem auto;
+    }
+
+    .topBar {
+        margin-bottom: 1.5rem;
+        gap: 1rem;
+    }
+
     .headerCard {
-        padding: 1.25rem;
+        padding: 2rem;
+        border-radius: var(--radiusLg);
+        margin-bottom: 1.5rem;
+        gap: 1rem;
     }
+
     .drugName {
-        font-size: 1.75rem;
+        font-size: 2.25rem;
     }
+
     .tabsNav {
-        padding: 0.25rem;
+        padding: 0.35rem;
+        margin-bottom: 1.5rem;
     }
+
     .tabButton {
-        padding: 0.5rem 0.75rem;
-        font-size: 0.8rem;
+        flex: 1;
+        min-width: 140px;
+        padding: 0.65rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .tabContent {
+        gap: 1.5rem;
+    }
+
+    .sectionCard {
+        padding: 1.5rem;
+    }
+
+    .sectionTitle {
+        font-size: 1.15rem;
+    }
+
+    .presentationsGrid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1rem;
+    }
+
+    .guidanceGrid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+
+    .adjustmentsGrid {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1rem;
+    }
+
+    .referencesCard {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        border-radius: var(--radiusLg);
+    }
+
+    .referenceItem {
+        font-size: 0.875rem;
+    }
+}
+
+/* Progressive Scaling: Desktop (>= 1024px) */
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1100px;
+        margin: 2rem auto;
+        padding: 0 1.5rem 3rem;
     }
 }

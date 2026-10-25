@@ -55,6 +55,14 @@
     --fontHeading: 'Outfit', var(--fontSans);
     --fontMono: 'JetBrains Mono', monospace;
 
+    /* Mobile-First & Safe Area Tokens */
+    --safeAreaTop: env(safe-area-inset-top, 0px);
+    --safeAreaBottom: env(safe-area-inset-bottom, 0px);
+    --safeAreaLeft: env(safe-area-inset-left, 0px);
+    --safeAreaRight: env(safe-area-inset-right, 0px);
+    --bottomNavHeight: 60px;
+    --touchTargetMin: 44px;
+
     /* Transitions */
     --transitionFast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     --transitionNormal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -92,6 +100,7 @@
 html, body {
     margin: 0;
     padding: 0;
+    width: 100%;
     min-height: 100vh;
     font-family: var(--fontSans);
     background-color: var(--bgBase);
@@ -101,10 +110,26 @@ html, body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    -webkit-tap-highlight-color: transparent;
 }
 
 #root {
     min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+button, a, input, select, textarea {
+    touch-action: manipulation;
+}
+
+.mainContent {
+    flex: 1;
+    width: 100%;
+    min-height: calc(100vh - 200px);
     display: flex;
     flex-direction: column;
 }
@@ -158,5 +183,14 @@ html, body {
 @keyframes spinLoader {
     to {
         transform: rotate(360deg);
+    }
+}
+
+@keyframes slideUpSheet {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
     }
 }

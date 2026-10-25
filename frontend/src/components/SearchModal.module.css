@@ -1,3 +1,4 @@
+/* Mobile-First Search Modal (Bottom Sheet on Mobile, Centered Modal on Desktop) */
 .overlay {
     position: fixed;
     inset: 0;
@@ -6,44 +7,66 @@
     backdrop-filter: var(--backdropBlur);
     -webkit-backdrop-filter: var(--backdropBlur);
     display: flex;
-    align-items: flex-start;
+    align-items: flex-end;
     justify-content: center;
-    padding-top: 10vh;
-    padding-inline: 1rem;
+    padding: 0;
     animation: fadeIn var(--transitionFast) ease-out;
 }
 
 .modal {
     width: 100%;
-    max-width: 640px;
+    max-width: 100%;
     background: var(--bgModal);
     border: 1px solid var(--borderGlassHover);
-    border-radius: var(--radiusLg);
+    border-bottom: none;
+    border-radius: var(--radiusLg) var(--radiusLg) 0 0;
     box-shadow: var(--shadowGlass);
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    max-height: 85vh;
+    max-height: 85dvh;
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+    animation: slideUpSheet 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.25);
+    margin: 0.6rem auto 0;
+    flex-shrink: 0;
 }
 
 .searchHeader {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 1rem 1.25rem;
+    padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--borderGlass);
+    min-height: 48px;
 }
 
 .searchIcon {
     color: var(--colorPrimary);
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
 }
 
 .searchInput {
     flex: 1;
+    min-height: var(--touchTargetMin, 44px);
     background: transparent;
     border: none;
     outline: none;
     color: var(--textPrimary);
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-family: var(--fontSans);
 }
 
@@ -56,11 +79,17 @@
     border: none;
     color: var(--textMuted);
     cursor: pointer;
-    padding: 0.25rem;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
     border-radius: var(--radiusSm);
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+    transition: all var(--transitionFast);
 }
 
 .closeButton:hover {
@@ -69,12 +98,15 @@
 }
 
 .resultsList {
-    max-height: 55vh;
+    flex: 1 1 auto;
+    min-height: 0;
     overflow-y: auto;
     padding: 0.75rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
 }
 
 .resultCard {
@@ -88,6 +120,10 @@
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
+    min-height: var(--touchTargetMin, 44px);
+    width: 100%;
+    -webkit-tap-highlight-color: transparent;
+    overflow-wrap: break-word;
 }
 
 .resultCard:hover {
@@ -100,6 +136,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
 .resultName {
@@ -122,7 +160,7 @@
     border-radius: var(--radiusPill);
     background: var(--colorInfoBg);
     color: var(--colorInfo);
-    text-transform: capitalize;
+    text-transform: none;
     font-weight: 600;
 }
 
@@ -134,6 +172,7 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     line-height: 1.35;
+    margin: 0;
 }
 
 .emptyState {
@@ -158,12 +197,14 @@
     align-items: center;
     gap: 0.75rem;
     max-width: 420px;
+    width: 100%;
 }
 
 .priorityRequestSubtitle {
     font-size: 0.85rem;
     color: var(--textSecondary);
     margin: 0;
+    text-align: center;
 }
 
 .priorityRequestButton {
@@ -171,11 +212,17 @@
     color: #fff;
     border: none;
     border-radius: var(--radiusPill);
-    padding: 0.45rem 1.1rem;
+    padding: 0.55rem 1.25rem;
+    min-height: var(--touchTargetMin, 44px);
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.3;
+    text-align: center;
     font-size: 0.825rem;
     font-weight: 600;
     cursor: pointer;
     transition: all var(--transitionFast);
+    -webkit-tap-highlight-color: transparent;
 }
 
 .priorityRequestButton:hover {
@@ -186,11 +233,51 @@
 .prioritySuccessBadge {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.35rem;
     color: #10b981;
     font-size: 0.825rem;
     font-weight: 600;
     background: rgba(16, 185, 129, 0.1);
-    padding: 0.35rem 0.85rem;
+    padding: 0.45rem 0.85rem;
     border-radius: var(--radiusPill);
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.35;
+    text-align: center;
+    overflow-wrap: break-word;
+}
+
+/* Progressive Scaling: Tablet & Desktop (>= 768px) */
+@media (min-width: 768px) {
+    .overlay {
+        align-items: flex-start;
+        padding-top: 10vh;
+        padding-inline: 1rem;
+    }
+
+    .modal {
+        max-width: 640px;
+        border-radius: var(--radiusLg);
+        border-bottom: 1px solid var(--borderGlassHover);
+        max-height: none;
+        padding-bottom: 0;
+        animation: fadeIn var(--transitionFast) ease-out;
+    }
+
+    .modal::before {
+        display: none;
+    }
+
+    .searchHeader {
+        padding: 1rem 1.25rem;
+    }
+
+    .searchInput {
+        font-size: 1.1rem;
+    }
+
+    .resultsList {
+        max-height: 55vh;
+    }
 }

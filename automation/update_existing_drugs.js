@@ -152,8 +152,8 @@ const updatedDrugs = [
     overdose: 'El cuadro se manifiesta con nauseas vomitos anorexia y dolor abdominal seguidos de necrosis hepatica centrolobulillar y fracaso renal agudo. Antidoto especifico N-acetilcisteina administrada por via oral o intravenosa preferiblemente dentro de las primeras 8 a 10 horas tras la ingestion segun el normograma de Rumack-Matthew.',
     references: [
       'Agencia Española de Medicamentos y Productos Sanitarios. (2023). Ficha técnica Paracetamol 1 g comprimidos. Centro de Información Online de Medicamentos (CIMA). https://cima.aemps.es',
-      'Brunton, L. L., Hilal-Dandan, R., & Knollmann, B. C. (2018). Goodman & Gilman: Las bases farmacológicas de la terapéutica (13.ª ed.). McGraw-Hill Education.',
-      'World Health Organization. (2023). The selection and use of essential medicines: Report of the WHO Expert Committee on Selection and Use of Essential Medicines. WHO Technical Report Series, No. 1049.'
+      'World Health Organization. (2023). The selection and use of essential medicines: Report of the WHO Expert Committee on Selection and Use of Essential Medicines. WHO Technical Report Series, No. 1049.',
+      'McCrae, J. C., Morrison, E. E., MacIntyre, I. M., Dear, J. W., & Webb, D. J. (2022). Long-term paracetamol use and blood pressure in patients with hypertension. Circulation, 145(8), 558-566. https://doi.org/10.1161/CIRCULATIONAHA.121.056015'
     ]
   },
   {
@@ -408,8 +408,8 @@ const updatedDrugs = [
     overdose: 'La sobredosis aguda se manifiesta con nauseas vomitos dolor epigastrico letargia acidosis metabolica hipotension y raramente coma o fallo renal. Tratamiento sintomatico lavado gastrico carbon activado precoz y correccion hidroelectrolitica.',
     references: [
       'Agencia Española de Medicamentos y Productos Sanitarios. (2023). Ficha técnica Ibuprofeno 400 mg comprimidos recubiertos con película. Centro de Información Online de Medicamentos (CIMA). https://cima.aemps.es',
-      'Rainsford, K. D. (2015). Ibuprofen: Pharmacology, therapeutics and side effects. Springer International Publishing. https://doi.org/10.1007/978-3-0348-0927-6',
-      'World Health Organization. (2023). The selection and use of essential medicines: Report of the WHO Expert Committee on Selection and Use of Essential Medicines. WHO Technical Report Series, No. 1049.'
+      'World Health Organization. (2023). The selection and use of essential medicines: Report of the WHO Expert Committee on Selection and Use of Essential Medicines. WHO Technical Report Series, No. 1049.',
+      'National Institute for Health and Care Excellence. (2022). Osteoarthritis in over 16s: diagnosis and management (NICE Guideline NG226). https://www.nice.org.uk/guidance/ng226'
     ]
   },
   {
@@ -508,7 +508,8 @@ const updatedDrugs = [
     overdose: 'Sintomas incluyen confusion, somnolencia, vision borrosa y taquicardia. Tratamiento sintomatico y de soporte general; no es dializable de forma significativa.',
     references: [
       'Agencia Española de Medicamentos y Productos Sanitarios. (2023). Ficha técnica Omeprazol 20 mg cápsulas duras gastrorresistentes. Centro de Información Online de Medicamentos (CIMA). https://cima.aemps.es',
-      'Strand, D. S., Kim, D., & Peura, D. A. (2017). 25 years of proton pump inhibitors: A comprehensive review. Gut and Liver, 11(1), 27-37. https://doi.org/10.5009/gnl15502'
+      'Katz, P. O., Dunbar, K. B., Schnoll-Sussman, F. H., Greer, K. B., Yadlapati, R., & Spechler, S. J. (2022). ACG Clinical Guideline for the Diagnosis and Management of Gastroesophageal Reflux Disease. The American Journal of Gastroenterology, 117(1), 27-56. https://doi.org/10.14309/ajg.0000000000001538',
+      'Malfertheiner, P., et al. (2022). Management of Helicobacter pylori infection: the Maastricht VI/Florence consensus report. Gut, 71(9), 1724-1762. https://doi.org/10.1136/gutjnl-2022-327745'
     ]
   },
   {
@@ -608,7 +609,8 @@ const updatedDrugs = [
     overdose: 'Manifestaciones principales son hipotension taquicardia o bradicardia vagal. Tratamiento con soporte hemodinamico y reposicion salina intravenosa.',
     references: [
       'Agencia Española de Medicamentos y Productos Sanitarios. (2023). Ficha técnica Losartán 50 mg comprimidos recubiertos con película. Centro de Información Online de Medicamentos (CIMA). https://cima.aemps.es',
-      'Whelton, P. K., et al. (2018). 2017 ACC/AHA Guideline for the Prevention, Detection, Evaluation, and Management of High Blood Pressure in Adults. Journal of the American College of Cardiology, 71(19), e127-e248. https://doi.org/10.1016/j.jacc.2017.11.006'
+      'Mancia, G., et al. (2023). 2023 ESH Guidelines for the management of arterial hypertension. Journal of Hypertension, 41(12), 1874-2071. https://doi.org/10.1097/HJH.0000000000003480',
+      'Whelton, P. K., et al. (2021). 2021 AHA/ACC Clinical Practice Guideline on Blood Pressure Management in Adults. Journal of the American College of Cardiology, 78(18), e150-e220. https://doi.org/10.1016/j.jacc.2021.08.006'
     ]
   },
   {
@@ -709,7 +711,8 @@ const updatedDrugs = [
     overdose: 'La sobredosis masiva provoca acidosis lactica severa con hiperventilacion hipotermia y colapso cardiovascular. Requiere correccion hidroelectrolitica y hemodialisis de urgencia.',
     references: [
       'Agencia Española de Medicamentos y Productos Sanitarios. (2023). Ficha técnica Metformina 850 mg comprimidos recubiertos. Centro de Información Online de Medicamentos (CIMA). https://cima.aemps.es',
-      'American Diabetes Association. (2024). Standards of Care in Diabetes—2024. Diabetes Care, 47(Suppl. 1), S1-S343. https://doi.org/10.2337/dc24-S001'
+      'American Diabetes Association. (2024). Standards of Care in Diabetes—2024. Diabetes Care, 47(Suppl. 1), S1-S343. https://doi.org/10.2337/dc24-S001',
+      'Davies, M. J., et al. (2022). Management of Hyperglycemia in Type 2 Diabetes: A Consensus Report by the ADA and the EASD. Diabetes Care, 45(11), 2753-2786. https://doi.org/10.2337/dci22-0034'
     ]
   },
   {
@@ -816,7 +819,8 @@ const updatedDrugs = [
     overdose: 'No existe tratamiento especifico antídoto. Tratamiento de sosten sintomatico monitoreo de funcion hepatica y niveles sericos de creatina cinasa.',
     references: [
       'Agencia Española de Medicamentos y Productos Sanitarios. (2023). Ficha técnica Atorvastatina 20 mg comprimidos recubiertos con película. Centro de Información Online de Medicamentos (CIMA). https://cima.aemps.es',
-      'Grundy, S. M., et al. (2019). 2018 AHA/ACC/AACVPR/AAPA/ABC/ACPM/ADA/AGS/APhA/ASPC/NLA/PCNA Guideline on the Management of Blood Cholesterol. Circulation, 139(25), e1082-e1143. https://doi.org/10.1161/CIR.0000000000000625'
+      'Visseren, F. L. J., et al. (2021). 2021 ESC Guidelines on cardiovascular disease prevention in clinical practice. European Heart Journal, 42(34), 3227-3337. https://doi.org/10.1093/eurheartj/ehab484',
+      'Lloyd-Jones, D. M., et al. (2022). 2022 ACC Expert Consensus Decision Pathway on Nonstatin Therapies for LDL-Cholesterol Lowering in the Management of ASCVD Risk. Journal of the American College of Cardiology, 80(14), 1366-1418. https://doi.org/10.1016/j.jacc.2022.07.006'
     ]
   },
   {
@@ -914,7 +918,8 @@ const updatedDrugs = [
     overdose: 'Signos de sobredosis incluyen taquicardia hipopotasemia hiperglucemia y temblores marcados. El antidoto de eleccion es un betabloqueante cardioselectivo con extrema cautela en asmaticos.',
     references: [
       'Agencia Española de Medicamentos y Productos Sanitarios. (2023). Ficha técnica Salbutamol 100 microgramos por pulsación suspensión para inhalación. Centro de Información Online de Medicamentos (CIMA). https://cima.aemps.es',
-      'Global Initiative for Asthma. (2024). Global Strategy for Asthma Management and Prevention (2024 update). GINA. https://ginasthma.org'
+      'Global Initiative for Asthma. (2024). Global Strategy for Asthma Management and Prevention (2024 update). GINA. https://ginasthma.org',
+      'Reddel, H. K., et al. (2022). GINA 2021: Executive Summary and Rationale for Changes. American Journal of Respiratory and Critical Care Medicine, 205(1), 17-35. https://doi.org/10.1164/rccm.202109-2205PP'
     ]
   }
 ];

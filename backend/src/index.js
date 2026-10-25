@@ -78,7 +78,7 @@ const drugSchema = new mongoose.Schema({
         type: [String], 
         required: true, 
         index: true,
-        match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s-]+$/i
+        match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ0-9\s\-()]+$/i
     },
     actionMechanism: {
         type: String,
@@ -190,7 +190,11 @@ app.get("/drugs/families", asyncHandler(async (req, res) => {
 
 // GET: Filter by category
 app.get("/drugs/categories/:category", asyncHandler(async (req, res) => {
-    const drugs = await Drug.find({ categories: req.params.category }, "name").sort({ name: 1 });
+    const rawCategory = (req.params.category || "").trim();
+    const escaped = rawCategory.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const drugs = await Drug.find({ 
+        categories: { $regex: new RegExp(`^${escaped}$`, 'i') } 
+    }, "name").sort({ name: 1 });
     if (drugs.length === 0) {
         return res.status(404).json({ success: false, error: "No drugs found for this category" });
     }

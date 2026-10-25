@@ -1,3 +1,4 @@
+/* Mobile-First Disclaimer Modal (Bottom Sheet on Mobile, Centered Modal on Desktop) */
 .overlay {
     position: fixed;
     inset: 0;
@@ -6,30 +7,45 @@
     backdrop-filter: var(--backdropBlurHeavy);
     -webkit-backdrop-filter: var(--backdropBlurHeavy);
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
-    padding: 1.5rem;
+    padding: 0;
     animation: fadeIn var(--transitionNormal) ease-out;
 }
 
 .modal {
     width: 100%;
-    max-width: 680px;
+    max-width: 100%;
     background: var(--bgModal);
     border: 1px solid var(--borderGlassHover);
-    border-radius: var(--radiusLg);
+    border-bottom: none;
+    border-radius: var(--radiusLg) var(--radiusLg) 0 0;
     box-shadow: var(--shadowGlass);
-    padding: 2rem;
+    padding: 1.25rem calc(1.25rem + env(safe-area-inset-right, 0px)) calc(1.5rem + env(safe-area-inset-bottom, 0px)) calc(1.25rem + env(safe-area-inset-left, 0px));
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1rem;
     max-height: 90vh;
+    max-height: 90dvh;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    animation: slideUpSheet 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.25);
+    margin: 0 auto 0.25rem;
+    flex-shrink: 0;
 }
 
 .title {
     font-family: var(--fontHeading);
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 800;
     color: var(--textPrimary);
     margin: 0;
@@ -40,16 +56,21 @@
     background: var(--colorDangerBg);
     border: 1px solid rgba(244, 63, 94, 0.4);
     border-radius: var(--radiusMd);
-    padding: 1rem;
+    padding: 0.85rem;
     display: flex;
     align-items: flex-start;
-    gap: 0.75rem;
+    gap: 0.65rem;
     color: var(--colorDanger);
+}
+
+.emergencyBanner > div {
+    min-width: 0;
+    flex: 1;
 }
 
 .emergencyBanner strong {
     display: block;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     margin-bottom: 0.25rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -57,21 +78,25 @@
 
 .emergencyBanner p {
     margin: 0;
-    font-size: 0.85rem;
-    line-height: 1.45;
+    font-size: 0.825rem;
+    line-height: 1.4;
 }
 
 .termsContainer {
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
+    gap: 0.75rem;
     background: var(--bgInput);
     border: 1px solid var(--borderGlass);
     border-radius: var(--radiusMd);
-    padding: 1.25rem;
-    font-size: 0.875rem;
+    padding: 1rem;
+    font-size: 0.85rem;
     color: var(--textSecondary);
-    line-height: 1.55;
+    line-height: 1.5;
+}
+
+.termsContainer p {
+    margin: 0.25rem 0 0;
 }
 
 .termSectionTitle {
@@ -85,19 +110,24 @@
     align-items: flex-start;
     gap: 0.75rem;
     cursor: pointer;
-    margin-top: 0.5rem;
+    padding: 0.5rem 0;
+    min-height: var(--touchTargetMin, 44px);
+    -webkit-tap-highlight-color: transparent;
 }
 
 .checkbox {
-    width: 18px;
-    height: 18px;
-    margin-top: 0.15rem;
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    min-height: 22px;
     accent-color: var(--colorPrimary);
     cursor: pointer;
+    flex-shrink: 0;
+    margin: 0.15rem 0 0;
 }
 
 .agreementText {
-    font-size: 0.85rem;
+    font-size: 0.825rem;
     color: var(--textPrimary);
     line-height: 1.4;
     user-select: none;
@@ -108,6 +138,7 @@
     border: none;
     color: #ffffff;
     padding: 0.85rem 1.5rem;
+    min-height: 48px;
     border-radius: var(--radiusPill);
     font-size: 0.95rem;
     font-weight: 700;
@@ -116,6 +147,7 @@
     box-shadow: 0 4px 12px var(--colorPrimaryGlow);
     text-align: center;
     width: 100%;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .acceptButton:hover:not(:disabled) {
@@ -127,4 +159,52 @@
     opacity: 0.45;
     cursor: not-allowed;
     box-shadow: none;
+}
+
+/* Progressive Scaling: Tablet & Desktop (>= 768px) */
+@media (min-width: 768px) {
+    .overlay {
+        align-items: center;
+        padding: 1.5rem;
+    }
+
+    .modal {
+        max-width: 680px;
+        border-radius: var(--radiusLg);
+        border-bottom: 1px solid var(--borderGlassHover);
+        padding: 2rem;
+        gap: 1.25rem;
+        animation: fadeIn var(--transitionNormal) ease-out;
+    }
+
+    .modal::before {
+        display: none;
+    }
+
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .termsContainer {
+        padding: 1.25rem;
+        font-size: 0.875rem;
+    }
+
+    .agreementRow {
+        align-items: flex-start;
+        padding: 0;
+        margin-top: 0.5rem;
+    }
+
+    .checkbox {
+        width: 18px;
+        height: 18px;
+        min-width: 18px;
+        min-height: 18px;
+        margin-top: 0.15rem;
+    }
+
+    .agreementText {
+        font-size: 0.85rem;
+    }
 }

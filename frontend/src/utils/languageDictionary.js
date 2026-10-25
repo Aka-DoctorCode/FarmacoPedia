@@ -10,6 +10,7 @@ export const translations = {
         searchTooltip: 'Búsqueda instantánea (Cmd/Ctrl + K)',
         themeDark: 'Modo Oscuro',
         themeLight: 'Modo Claro',
+        navTheme: 'Tema',
         language: 'Idioma',
         
         // Drugs View
@@ -35,6 +36,7 @@ export const translations = {
         tabDosage: 'Presentaciones y Dosis',
         tabRisks: 'Riesgos y Ajustes',
         tabSafety: 'Interacciones y Seguridad',
+        tabReferences: 'Bibliografía y Fuentes',
         
         // Detail Sections
         sectionMechanism: 'Mecanismo de Acción',
@@ -99,6 +101,7 @@ export const translations = {
         searchTooltip: 'Instant Search (Cmd/Ctrl + K)',
         themeDark: 'Dark Mode',
         themeLight: 'Light Mode',
+        navTheme: 'Theme',
         language: 'Language',
         
         // Drugs View
@@ -124,6 +127,7 @@ export const translations = {
         tabDosage: 'Presentations & Dosage',
         tabRisks: 'Risks & Adjustments',
         tabSafety: 'Interactions & Safety',
+        tabReferences: 'Bibliography & References',
         
         // Detail Sections
         sectionMechanism: 'Mechanism of Action',

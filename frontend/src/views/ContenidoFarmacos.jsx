@@ -2,11 +2,13 @@ import { useContext, useEffect, useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { counterContext } from '../context/counterContext.js';
 import { drugService } from '../services/drugService.js';
+import { formatCategory } from '../utils/formatCategory.js';
 import styles from './ContenidoFarmacos.module.css';
 
 const ContenidoFarmacos = () => {
     const {
         openDrugDetail,
+        setSelectedFamily,
         setIsOffline,
         t
     } = useContext(counterContext);
@@ -89,6 +91,7 @@ const ContenidoFarmacos = () => {
 
                 <div className={styles.categoryChips}>
                     <button
+                        type="button"
                         className={`${styles.chipButton} ${selectedCategory === 'all' ? styles.chipButtonActive : ''}`}
                         onClick={() => setSelectedCategory('all')}
                     >
@@ -97,10 +100,11 @@ const ContenidoFarmacos = () => {
                     {categories.map((cat, idx) => (
                         <button
                             key={idx}
+                            type="button"
                             className={`${styles.chipButton} ${selectedCategory === cat ? styles.chipButtonActive : ''}`}
                             onClick={() => setSelectedCategory(cat)}
                         >
-                            {cat}
+                            {formatCategory(cat)}
                         </button>
                     ))}
                 </div>
@@ -118,11 +122,16 @@ const ContenidoFarmacos = () => {
                         <div
                             key={drug.id || drug._id || drug.name}
                             className={styles.card}
-                            onClick={() => openDrugDetail(drug)}
+                            onClick={() => {
+                                setSelectedFamily(null);
+                                openDrugDetail(drug);
+                            }}
                             role="button"
                             tabIndex={0}
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter' || e.key === ' ') {
+                                    if (e.key === ' ') e.preventDefault();
+                                    setSelectedFamily(null);
                                     openDrugDetail(drug);
                                 }
                             }}
@@ -133,7 +142,7 @@ const ContenidoFarmacos = () => {
                                     <div className={styles.cardCategories}>
                                         {drug.categories.map((c, idx) => (
                                             <span key={idx} className={styles.categoryTag}>
-                                                {c}
+                                                {formatCategory(c)}
                                             </span>
                                         ))}
                                     </div>

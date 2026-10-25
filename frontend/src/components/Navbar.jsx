@@ -20,6 +20,7 @@ const Navbar = () => {
         <header className={styles.navHeader}>
             <div className={styles.navContainer}>
                 <button
+                    type="button"
                     className={styles.brandGroup}
                     onClick={navigateToDrugs}
                     title={t.appName}
@@ -38,6 +39,7 @@ const Navbar = () => {
 
                 <nav className={styles.navigationNav}>
                     <button
+                        type="button"
                         className={`${styles.navButton} ${activeView === 'drugs' ? styles.navButtonActive : ''}`}
                         onClick={navigateToDrugs}
                     >
@@ -49,6 +51,7 @@ const Navbar = () => {
                         {t.navDrugs}
                     </button>
                     <button
+                        type="button"
                         className={`${styles.navButton} ${activeView === 'families' ? styles.navButtonActive : ''}`}
                         onClick={() => navigateToFamilies(null)}
                     >
@@ -67,6 +70,7 @@ const Navbar = () => {
                     )}
 
                     <button
+                        type="button"
                         className={styles.searchTrigger}
                         onClick={() => setSearchModalOpen(true)}
                         title={t.searchTooltip}
@@ -80,6 +84,7 @@ const Navbar = () => {
                     </button>
 
                     <button
+                        type="button"
                         className={styles.iconButton}
                         onClick={toggleLanguage}
                         title={`Cambiar a ${language === 'es' ? 'English' : 'Español'}`}
@@ -88,6 +93,7 @@ const Navbar = () => {
                     </button>
 
                     <button
+                        type="button"
                         className={styles.iconButton}
                         onClick={toggleTheme}
                         title={theme === 'dark' ? t.themeLight : t.themeDark}

@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import axios from 'axios';
 import { counterContext } from '../context/counterContext.js';
+import { formatCategory } from '../utils/formatCategory.js';
 import Styles from './FarmacosEnFamilia.module.css';
 
 const FarmacosEnFamilia = () => {
@@ -40,10 +41,10 @@ const FarmacosEnFamilia = () => {
         listaFamilia && (
             <section id={Styles.contenedor}>
                 <Helmet>
-                    <title>Fármacos en: {familiaSeleccionada} | ClickSalud FarmacoPedia</title>
-                    <meta name="description" content={`Fármacos en la categoría ${familiaSeleccionada}`} />
+                    <title>Fármacos en: {formatCategory(familiaSeleccionada)} | ClickSalud FarmacoPedia</title>
+                    <meta name="description" content={`Fármacos en la categoría ${formatCategory(familiaSeleccionada)}`} />
                 </Helmet>
-                <span id={Styles.tituloVista}>Fármacos en: {familiaSeleccionada}</span>
+                <span id={Styles.tituloVista}>Fármacos en: {formatCategory(familiaSeleccionada)}</span>
                 <div id={Styles.lista}>
                     {drugs.map((drug, index) => (
                         <button 
