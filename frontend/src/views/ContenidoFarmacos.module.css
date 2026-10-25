@@ -212,9 +212,10 @@
 }
 
 .cardMechanism {
-    font-size: 0.875rem;
+    font-size: 0.95rem;
+    font-weight: 500;
     color: var(--textSecondary);
-    line-height: 1.5;
+    line-height: 1.55;
     margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 3;

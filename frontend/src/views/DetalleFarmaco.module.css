@@ -144,9 +144,10 @@
 }
 
 .mechanismSnippet {
-    color: var(--textSecondary);
-    font-size: 0.95rem;
-    line-height: 1.55;
+    color: var(--textPrimary);
+    font-size: 1.05rem;
+    font-weight: 500;
+    line-height: 1.65;
     margin: 0;
 }
 
@@ -310,15 +311,17 @@
 
 .sectionTitle {
     font-family: var(--fontHeading);
-    font-size: 1.1rem;
-    font-weight: 700;
+    font-size: 1.15rem;
+    font-weight: 800;
     color: var(--textPrimary);
     margin: 0;
 }
 
 .plainText {
-    color: var(--textSecondary);
-    line-height: 1.6;
+    color: var(--textPrimary);
+    font-size: 1.025rem;
+    font-weight: 500;
+    line-height: 1.68;
     margin: 0;
     overflow-wrap: anywhere;
     word-break: break-word;
@@ -326,12 +329,14 @@
 
 .bulletList {
     margin: 0;
-    padding-left: 1.25rem;
+    padding-left: 1.35rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    color: var(--textSecondary);
-    line-height: 1.5;
+    gap: 0.65rem;
+    color: var(--textPrimary);
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.65;
     overflow-wrap: anywhere;
     word-break: break-word;
 }
@@ -360,8 +365,8 @@
 }
 
 .presentationTitle {
-    font-weight: 700;
-    font-size: 0.95rem;
+    font-weight: 800;
+    font-size: 1.05rem;
     color: var(--textPrimary);
 }
 
@@ -375,22 +380,25 @@
 .dosageItem {
     background: var(--bgInput);
     border-radius: var(--radiusSm);
-    padding: 0.6rem 0.75rem;
+    padding: 0.65rem 0.85rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 0.5rem;
     width: 100%;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--textPrimary);
     overflow-wrap: break-word;
     word-break: break-word;
 }
 
 .dosageAmount {
-    font-weight: 700;
+    font-weight: 800;
     font-family: var(--fontMono);
     color: var(--colorPrimary);
-    font-size: 0.9rem;
+    font-size: 1.025rem;
 }
 
 .routeBadges {
@@ -402,18 +410,19 @@
 .routeBadge {
     background: var(--colorSuccessBg);
     color: var(--colorSuccess);
-    font-size: 0.725rem;
-    padding: 0.15rem 0.5rem;
+    font-size: 0.775rem;
+    padding: 0.2rem 0.6rem;
     border-radius: var(--radiusPill);
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .useInBadge {
-    font-size: 0.725rem;
-    padding: 0.15rem 0.5rem;
+    font-size: 0.775rem;
+    padding: 0.2rem 0.6rem;
     border-radius: var(--radiusPill);
     background: rgba(255, 255, 255, 0.08);
     color: var(--textSecondary);
+    font-weight: 600;
 }
 
 /* Guidance Routes: Mobile Base is Single Column */
@@ -436,17 +445,17 @@
 }
 
 .guidanceRouteName {
-    font-weight: 700;
+    font-weight: 800;
     color: var(--textPrimary);
-    font-size: 0.9rem;
+    font-size: 1.05rem;
     border-bottom: 1px solid var(--borderGlass);
     padding-bottom: 0.35rem;
 }
 
 .guidanceItemTitle {
-    font-size: 0.75rem;
+    font-size: 0.825rem;
     color: var(--textMuted);
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     margin-top: 0.25rem;
@@ -472,21 +481,22 @@
 }
 
 .riskTitle {
-    font-weight: 700;
-    font-size: 0.9rem;
+    font-weight: 800;
+    font-size: 1.05rem;
     color: var(--textPrimary);
 }
 
 .riskLevel {
-    font-weight: 600;
+    font-weight: 700;
     color: var(--colorWarning);
-    font-size: 0.85rem;
+    font-size: 0.925rem;
 }
 
 .riskAdjustment {
-    color: var(--textSecondary);
-    font-size: 0.825rem;
-    line-height: 1.45;
+    color: var(--textPrimary);
+    font-size: 0.975rem;
+    font-weight: 500;
+    line-height: 1.6;
     overflow-wrap: break-word;
 }
 
@@ -499,8 +509,9 @@
     display: flex;
     align-items: flex-start;
     gap: 0.6rem;
-    font-size: 0.875rem;
-    line-height: 1.4;
+    font-size: 0.975rem;
+    font-weight: 600;
+    line-height: 1.55;
     overflow-wrap: anywhere;
     word-break: break-word;
 }
@@ -547,10 +558,11 @@
 }
 
 .referenceItem {
-    line-height: 1.6;
-    margin-bottom: 0.75rem;
-    font-size: 0.825rem;
-    color: var(--textSecondary);
+    line-height: 1.65;
+    margin-bottom: 0.85rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--textPrimary);
     list-style-type: disc;
     overflow-wrap: anywhere;
     word-break: break-word;
@@ -623,7 +635,20 @@
     }
 
     .sectionTitle {
-        font-size: 1.15rem;
+        font-size: 1.25rem;
+        font-weight: 800;
+    }
+
+    .mechanismSnippet {
+        font-size: 1.125rem;
+    }
+
+    .plainText {
+        font-size: 1.085rem;
+    }
+
+    .bulletList {
+        font-size: 1.05rem;
     }
 
     .presentationsGrid {
@@ -648,7 +673,7 @@
     }
 
     .referenceItem {
-        font-size: 0.875rem;
+        font-size: 1rem;
     }
 }
 
