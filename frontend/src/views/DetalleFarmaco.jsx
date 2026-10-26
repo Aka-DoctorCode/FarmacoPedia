@@ -1,4 +1,4 @@
-import { useContext, useState, useMemo } from 'react';
+import { useContext, useState, useMemo, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { counterContext } from '../context/counterContext.js';
 import { PediatricCalculatorModal } from '../components/PediatricCalculatorModal.jsx';
@@ -40,11 +40,30 @@ const DetalleFarmaco = () => {
         setActiveTab(cleanTab);
         const element = document.getElementById(sectionId);
         if (element) {
-            const yOffset = -85;
+            const yOffset = -90;
             const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
             window.scrollTo({ top: y, behavior: 'smooth' });
         }
     };
+
+    // Scroll spy for desktop view: update activeTab when scrolling past sections
+    useEffect(() => {
+        const sectionIds = ['sec-overview', 'sec-dosage', 'sec-risks', 'sec-safety', 'sec-references'];
+        const handleScroll = () => {
+            if (window.innerWidth < 1024) return;
+            const scrollPos = window.scrollY + 140;
+            for (let i = sectionIds.length - 1; i >= 0; i--) {
+                const el = document.getElementById(sectionIds[i]);
+                if (el && el.offsetTop <= scrollPos) {
+                    setActiveTab(sectionIds[i].replace(/^sec-/, ''));
+                    break;
+                }
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     if (isDrugLoading) {
         return (

@@ -10,14 +10,14 @@
 }
 
 .footerContent {
-    width: var(--containerDesktopWidth, 94%);
-    max-width: var(--containerDesktopMax, 1600px);
+    max-width: min(96%, var(--containerDesktopMax, 1640px));
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1.25rem;
     text-align: center;
+    width: 100%;
 }
 
 .brandName {

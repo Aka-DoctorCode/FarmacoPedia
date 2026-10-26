@@ -16,8 +16,8 @@
 }
 
 .navContainer {
-    width: var(--containerDesktopWidth, 94%);
-    max-width: var(--containerDesktopMax, 1600px);
+    width: 100%;
+    max-width: 1280px;
     margin: 0 auto;
     display: flex;
     align-items: center;
@@ -286,11 +286,12 @@
 /* Large Desktop (>= 1024px) */
 @media (min-width: 1024px) {
     .navContainer {
-        max-width: var(--containerDesktopMax);
+        max-width: min(96%, var(--containerDesktopMax, 1640px));
+        width: 96%;
         gap: 2rem;
     }
 
     .desktopSearchTrigger {
-        max-width: 440px;
+        max-width: 460px;
     }
 }

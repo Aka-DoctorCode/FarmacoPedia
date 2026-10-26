@@ -66,9 +66,8 @@
 
     /* Viewport layout specialization */
     --containerMobilePadding: 1rem;
-    --containerDesktopMax: 1600px;
-    --containerDesktopWidth: 94%;
-    --sidebarDesktopWidth: 280px;
+    --containerDesktopMax: 1640px;
+    --sidebarDesktopWidth: 300px;
 
     /* Transitions */
     --transitionFast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
@@ -117,7 +116,7 @@ html, body {
     color: var(--textPrimary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
+    overflow-x: clip;
     -webkit-overflow-scrolling: touch;
     -webkit-tap-highlight-color: transparent;
 }
@@ -127,7 +126,7 @@ html, body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
+    overflow-x: clip;
 }
 
 button, a, input, select, textarea {

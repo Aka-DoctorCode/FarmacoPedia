@@ -749,10 +749,10 @@
 /* Progressive Scaling: Desktop (>= 1024px) */
 @media (min-width: 1024px) {
     .container {
-        width: var(--containerDesktopWidth, 94%);
-        max-width: var(--containerDesktopMax, 1600px);
+        max-width: 96%;
+        width: 96%;
         margin: 1.5rem auto;
-        padding: 0 1rem 3rem;
+        padding: 0 1rem 3.5rem;
     }
 
     /* Ocultar barra horizontal de pestañas en desktop ya que usamos el sidebar clínico */
@@ -764,20 +764,23 @@
     .workspace {
         display: flex;
         align-items: flex-start;
-        gap: 2rem;
+        gap: 1.75rem;
         position: relative;
     }
 
     /* Sidebar Clínico Sticky */
     .desktopClinicSidebar {
         display: block;
-        width: 270px;
+        width: 280px;
         flex-shrink: 0;
+        position: -webkit-sticky;
+        position: sticky;
+        top: 85px;
+        align-self: flex-start;
+        z-index: 20;
     }
 
     .sidebarStickyCard {
-        position: sticky;
-        top: 85px;
         background: var(--bgCard);
         backdrop-filter: var(--backdropBlur);
         -webkit-backdrop-filter: var(--backdropBlur);
@@ -788,6 +791,8 @@
         display: flex;
         flex-direction: column;
         gap: 1.25rem;
+        max-height: calc(100vh - 105px);
+        overflow-y: auto;
     }
 
     .sidebarHeader {
@@ -924,8 +929,8 @@
 /* Progressive Scaling: Large Screens (>= 1440px) */
 @media (min-width: 1440px) {
     .container {
-        width: 95%;
-        max-width: var(--containerDesktopMax, 1600px);
+        max-width: min(96%, var(--containerDesktopMax, 1640px));
+        width: 96%;
         margin: 2rem auto;
         padding: 0 1rem 3.5rem;
     }

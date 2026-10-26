@@ -160,125 +160,149 @@
     width: 100%;
 }
 
-/* Drugs Grid: Mobile Base is Single Column */
-.grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
+/* Drug List Container (Mobile-First: vertical stack of compact list items) */
+.drugList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
     width: 100%;
 }
 
-.card {
+.drugListItem {
     background: var(--bgCard);
     backdrop-filter: var(--backdropBlur);
     -webkit-backdrop-filter: var(--backdropBlur);
     border: 1px solid var(--borderGlass);
     border-radius: var(--radiusMd);
-    padding: 1.25rem;
+    padding: 0.95rem 1.15rem;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: 0.85rem;
+    gap: 0.65rem;
     cursor: pointer;
     transition: all var(--transitionFast);
     box-shadow: var(--shadowCard);
     text-align: left;
-    min-height: var(--touchTargetMin, 44px);
+    min-height: 60px;
     -webkit-tap-highlight-color: transparent;
-    overflow-wrap: break-word;
-    word-break: break-word;
+    position: relative;
+    overflow: hidden;
 }
 
-.card:hover {
+.drugListItem:hover {
     border-color: var(--borderGlassHover);
     background: var(--bgCardHover);
-    transform: translateY(-2px);
-    box-shadow: var(--shadowGlass);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(14, 165, 233, 0.12);
 }
 
-.cardHeader {
+.drugListItem:focus-visible {
+    outline: 2px solid var(--colorPrimary);
+    outline-offset: 2px;
+}
+
+/* Columna 1: Identificación */
+.itemIdentityCol {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.35rem;
+    min-width: 0;
 }
 
-.cardTitleGroup {
+.itemTitleRow {
     display: flex;
     align-items: center;
-    gap: 0.55rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
 }
 
-.cardTitle {
+.drugName {
     font-family: var(--fontHeading);
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: var(--textPrimary);
     text-transform: capitalize;
     margin: 0;
-    overflow-wrap: anywhere;
-    word-break: break-word;
+    line-height: 1.3;
 }
 
-.cardAtcPill {
+.drugAtcBadge {
     font-size: 0.72rem;
     font-family: var(--fontMono);
     font-weight: 700;
     color: var(--colorPrimary);
     background: rgba(14, 165, 233, 0.12);
-    border: 1px solid rgba(14, 165, 233, 0.3);
+    border: 1px solid rgba(14, 165, 233, 0.28);
     padding: 0.12rem 0.45rem;
     border-radius: var(--radiusPill);
     white-space: nowrap;
+    letter-spacing: 0.02em;
 }
 
-.cardCategories {
+.itemCategoriesRow {
     display: flex;
     gap: 0.35rem;
     flex-wrap: wrap;
 }
 
-.categoryTag {
-    font-size: 0.725rem;
+.categoryPill {
+    font-size: 0.72rem;
     background: var(--colorInfoBg);
     color: var(--colorInfo);
-    padding: 0.15rem 0.55rem;
+    padding: 0.12rem 0.5rem;
     border-radius: var(--radiusPill);
-    text-transform: none;
     font-weight: 600;
+    white-space: nowrap;
 }
 
-.cardMechanism {
-    font-size: 0.95rem;
+/* Columna 2: Mecanismo / Clínico */
+.itemClinicalCol {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+.itemMechanism {
+    font-size: 0.875rem;
     font-weight: 500;
     color: var(--textSecondary);
-    line-height: 1.55;
+    line-height: 1.45;
     margin: 0;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-.cardFooter {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 0.75rem;
-    border-top: 1px solid var(--borderGlass);
+.itemMechanismEmpty {
+    font-size: 0.825rem;
+    color: var(--textMuted);
+    margin: 0;
+    font-style: italic;
 }
 
-.viewDetailLink {
-    font-size: 0.85rem;
-    font-weight: 600;
+/* Columna 3: Acción */
+.itemActionCol {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+.desktopActionBtn {
+    display: none;
+}
+
+.mobileChevron {
+    font-size: 1.35rem;
+    color: var(--textMuted);
+    font-weight: 300;
+    line-height: 1;
+    transition: transform var(--transitionFast), color var(--transitionFast);
+}
+
+.drugListItem:hover .mobileChevron {
     color: var(--colorPrimary);
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-}
-
-.card:hover .viewDetailLink {
-    color: var(--textAccent);
+    transform: translateX(3px);
 }
 
 .emptyBox {
@@ -356,8 +380,8 @@
 /* Progressive Scaling: Desktop (>= 1024px) - Cockpit Clínico */
 @media (min-width: 1024px) {
     .container {
-        width: var(--containerDesktopWidth, 94%);
-        max-width: var(--containerDesktopMax, 1600px);
+        max-width: 96%;
+        width: 96%;
         margin: 1.5rem auto;
         padding: 0 1rem 3.5rem;
     }
@@ -374,16 +398,18 @@
     /* Dual Column Layout */
     .catalogWorkspace {
         display: grid;
-        grid-template-columns: var(--sidebarDesktopWidth) 1fr;
-        gap: 2rem;
+        grid-template-columns: var(--sidebarDesktopWidth, 300px) minmax(0, 1fr);
+        gap: 1.75rem;
         align-items: start;
     }
 
     .desktopSidebar {
         display: block;
+        position: -webkit-sticky;
         position: sticky;
-        top: 80px;
-        max-height: calc(100vh - 100px);
+        top: 85px;
+        align-self: start;
+        z-index: 20;
     }
 
     .sidebarStickyInner {
@@ -397,7 +423,8 @@
         flex-direction: column;
         gap: 1rem;
         box-shadow: var(--shadowCard);
-        max-height: calc(100vh - 100px);
+        max-height: calc(100vh - 105px);
+        overflow: hidden;
     }
 
     .sidebarHeader {
@@ -454,7 +481,8 @@
         gap: 0.25rem;
         overflow-y: auto;
         padding-right: 0.25rem;
-        max-height: 480px;
+        flex: 1;
+        min-height: 0;
     }
 
     .sidebarNavItem {
@@ -514,21 +542,57 @@
         flex-shrink: 0;
     }
 
-    .grid {
-        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-        gap: 1.25rem;
-    }
-}
-
-@media (min-width: 1440px) {
-    .container {
-        width: 95%;
-        max-width: var(--containerDesktopMax, 1600px);
-        padding: 0 1rem 4rem;
+    .drugList {
+        gap: 0.65rem;
     }
 
-    .grid {
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1.35rem;
+    .drugListItem {
+        display: grid;
+        grid-template-columns: minmax(240px, 300px) 1fr auto;
+        align-items: center;
+        gap: 1.5rem;
+        padding: 1rem 1.4rem;
+        border-radius: var(--radiusMd);
+    }
+
+    .itemIdentityCol {
+        gap: 0.4rem;
+    }
+
+    .drugName {
+        font-size: 1.15rem;
+    }
+
+    .itemMechanism {
+        font-size: 0.9rem;
+        -webkit-line-clamp: 2;
+        line-height: 1.5;
+    }
+
+    .mobileChevron {
+        display: none;
+    }
+
+    .desktopActionBtn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(14, 165, 233, 0.08);
+        border: 1px solid rgba(14, 165, 233, 0.25);
+        color: var(--colorPrimary);
+        padding: 0.45rem 0.9rem;
+        border-radius: var(--radiusSm);
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all var(--transitionFast);
+        white-space: nowrap;
+    }
+
+    .drugListItem:hover .desktopActionBtn {
+        background: var(--colorPrimary);
+        color: #ffffff;
+        border-color: var(--colorPrimary);
+        box-shadow: 0 2px 10px var(--colorPrimaryGlow);
+        transform: translateX(2px);
     }
 }

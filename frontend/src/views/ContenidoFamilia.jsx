@@ -428,13 +428,13 @@ const ContenidoFamilia = () => {
                                     </button>
                                 </div>
                             ) : (
-                                <div className={styles.drugsGrid}>
+                                <div className={styles.drugList}>
                                     {leafDrugs.map((drug) => {
                                         const atcCode = getDrugAtcCode(drug) || currentNode?.code;
                                         return (
                                             <article
                                                 key={drug.name}
-                                                className={styles.drugCard}
+                                                className={styles.drugListItem}
                                                 onClick={() => handleSelectDrug(drug)}
                                                 role="button"
                                                 tabIndex={0}
@@ -445,37 +445,40 @@ const ContenidoFamilia = () => {
                                                     }
                                                 }}
                                             >
-                                                <div className={styles.drugCardTop}>
-                                                    <div className={styles.drugCardMeta}>
-                                                        <span className={styles.drugCardAtcPill}>
+                                                {/* Columna 1: Identificación Taxonómica */}
+                                                <div className={styles.itemIdentityCol}>
+                                                    <div className={styles.itemTitleRow}>
+                                                        <h3 className={styles.drugName}>{drug.name}</h3>
+                                                        <span className={styles.drugAtcBadge}>
                                                             ATC {atcCode}
                                                         </span>
                                                         <span className={styles.level5Badge}>Nivel 5 OMS</span>
                                                     </div>
-                                                    <h3 className={styles.drugCardName}>{drug.name}</h3>
                                                 </div>
 
-                                                {drug.actionMechanism && (
-                                                    <p className={styles.drugCardMechanism}>
-                                                        {drug.actionMechanism}
-                                                    </p>
-                                                )}
+                                                {/* Columna 2: Mecanismo de Acción */}
+                                                <div className={styles.itemClinicalCol}>
+                                                    {drug.actionMechanism ? (
+                                                        <p className={styles.itemMechanism}>
+                                                            {drug.actionMechanism}
+                                                        </p>
+                                                    ) : (
+                                                        <p className={styles.itemMechanismEmpty}>
+                                                            Monografía clínica disponible en el catálogo de FarmacoPedia.
+                                                        </p>
+                                                    )}
+                                                </div>
 
-                                                <div className={styles.drugCardFooter}>
-                                                    <button
-                                                        type="button"
-                                                        className={styles.viewDrugDetailButton}
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleSelectDrug(drug);
-                                                        }}
-                                                    >
-                                                        <span>Ver Monografía Completa</span>
-                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                                {/* Columna 3: Navegación */}
+                                                <div className={styles.itemActionCol}>
+                                                    <span className={styles.desktopActionBtn}>
+                                                        Ver Ficha
+                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                                             <path d="M5 12h14" />
                                                             <path d="m12 5 7 7-7 7" />
                                                         </svg>
-                                                    </button>
+                                                    </span>
+                                                    <span className={styles.mobileChevron} aria-hidden="true">›</span>
                                                 </div>
                                             </article>
                                         );

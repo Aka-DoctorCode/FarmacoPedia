@@ -221,11 +221,11 @@ const ContenidoFarmacos = () => {
                     <p>Cargando fármacos...</p>
                 </div>
             ) : filteredDrugs.length > 0 ? (
-                <div className={styles.grid}>
+                <div className={styles.drugList}>
                     {filteredDrugs.map((drug) => (
                         <div
                             key={drug.id || drug._id || drug.name}
-                            className={styles.card}
+                            className={styles.drugListItem}
                             onClick={() => {
                                 setSelectedFamily(null);
                                 openDrugDetail(drug);
@@ -240,19 +240,20 @@ const ContenidoFarmacos = () => {
                                 }
                             }}
                         >
-                            <div className={styles.cardHeader}>
-                                <div className={styles.cardTitleGroup}>
-                                    <h3 className={styles.cardTitle}>{drug.name}</h3>
+                            {/* Columna 1: Identificación y Clasificación */}
+                            <div className={styles.itemIdentityCol}>
+                                <div className={styles.itemTitleRow}>
+                                    <h3 className={styles.drugName}>{drug.name}</h3>
                                     {drug.atc && drug.atc.length > 0 && (
-                                        <span className={styles.cardAtcPill}>
+                                        <span className={styles.drugAtcBadge}>
                                             {drug.atc[0].code}
                                         </span>
                                     )}
                                 </div>
                                 {drug.atc && drug.atc.length > 0 && (
-                                    <div className={styles.cardCategories}>
+                                    <div className={styles.itemCategoriesRow}>
                                         {drug.atc.map((item, idx) => (
-                                            <span key={idx} className={styles.categoryTag}>
+                                            <span key={idx} className={styles.categoryPill}>
                                                 {item.subcategoryName || item.categoryName}
                                             </span>
                                         ))}
@@ -260,14 +261,25 @@ const ContenidoFarmacos = () => {
                                 )}
                             </div>
 
-                            {drug.actionMechanism && (
-                                <p className={styles.cardMechanism}>{drug.actionMechanism}</p>
-                            )}
+                            {/* Columna 2: Mecanismo de Acción / Contexto Clínico */}
+                            <div className={styles.itemClinicalCol}>
+                                {drug.actionMechanism ? (
+                                    <p className={styles.itemMechanism}>{drug.actionMechanism}</p>
+                                ) : (
+                                    <p className={styles.itemMechanismEmpty}>Monografía clínica disponible en el catálogo de FarmacoPedia.</p>
+                                )}
+                            </div>
 
-                            <div className={styles.cardFooter}>
-                                <span className={styles.viewDetailLink}>
-                                    {t.viewDetails} →
+                            {/* Columna 3: Acción de Entrada / Navegación */}
+                            <div className={styles.itemActionCol}>
+                                <span className={styles.desktopActionBtn}>
+                                    {t.viewDetails}
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                        <path d="M5 12h14" />
+                                        <path d="m12 5 7 7-7 7" />
+                                    </svg>
                                 </span>
+                                <span className={styles.mobileChevron} aria-hidden="true">›</span>
                             </div>
                         </div>
                     ))}
