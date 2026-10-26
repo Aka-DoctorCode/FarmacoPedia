@@ -1,9 +1,11 @@
-import { useContext, useState, useMemo, useEffect } from 'react';
+import { useContext, useState, useMemo, useEffect, lazy, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { counterContext } from '../context/counterContext.js';
-import { PediatricCalculatorModal } from '../components/PediatricCalculatorModal.jsx';
 import { getDrugAtcCode, parseAtcPath } from '../utils/atcTree.js';
 import styles from './DetalleFarmaco.module.css';
+
+const PediatricCalculatorModal = lazy(() => import('../components/PediatricCalculatorModal.jsx'));
+
 
 const DetalleFarmaco = () => {
     const {
@@ -737,12 +739,16 @@ const DetalleFarmaco = () => {
                 </div>
             </div>
 
-            <PediatricCalculatorModal
-                isOpen={isCalculatorOpen}
-                onClose={() => setIsCalculatorOpen(false)}
-                drugName={drug.name}
-                drug={drug}
-            />
+            {isCalculatorOpen && (
+                <Suspense fallback={null}>
+                    <PediatricCalculatorModal
+                        isOpen={isCalculatorOpen}
+                        onClose={() => setIsCalculatorOpen(false)}
+                        drugName={drug.name}
+                        drug={drug}
+                    />
+                </Suspense>
+            )}
         </section>
     );
 };

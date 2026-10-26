@@ -34,8 +34,16 @@ const ContenidoFamilia = () => {
     // Filter toggle: show only branches that contain registered drugs
     const [filterOnlyWithDrugs, setFilterOnlyWithDrugs] = useState(false);
 
-    // Live search input
+    // Live search input and debounced query
     const [searchQuery, setSearchQuery] = useState('');
+    const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearchQuery(searchQuery.trim());
+        }, 250);
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
 
     // Fetch all drugs on mount
     useEffect(() => {
@@ -80,17 +88,19 @@ const ContenidoFamilia = () => {
         return getAtcChildren(parentCode, currentLevel);
     }, [currentLevel, currentNode]);
 
-    // Compute drug counts for each child node
+    // Compute drug counts for each child node without allocating duplicate drug object arrays
     const childrenWithStats = useMemo(() => {
         return currentChildren.map((child) => {
-            const matching = allDrugs.filter((drug) => {
-                const code = getDrugAtcCode(drug);
-                return code && code.startsWith(child.code);
-            });
+            let count = 0;
+            for (let i = 0; i < allDrugs.length; i++) {
+                const code = getDrugAtcCode(allDrugs[i]);
+                if (code && code.startsWith(child.code)) {
+                    count++;
+                }
+            }
             return {
                 ...child,
-                drugCount: matching.length,
-                matchingDrugs: matching
+                drugCount: count
             };
         });
     }, [currentChildren, allDrugs]);
@@ -112,11 +122,11 @@ const ContenidoFamilia = () => {
 
     const isLeafView = currentLevel >= 4 || (currentLevel > 0 && currentChildren.length === 0);
 
-    // Search results when typing
+    // Search results when typing (using debounced query)
     const searchResults = useMemo(() => {
-        if (!searchQuery.trim()) return [];
-        return searchAtcTree(searchQuery, allDrugs);
-    }, [searchQuery, allDrugs]);
+        if (!debouncedSearchQuery) return [];
+        return searchAtcTree(debouncedSearchQuery, allDrugs);
+    }, [debouncedSearchQuery, allDrugs]);
 
     // Navigation actions
     const handleDrillDown = (node) => {

@@ -71,31 +71,39 @@ const SearchModal = () => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [searchModalOpen, setSearchModalOpen]);
 
-    // Search query filter
+    // Search query filter with debouncing and DOM capping to 25 items
     useEffect(() => {
-        const trimmed = query.trim().toLowerCase();
-        if (!trimmed) {
-            setResults(allDrugs.slice(0, 10));
-            return;
-        }
+        let isMounted = true;
+        const timer = setTimeout(async () => {
+            const trimmed = query.trim().toLowerCase();
+            if (!trimmed) {
+                if (isMounted) setResults(allDrugs.slice(0, 10));
+                return;
+            }
 
-        if (allDrugs && allDrugs.length > 0) {
-            const filtered = allDrugs.filter((drug) => {
-                const nameMatch = drug.name?.toLowerCase().includes(trimmed);
-                const atcMatch = (drug.atc || []).some((a) =>
-                    a.code?.toLowerCase().includes(trimmed) ||
-                    a.subcategoryCode?.toLowerCase().includes(trimmed) ||
-                    a.subcategoryName?.toLowerCase().includes(trimmed) ||
-                    a.categoryName?.toLowerCase().includes(trimmed)
-                );
-                return nameMatch || atcMatch;
-            });
-            setResults(filtered);
-            return;
-        }
+            if (allDrugs && allDrugs.length > 0) {
+                const filtered = allDrugs.filter((drug) => {
+                    const nameMatch = drug.name?.toLowerCase().includes(trimmed);
+                    const atcMatch = (drug.atc || []).some((a) =>
+                        a.code?.toLowerCase().includes(trimmed) ||
+                        a.subcategoryCode?.toLowerCase().includes(trimmed) ||
+                        a.subcategoryName?.toLowerCase().includes(trimmed) ||
+                        a.categoryName?.toLowerCase().includes(trimmed)
+                    );
+                    return nameMatch || atcMatch;
+                });
+                if (isMounted) setResults(filtered.slice(0, 25));
+                return;
+            }
 
-        const fallbackResults = drugService.searchFallback(trimmed);
-        setResults(fallbackResults);
+            const fallbackResults = await drugService.searchFallback(trimmed);
+            if (isMounted) setResults(fallbackResults.slice(0, 25));
+        }, 200);
+
+        return () => {
+            isMounted = false;
+            clearTimeout(timer);
+        };
     }, [query, allDrugs]);
 
     if (!searchModalOpen) return null;

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { counterContext } from './counterContext.js';
 import { drugService } from '../services/drugService.js';
 import { translations } from '../utils/languageDictionary.js';
@@ -115,44 +115,76 @@ const StateContext = ({ children }) => {
     const listaFamiliaOcultar = () => {};
     const descargoOcultar = acceptDisclaimer;
 
+    const contextValue = useMemo(() => ({
+        // Modern State & Methods
+        theme,
+        toggleTheme,
+        language,
+        toggleLanguage,
+        t,
+        descargoVisible,
+        acceptDisclaimer,
+        descargoOcultar,
+        activeView,
+        setActiveView,
+        selectedDrugName,
+        selectedDrugData,
+        isDrugLoading,
+        selectedFamily,
+        setSelectedFamily,
+        openDrugDetail,
+        closeDrugDetail,
+        navigateToDrugs,
+        navigateToFamilies,
+        searchModalOpen,
+        setSearchModalOpen,
+        searchQuery,
+        setSearchQuery,
+        isOffline,
+        setIsOffline,
+        // Legacy compatibility
+        listaFarmacos,
+        listaFarmacosMostrar,
+        listaFarmacosOcultar,
+        listaFamilia,
+        listaFamiliaMostrar,
+        listaFamiliaOcultar
+    }), [
+        theme,
+        toggleTheme,
+        language,
+        toggleLanguage,
+        t,
+        descargoVisible,
+        acceptDisclaimer,
+        descargoOcultar,
+        activeView,
+        setActiveView,
+        selectedDrugName,
+        selectedDrugData,
+        isDrugLoading,
+        selectedFamily,
+        setSelectedFamily,
+        openDrugDetail,
+        closeDrugDetail,
+        navigateToDrugs,
+        navigateToFamilies,
+        searchModalOpen,
+        setSearchModalOpen,
+        searchQuery,
+        setSearchQuery,
+        isOffline,
+        setIsOffline,
+        listaFarmacos,
+        listaFarmacosMostrar,
+        listaFarmacosOcultar,
+        listaFamilia,
+        listaFamiliaMostrar,
+        listaFamiliaOcultar
+    ]);
+
     return (
-        <counterContext.Provider
-            value={{
-                // Modern State & Methods
-                theme,
-                toggleTheme,
-                language,
-                toggleLanguage,
-                t,
-                descargoVisible,
-                acceptDisclaimer,
-                descargoOcultar,
-                activeView,
-                setActiveView,
-                selectedDrugName,
-                selectedDrugData,
-                isDrugLoading,
-                selectedFamily,
-                setSelectedFamily,
-                openDrugDetail,
-                closeDrugDetail,
-                navigateToDrugs,
-                navigateToFamilies,
-                searchModalOpen,
-                setSearchModalOpen,
-                searchQuery,
-                setSearchQuery,
-                isOffline,
-                setIsOffline,
-                // Legacy compatibility
-                listaFarmacos,
-                listaFarmacosMostrar,
-                listaFarmacosOcultar,
-                listaFamilia,
-                listaFamiliaMostrar,
-                listaFamiliaOcultar
-            }}
-        >
+        <counterContext.Provider value={contextValue}>
             {children}
         </counterContext.Provider>
     );

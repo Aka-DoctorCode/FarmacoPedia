@@ -1,14 +1,22 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, lazy, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { counterContext } from './context/counterContext.js';
 import Navbar from './components/Navbar.jsx';
 import BottomNav from './components/BottomNav.jsx';
 import SearchModal from './components/SearchModal.jsx';
-import ContenidoFarmacos from './views/ContenidoFarmacos.jsx';
-import ContenidoFamilia from './views/ContenidoFamilia.jsx';
-import DetalleFarmaco from './views/DetalleFarmaco.jsx';
 import Descargo from './views/Descargo.jsx';
 import Footer from './components/Footer.jsx';
+
+const ContenidoFarmacos = lazy(() => import('./views/ContenidoFarmacos.jsx'));
+const ContenidoFamilia = lazy(() => import('./views/ContenidoFamilia.jsx'));
+const DetalleFarmaco = lazy(() => import('./views/DetalleFarmaco.jsx'));
+
+const ViewFallback = () => (
+    <div className="viewLoadingFallback" role="status" aria-live="polite">
+        <div className="fallbackSpinner" />
+        <span>Cargando contenido...</span>
+    </div>
+);
 
 const App = () => {
     const { activeView, selectedDrugName, t } = useContext(counterContext);
@@ -31,9 +39,11 @@ const App = () => {
             <Descargo />
 
             <main className="mainContent">
-                {activeView === 'drugs' && <ContenidoFarmacos />}
-                {activeView === 'families' && <ContenidoFamilia />}
-                {activeView === 'drugDetail' && <DetalleFarmaco key={selectedDrugName} />}
+                <Suspense fallback={<ViewFallback />}>
+                    {activeView === 'drugs' && <ContenidoFarmacos />}
+                    {activeView === 'families' && <ContenidoFamilia />}
+                    {activeView === 'drugDetail' && <DetalleFarmaco key={selectedDrugName} />}
+                </Suspense>
             </main>
 
             <Footer />
