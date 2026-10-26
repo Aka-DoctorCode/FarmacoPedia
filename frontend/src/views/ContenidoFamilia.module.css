@@ -852,9 +852,10 @@
 /* Progressive Scaling: Desktop (>= 1024px) */
 @media (min-width: 1024px) {
     .container {
-        max-width: 1240px;
+        width: var(--containerDesktopWidth, 94%);
+        max-width: var(--containerDesktopMax, 1600px);
         margin: 1.5rem auto;
-        padding: 0 2rem 3.5rem;
+        padding: 0 1rem 3.5rem;
     }
 
     .nodesGrid {
@@ -875,7 +876,9 @@
 /* Progressive Scaling: Large Screens (>= 1440px) */
 @media (min-width: 1440px) {
     .container {
-        max-width: var(--containerDesktopMax, 1380px);
+        width: 95%;
+        max-width: var(--containerDesktopMax, 1600px);
+        padding: 0 1rem 4rem;
     }
 
     .nodesGrid {

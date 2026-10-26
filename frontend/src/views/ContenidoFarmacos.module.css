@@ -356,9 +356,10 @@
 /* Progressive Scaling: Desktop (>= 1024px) - Cockpit Clínico */
 @media (min-width: 1024px) {
     .container {
-        max-width: var(--containerDesktopMax);
-        margin: 2rem auto;
-        padding: 0 2rem 3.5rem;
+        width: var(--containerDesktopWidth, 94%);
+        max-width: var(--containerDesktopMax, 1600px);
+        margin: 1.5rem auto;
+        padding: 0 1rem 3.5rem;
     }
 
     .title {
@@ -514,7 +515,20 @@
     }
 
     .grid {
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+        gap: 1.25rem;
+    }
+}
+
+@media (min-width: 1440px) {
+    .container {
+        width: 95%;
+        max-width: var(--containerDesktopMax, 1600px);
+        padding: 0 1rem 4rem;
+    }
+
+    .grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.35rem;
     }
 }

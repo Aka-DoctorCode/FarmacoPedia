@@ -749,9 +749,10 @@
 /* Progressive Scaling: Desktop (>= 1024px) */
 @media (min-width: 1024px) {
     .container {
-        max-width: 1280px;
-        margin: 2rem auto;
-        padding: 0 2rem 3rem;
+        width: var(--containerDesktopWidth, 94%);
+        max-width: var(--containerDesktopMax, 1600px);
+        margin: 1.5rem auto;
+        padding: 0 1rem 3rem;
     }
 
     /* Ocultar barra horizontal de pestañas en desktop ya que usamos el sidebar clínico */
@@ -923,9 +924,10 @@
 /* Progressive Scaling: Large Screens (>= 1440px) */
 @media (min-width: 1440px) {
     .container {
-        max-width: var(--containerDesktopMax, 1380px);
-        margin: 2.5rem auto;
-        padding: 0 2rem 3.5rem;
+        width: 95%;
+        max-width: var(--containerDesktopMax, 1600px);
+        margin: 2rem auto;
+        padding: 0 1rem 3.5rem;
     }
 
     .desktopClinicSidebar {

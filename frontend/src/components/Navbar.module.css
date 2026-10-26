@@ -16,8 +16,8 @@
 }
 
 .navContainer {
-    width: 100%;
-    max-width: 1280px;
+    width: var(--containerDesktopWidth, 94%);
+    max-width: var(--containerDesktopMax, 1600px);
     margin: 0 auto;
     display: flex;
     align-items: center;

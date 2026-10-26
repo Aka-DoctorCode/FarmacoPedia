@@ -66,8 +66,9 @@
 
     /* Viewport layout specialization */
     --containerMobilePadding: 1rem;
-    --containerDesktopMax: 1380px;
-    --sidebarDesktopWidth: 290px;
+    --containerDesktopMax: 1600px;
+    --containerDesktopWidth: 94%;
+    --sidebarDesktopWidth: 280px;
 
     /* Transitions */
     --transitionFast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
