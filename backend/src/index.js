@@ -100,11 +100,6 @@ const drugSchema = new mongoose.Schema({
         index: true,
         match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s-]+$/i
     },
-    categories: { 
-        type: [String], 
-        index: true,
-        match: /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ0-9\s\-()]+$/i
-    },
     atc: {
         type: [atcEntrySchema],
         required: true,
@@ -155,7 +150,7 @@ const drugSchema = new mongoose.Schema({
 }, { timestamps: true, lean: true });
 
 // Compound indexes for optimized search and ATC queries
-drugSchema.index({ name: 1, categories: 1 });
+drugSchema.index({ name: 1 });
 drugSchema.index({ "atc.code": 1 });
 drugSchema.index({ "atc.subcategoryCode": 1 });
 drugSchema.index({ "atc.categoryCode": 1 });
@@ -223,12 +218,11 @@ app.get("/drugs", asyncHandler(async (req, res) => {
                 { "atc.code": regex },
                 { "atc.subcategoryCode": regex },
                 { "atc.subcategoryName": regex },
-                { "atc.categoryName": regex },
-                { categories: regex }
+                { "atc.categoryName": regex }
             ]
         };
     }
-    const drugList = await Drug.find(filter, "name categories atc").sort({ name: 1 });
+    const drugList = await Drug.find(filter, "name atc actionMechanism").sort({ name: 1 });
     res.status(200).json({ success: true, count: drugList.length, data: drugList });
 }));
 
@@ -302,33 +296,127 @@ app.get("/drugs/families", asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, data: tree });
 }));
 
+// Helper function to resolve enriched ATC search and metadata
+const getEnrichedAtcDrugs = async (identifier) => {
+    const raw = (identifier || "").trim();
+    if (!raw) return null;
+
+    const escaped = raw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`^${escaped}$`, 'i');
+
+    const filter = {
+        $or: [
+            { "atc.code": regex },
+            { "atc.subcategoryCode": regex },
+            { "atc.categoryCode": regex },
+            { "atc.subcategoryName": regex },
+            { "atc.categoryName": regex }
+        ]
+    };
+
+    const drugs = await Drug.find(
+        filter, 
+        "name atc actionMechanism indications"
+    ).sort({ name: 1 });
+
+    if (!drugs || drugs.length === 0) {
+        return null;
+    }
+
+    // Determine metadata from first matching drug's ATC entries
+    let matchedMetadata = null;
+    const upper = raw.toUpperCase();
+
+    for (const drug of drugs) {
+        for (const item of (drug.atc || [])) {
+            if (item.code?.toUpperCase() === upper) {
+                matchedMetadata = {
+                    level: 5,
+                    code: item.code,
+                    name: drug.name,
+                    categoryCode: item.categoryCode,
+                    categoryName: item.categoryName,
+                    subcategoryCode: item.subcategoryCode,
+                    subcategoryName: item.subcategoryName
+                };
+                break;
+            } else if (item.subcategoryCode?.toUpperCase() === upper || item.subcategoryName?.toLowerCase() === raw.toLowerCase()) {
+                matchedMetadata = {
+                    level: 2,
+                    code: item.subcategoryCode,
+                    name: item.subcategoryName,
+                    categoryCode: item.categoryCode,
+                    categoryName: item.categoryName
+                };
+                break;
+            } else if (item.categoryCode?.toUpperCase() === upper || item.categoryName?.toLowerCase() === raw.toLowerCase()) {
+                matchedMetadata = {
+                    level: 1,
+                    code: item.categoryCode,
+                    name: item.categoryName
+                };
+                break;
+            }
+        }
+        if (matchedMetadata) break;
+    }
+
+    if (!matchedMetadata) {
+        matchedMetadata = {
+            query: raw
+        };
+    }
+
+    const formattedDrugs = drugs.map(d => ({
+        _id: d._id,
+        name: d.name,
+        atc: d.atc,
+        actionMechanism: d.actionMechanism,
+        indications: (d.indications || []).slice(0, 3)
+    }));
+
+    return {
+        atcGroup: matchedMetadata,
+        count: formattedDrugs.length,
+        drugs: formattedDrugs
+    };
+};
+
 // GET: Filter by ATC subcategory code (e.g. N02, J01)
 app.get("/drugs/atc/subcategories/:code", asyncHandler(async (req, res) => {
     const rawCode = (req.params.code || "").trim().toUpperCase();
     const drugs = await Drug.find({ 
         "atc.subcategoryCode": rawCode 
-    }, "name categories atc actionMechanism").sort({ name: 1 });
+    }, "name atc actionMechanism").sort({ name: 1 });
     res.status(200).json({ success: true, count: drugs.length, data: drugs });
 }));
 
-// GET: Filter by category / subcategory
+// GET: Enriched ATC query (supports Level 1 to Level 5: Code, subcategory, or category name)
+app.get("/drugs/atc/:identifier", asyncHandler(async (req, res) => {
+    const result = await getEnrichedAtcDrugs(req.params.identifier);
+    if (!result) {
+        return res.status(404).json({ success: false, error: "No drugs found for this ATC classification" });
+    }
+    res.status(200).json({
+        success: true,
+        atcGroup: result.atcGroup,
+        count: result.count,
+        data: result.drugs
+    });
+}));
+
+// GET: Legacy /drugs/categories/:category alias (supports retro-compatibility and returns enriched payload)
 app.get("/drugs/categories/:category", asyncHandler(async (req, res) => {
-    const rawCategory = (req.params.category || "").trim();
-    const escaped = rawCategory.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(`^${escaped}$`, 'i');
-    const drugs = await Drug.find({ 
-        $or: [
-            { "atc.subcategoryName": regex },
-            { "atc.categoryName": regex },
-            { "atc.subcategoryCode": regex },
-            { "atc.categoryCode": regex },
-            { categories: regex }
-        ]
-    }, "name atc").sort({ name: 1 });
-    if (drugs.length === 0) {
+    const result = await getEnrichedAtcDrugs(req.params.category);
+    if (!result) {
         return res.status(404).json({ success: false, error: "No drugs found for this category" });
     }
-    res.status(200).json({ success: true, data: drugs });
+    res.status(200).json({
+        success: true,
+        atcGroup: result.atcGroup,
+        count: result.count,
+        data: result.drugs
+    });
 }));
 
 // GET: Single drug

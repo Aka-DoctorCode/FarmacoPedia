@@ -46,32 +46,49 @@ const ContenidoFarmacos = () => {
     }, [setIsOffline]);
 
     const categoryList = useMemo(() => {
-        return categories.map((cat) => {
-            if (typeof cat === 'object' && cat !== null) {
-                return {
-                    id: cat.categoryCode,
-                    label: `[${cat.categoryCode}] ${cat.categoryName}`,
-                    filterKey: cat.categoryCode
-                };
+        const mergedMap = new Map();
+
+        (categories || []).forEach((cat) => {
+            if (typeof cat === 'object' && cat !== null && cat.categoryCode) {
+                const code = String(cat.categoryCode).trim();
+                const name = String(cat.categoryName || code).trim();
+                if (code) {
+                    mergedMap.set(code, {
+                        id: code,
+                        label: `[${code}] ${name}`,
+                        filterKey: code
+                    });
+                }
             }
-            return {
-                id: cat,
-                label: cat,
-                filterKey: cat
-            };
         });
-    }, [categories]);
+
+        // Also include any ATC Level 1 categories present in the loaded drugs list
+        (drugs || []).forEach((drug) => {
+            (drug.atc || []).forEach((a) => {
+                if (a && a.categoryCode && !mergedMap.has(a.categoryCode)) {
+                    mergedMap.set(a.categoryCode, {
+                        id: a.categoryCode,
+                        label: `[${a.categoryCode}] ${a.categoryName || a.categoryCode}`,
+                        filterKey: a.categoryCode
+                    });
+                }
+            });
+        });
+
+        return Array.from(mergedMap.values()).sort((a, b) => a.id.localeCompare(b.id));
+    }, [categories, drugs]);
 
     const filteredDrugs = useMemo(() => {
+        const selLower = String(selectedCategory || 'all').toLowerCase();
         return drugs.filter((drug) => {
             const matchesCategory =
-                selectedCategory === 'all' ||
+                selLower === 'all' ||
                 drug.atc?.some((a) => 
-                    a.categoryCode?.toLowerCase() === selectedCategory.toLowerCase() ||
-                    a.categoryName?.toLowerCase() === selectedCategory.toLowerCase() ||
-                    a.subcategoryCode?.toLowerCase() === selectedCategory.toLowerCase() ||
-                    a.subcategoryName?.toLowerCase() === selectedCategory.toLowerCase() ||
-                    a.code?.toLowerCase() === selectedCategory.toLowerCase()
+                    a.categoryCode?.toLowerCase() === selLower ||
+                    a.categoryName?.toLowerCase() === selLower ||
+                    a.subcategoryCode?.toLowerCase() === selLower ||
+                    a.subcategoryName?.toLowerCase() === selLower ||
+                    a.code?.toLowerCase() === selLower
                 );
 
             const query = filterQuery.trim().toLowerCase();
@@ -107,8 +124,8 @@ const ContenidoFarmacos = () => {
                 <p className={styles.subtitle}>{t.allDrugsSubtitle}</p>
             </div>
 
-            {/* Filter and search bar */}
-            <div className={styles.filterBar}>
+            {/* Mobile Filter & Search Bar */}
+            <div className={styles.mobileFilterBar}>
                 <div className={styles.searchInputWrapper}>
                     <svg className={styles.searchIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <circle cx="11" cy="11" r="8" />
@@ -143,6 +160,59 @@ const ContenidoFarmacos = () => {
                     ))}
                 </div>
             </div>
+
+            {/* Desktop Cockpit Layout: Sidebar + Main Grid */}
+            <div className={styles.catalogWorkspace}>
+                <aside className={styles.desktopSidebar}>
+                    <div className={styles.sidebarStickyInner}>
+                        <div className={styles.sidebarHeader}>
+                            <h3 className={styles.sidebarTitle}>Filtrar Categoría ATC</h3>
+                            <span className={styles.sidebarCountBadge}>{categoryList.length}</span>
+                        </div>
+                        <div className={styles.sidebarSearchWrapper}>
+                            <input
+                                className={styles.sidebarSearchInput}
+                                type="text"
+                                placeholder="Filtrar por nombre o código..."
+                                value={filterQuery}
+                                onChange={(e) => setFilterQuery(e.target.value)}
+                            />
+                        </div>
+                        <nav className={styles.sidebarNavList}>
+                            <button
+                                type="button"
+                                className={`${styles.sidebarNavItem} ${selectedCategory === 'all' ? styles.sidebarNavItemActive : ''}`}
+                                onClick={() => setSelectedCategory('all')}
+                            >
+                                <span className={styles.sidebarItemName}>{t.allCategories}</span>
+                                <span className={styles.sidebarItemCount}>{drugs.length}</span>
+                            </button>
+                            {categoryList.map((cat) => {
+                                const keyLower = String(cat.filterKey || '').toLowerCase();
+                                const matchingCount = drugs.filter((d) =>
+                                    d.atc?.some((a) =>
+                                        a.categoryCode?.toLowerCase() === keyLower ||
+                                        a.subcategoryCode?.toLowerCase() === keyLower
+                                    )
+                                ).length;
+                                return (
+                                    <button
+                                        key={cat.id}
+                                        type="button"
+                                        className={`${styles.sidebarNavItem} ${selectedCategory === cat.filterKey ? styles.sidebarNavItemActive : ''}`}
+                                        onClick={() => setSelectedCategory(cat.filterKey)}
+                                    >
+                                        <span className={styles.sidebarItemCode}>{cat.filterKey}</span>
+                                        <span className={styles.sidebarItemName}>{String(cat.label || '').replace(/^\[.*?\]\s*/, '')}</span>
+                                        <span className={styles.sidebarItemCount}>{matchingCount}</span>
+                                    </button>
+                                );
+                            })}
+                        </nav>
+                    </div>
+                </aside>
+
+                <div className={styles.catalogMainContent}>
 
             {/* Loading & Content */}
             {isLoading ? (
@@ -207,6 +277,8 @@ const ContenidoFarmacos = () => {
                     <p>{t.emptyDrugsMessage}</p>
                 </div>
             )}
+                </div>
+            </div>
         </section>
     );
 };

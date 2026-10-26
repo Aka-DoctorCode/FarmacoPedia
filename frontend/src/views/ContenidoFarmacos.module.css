@@ -49,8 +49,8 @@
     line-height: 1.45;
 }
 
-/* Filter bar */
-.filterBar {
+/* Mobile Filter Bar (Hidden on Desktop) */
+.mobileFilterBar {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
@@ -140,6 +140,24 @@
     color: #ffffff;
     border-color: var(--colorPrimary);
     box-shadow: 0 2px 8px var(--colorPrimaryGlow);
+}
+
+/* Catalog Workspace: Mobile Base is simple vertical stack without sidebar */
+.catalogWorkspace {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.desktopSidebar {
+    display: none;
+}
+
+.catalogMainContent {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
 }
 
 /* Drugs Grid: Mobile Base is Single Column */
@@ -335,19 +353,168 @@
     }
 }
 
-/* Progressive Scaling: Desktop (>= 1024px) */
+/* Progressive Scaling: Desktop (>= 1024px) - Cockpit Clínico */
 @media (min-width: 1024px) {
     .container {
-        max-width: 1280px;
+        max-width: var(--containerDesktopMax);
         margin: 2rem auto;
-        padding: 0 1.5rem 3rem;
+        padding: 0 2rem 3.5rem;
     }
 
     .title {
         font-size: 2.25rem;
     }
 
+    /* Hide horizontal mobile chips on desktop */
+    .mobileFilterBar {
+        display: none;
+    }
+
+    /* Dual Column Layout */
+    .catalogWorkspace {
+        display: grid;
+        grid-template-columns: var(--sidebarDesktopWidth) 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    .desktopSidebar {
+        display: block;
+        position: sticky;
+        top: 80px;
+        max-height: calc(100vh - 100px);
+    }
+
+    .sidebarStickyInner {
+        background: var(--bgCard);
+        backdrop-filter: var(--backdropBlur);
+        -webkit-backdrop-filter: var(--backdropBlur);
+        border: 1px solid var(--borderGlass);
+        border-radius: var(--radiusLg);
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        box-shadow: var(--shadowCard);
+        max-height: calc(100vh - 100px);
+    }
+
+    .sidebarHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 0.6rem;
+        border-bottom: 1px solid var(--borderGlass);
+    }
+
+    .sidebarTitle {
+        font-family: var(--fontHeading);
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--textPrimary);
+        margin: 0;
+        letter-spacing: -0.01em;
+    }
+
+    .sidebarCountBadge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--colorPrimary);
+        background: var(--colorPrimaryBg);
+        padding: 0.15rem 0.5rem;
+        border-radius: var(--radiusPill);
+    }
+
+    .sidebarSearchWrapper {
+        width: 100%;
+    }
+
+    .sidebarSearchInput {
+        width: 100%;
+        background: var(--bgInput);
+        border: 1px solid var(--borderGlass);
+        border-radius: var(--radiusMd);
+        padding: 0.55rem 0.85rem;
+        font-size: 0.85rem;
+        color: var(--textPrimary);
+        font-family: var(--fontSans);
+        transition: all var(--transitionFast);
+    }
+
+    .sidebarSearchInput:focus {
+        border-color: var(--borderGlassFocus);
+        outline: none;
+        box-shadow: 0 0 10px var(--colorPrimaryGlow);
+    }
+
+    .sidebarNavList {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        overflow-y: auto;
+        padding-right: 0.25rem;
+        max-height: 480px;
+    }
+
+    .sidebarNavItem {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: transparent;
+        border: 1px solid transparent;
+        padding: 0.55rem 0.75rem;
+        border-radius: var(--radiusSm);
+        color: var(--textSecondary);
+        font-size: 0.825rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-align: left;
+        transition: all var(--transitionFast);
+        width: 100%;
+    }
+
+    .sidebarNavItem:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--textPrimary);
+        border-color: var(--borderGlass);
+    }
+
+    .sidebarNavItemActive {
+        background: rgba(14, 165, 233, 0.15);
+        color: var(--colorPrimary);
+        border-color: rgba(14, 165, 233, 0.35);
+        font-weight: 700;
+    }
+
+    .sidebarItemCode {
+        font-family: var(--fontMono);
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: var(--colorPrimary);
+        background: rgba(14, 165, 233, 0.12);
+        padding: 0.1rem 0.35rem;
+        border-radius: 4px;
+        flex-shrink: 0;
+    }
+
+    .sidebarItemName {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .sidebarItemCount {
+        font-size: 0.75rem;
+        color: var(--textMuted);
+        background: rgba(255, 255, 255, 0.06);
+        padding: 0.1rem 0.45rem;
+        border-radius: var(--radiusPill);
+        flex-shrink: 0;
+    }
+
     .grid {
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
     }
 }

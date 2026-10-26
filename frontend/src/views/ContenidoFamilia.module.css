@@ -456,6 +456,7 @@
     flex-direction: column;
     gap: 0.85rem;
     box-shadow: var(--shadowCard);
+    cursor: pointer;
     transition: all var(--transitionFast);
 }
 
@@ -642,6 +643,7 @@
     flex-direction: column;
     gap: 1rem;
     box-shadow: var(--shadowCard);
+    cursor: pointer;
     transition: all var(--transitionFast);
 }
 
@@ -844,5 +846,39 @@
     }
     100% {
         opacity: 0.5;
+    }
+}
+
+/* Progressive Scaling: Desktop (>= 1024px) */
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1240px;
+        margin: 1.5rem auto;
+        padding: 0 2rem 3.5rem;
+    }
+
+    .nodesGrid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.1rem;
+    }
+
+    .drugsGrid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+    }
+
+    .searchResultsGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Progressive Scaling: Large Screens (>= 1440px) */
+@media (min-width: 1440px) {
+    .container {
+        max-width: var(--containerDesktopMax, 1380px);
+    }
+
+    .nodesGrid {
+        grid-template-columns: repeat(4, 1fr);
     }
 }

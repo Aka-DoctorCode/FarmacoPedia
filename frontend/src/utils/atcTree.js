@@ -101,6 +101,8 @@ export const ATC_LEVEL_3 = {
     C03A: { code: 'C03A', parent: 'C03', name: 'Diuréticos de Techo Bajo, Tiazidas' },
     C03C: { code: 'C03C', parent: 'C03', name: 'Diuréticos de Techo Alto (Diuréticos del Asa)' },
     C03D: { code: 'C03D', parent: 'C03', name: 'Ahorradores de Potasio' },
+    // C07
+    C07A: { code: 'C07A', parent: 'C07', name: 'Agentes Betabloqueantes' },
     // C08
     C08C: { code: 'C08C', parent: 'C08', name: 'Bloqueantes Selectivos de Canales de Calcio con Efectos Vasculares' },
     // C09
@@ -108,6 +110,9 @@ export const ATC_LEVEL_3 = {
     C09C: { code: 'C09C', parent: 'C09', name: 'Antagonistas de Receptores de Angiotensina II (ARA-II) Solos' },
     // C10
     C10A: { code: 'C10A', parent: 'C10', name: 'Modificadores de Lípidos, Monofármacos' },
+    // H02 & H03
+    H02A: { code: 'H02A', parent: 'H02', name: 'Corticosteroides para Uso Sistémico, Solos' },
+    H03A: { code: 'H03A', parent: 'H03', name: 'Preparados Tiroideos' },
     // J01 Antibacterianos
     J01A: { code: 'J01A', parent: 'J01', name: 'Tetraciclinas' },
     J01B: { code: 'J01B', parent: 'J01', name: 'Anfenicoles' },
@@ -118,19 +123,23 @@ export const ATC_LEVEL_3 = {
     J01G: { code: 'J01G', parent: 'J01', name: 'Antibacterianos Aminoglucósidos' },
     J01M: { code: 'J01M', parent: 'J01', name: 'Antibacterianos Quinolónicos' },
     J01R: { code: 'J01R', parent: 'J01', name: 'Combinaciones de Antibacterianos' },
-    J01X: { code: 'J01X', parent: 'J01', name: 'Otros Antibacterianos (Glucopéptidos, Polimixinas)' },
+    J01X: { code: 'J01X', parent: 'J01', name: 'Otros Antibacterianos (Glucopéptidos, Imidazoles, Polimixinas)' },
     // M01
     M01A: { code: 'M01A', parent: 'M01', name: 'Antiinflamatorios y Antirreumáticos No Esteroideos' },
     // N02
     N02A: { code: 'N02A', parent: 'N02', name: 'Opioides' },
     N02B: { code: 'N02B', parent: 'N02', name: 'Otros Analgésicos y Antipiréticos' },
     N02C: { code: 'N02C', parent: 'N02', name: 'Antimigrañosos' },
+    // N03
+    N03A: { code: 'N03A', parent: 'N03', name: 'Antiepilépticos' },
     // N05
     N05A: { code: 'N05A', parent: 'N05', name: 'Antipsicóticos' },
     N05B: { code: 'N05B', parent: 'N05', name: 'Ansiolíticos' },
     N05C: { code: 'N05C', parent: 'N05', name: 'Hipnóticos y Sedantes' },
     // N06
     N06A: { code: 'N06A', parent: 'N06', name: 'Antidepresivos' },
+    // P01
+    P01A: { code: 'P01A', parent: 'P01', name: 'Agentes contra la Amebiasis y otras Enfermedades por Protozoarios' },
     // R03
     R03A: { code: 'R03A', parent: 'R03', name: 'Adrenérgicos Inhalatorios' },
     R03B: { code: 'R03B', parent: 'R03', name: 'Otros Agentes Inhalatorios contra Padecimientos Obstructivos' },
@@ -145,7 +154,8 @@ export const ATC_LEVEL_4 = {
     A02BA: { code: 'A02BA', parent: 'A02B', name: 'Antagonistas del Receptor H2' },
     // A03FA
     A03FA: { code: 'A03FA', parent: 'A03F', name: 'Propulsivos (Procinéticos)' },
-    // A10BA, A10BB
+    // A10AE, A10BA, A10BB
+    A10AE: { code: 'A10AE', parent: 'A10A', name: 'Insulinas y Análogos de Acción Prolongada' },
     A10BA: { code: 'A10BA', parent: 'A10B', name: 'Biguanidas' },
     A10BB: { code: 'A10BB', parent: 'A10B', name: 'Sulfonilureas' },
     // B01AC
@@ -153,12 +163,20 @@ export const ATC_LEVEL_4 = {
     // C03AA, C03CA
     C03AA: { code: 'C03AA', parent: 'C03A', name: 'Tiazidas Solas' },
     C03CA: { code: 'C03CA', parent: 'C03C', name: 'Sulfonamidas Solas (Furosemida)' },
+    // C07AB
+    C07AB: { code: 'C07AB', parent: 'C07A', name: 'Agentes Betabloqueantes Selectivos' },
     // C08CA
     C08CA: { code: 'C08CA', parent: 'C08C', name: 'Derivados de Dihidropiridina' },
-    // C09CA
+    // C09AA, C09CA
+    C09AA: { code: 'C09AA', parent: 'C09A', name: 'Inhibidores de la ECA Solos' },
     C09CA: { code: 'C09CA', parent: 'C09C', name: 'Antagonistas de la Angiotensina II (ARA-II) Solos' },
     // C10AA
     C10AA: { code: 'C10AA', parent: 'C10A', name: 'Inhibidores de la HMG-CoA Reductasa (Estatinas)' },
+    // H02AB & H03AA
+    H02AB: { code: 'H02AB', parent: 'H02A', name: 'Glucocorticoides' },
+    H03AA: { code: 'H03AA', parent: 'H03A', name: 'Hormonas Tiroideas' },
+    // J01AA Tetraciclinas
+    J01AA: { code: 'J01AA', parent: 'J01A', name: 'Tetraciclinas' },
     // J01C Penicilinas
     J01CA: { code: 'J01CA', parent: 'J01C', name: 'Penicilinas de Amplio Espectro (Aminopenicilinas)' },
     J01CE: { code: 'J01CE', parent: 'J01C', name: 'Penicilinas Sensibles a Betalactamasa' },
@@ -176,15 +194,22 @@ export const ATC_LEVEL_4 = {
     J01FA: { code: 'J01FA', parent: 'J01F', name: 'Macrólidos' },
     // J01MA Quinolonas
     J01MA: { code: 'J01MA', parent: 'J01M', name: 'Fluoroquinolonas' },
+    // J01XD Otros Antibacterianos
+    J01XD: { code: 'J01XD', parent: 'J01X', name: 'Derivados del Imidazol' },
     // M01AE
     M01AE: { code: 'M01AE', parent: 'M01A', name: 'Derivados del Ácido Propiónico' },
-    // N02BE
+    // N02AX, N02BE, N02BA
+    N02AX: { code: 'N02AX', parent: 'N02A', name: 'Otros Opioides' },
     N02BE: { code: 'N02BE', parent: 'N02B', name: 'Anilidas (Paracetamol)' },
     N02BA: { code: 'N02BA', parent: 'N02B', name: 'Ácido Salicílico y Derivados' },
+    // N03AE
+    N03AE: { code: 'N03AE', parent: 'N03A', name: 'Derivados de Benzodiazepina (Antiepilépticos)' },
     // N05BA
-    N05BA: { code: 'N05BA', parent: 'N05B', name: 'Derivados de Benzodiazepina' },
+    N05BA: { code: 'N05BA', parent: 'N05B', name: 'Derivados de Benzodiazepina (Ansiolíticos)' },
     // N06AB
     N06AB: { code: 'N06AB', parent: 'N06A', name: 'Inhibidores Selectivos de la Recaptación de Serotonina (ISRS)' },
+    // P01AB
+    P01AB: { code: 'P01AB', parent: 'P01A', name: 'Derivados del Nitroimidazol' },
     // R03AC
     R03AC: { code: 'R03AC', parent: 'R03A', name: 'Agonistas Selectivos de Receptores Beta-2 Adrenérgicos' },
     // R06AX
@@ -268,27 +293,40 @@ export function getAtcChildren(parentCode, currentLevel = 0) {
 export const CANONICAL_DRUG_ATC = {
     acetaminofen: 'N02BE01',
     paracetamol: 'N02BE01',
-    amoxicilina: 'J01CA04',
-    ibuprofeno: 'M01AE01',
-    omeprazol: 'A02BC01',
-    salbutamol: 'R03AC02',
-    losartan: 'C09CA01',
-    metformina: 'A10BA02',
-    atorvastatina: 'C10AA05',
-    ciprofloxacino: 'J01MA02',
-    azitromicina: 'J01FA10',
-    ampicilina: 'J01CA01',
-    hidroclorotiazida: 'C03AA03',
-    glibenclamida: 'A10BB01',
-    simvastatina: 'C10AA01',
-    diazepam: 'N05BA01',
-    loratadina: 'R06AX13',
-    furosemida: 'C03CA01',
     amlodipino: 'C08CA01',
+    amoxicilina: 'J01CA04',
+    ampicilina: 'J01CA01',
+    atorvastatina: 'C10AA05',
+    azitromicina: 'J01FA10',
+    bisoprolol: 'C07AB07',
     ceftriaxona: 'J01DD04',
+    ciprofloxacino: 'J01MA02',
+    claritromicina: 'J01FA09',
+    clonazepam: 'N03AE01',
+    dexametasona: 'H02AB02',
+    diazepam: 'N05BA01',
+    doxiciclina: 'J01AA02',
+    enalapril: 'C09AA02',
+    fluoxetina: 'N06AB03',
+    furosemida: 'C03CA01',
+    glibenclamida: 'A10BB01',
+    hidroclorotiazida: 'C03AA03',
+    ibuprofeno: 'M01AE01',
+    'insulina glargina': 'A10AE04',
+    levotiroxina: 'H03AA01',
+    loratadina: 'R06AX13',
+    losartan: 'C09CA01',
     meropenem: 'J01DH02',
+    metformina: 'A10BA02',
+    metoclopramida: 'A03FA01',
+    metronidazol: 'J01XD01',
+    omeprazol: 'A02BC01',
+    pantoprazol: 'A02BC02',
+    prednisona: 'H02AB07',
+    salbutamol: 'R03AC02',
     sertralina: 'N06AB06',
-    metoclopramida: 'A03FA01'
+    simvastatina: 'C10AA01',
+    tramadol: 'N02AX02'
 };
 
 /**

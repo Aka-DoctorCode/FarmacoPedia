@@ -269,7 +269,35 @@
     transform: translateY(-1px);
 }
 
-/* Tab Content Cards */
+/* Tab Content Cards & Workspace */
+.workspace {
+    width: 100%;
+}
+
+.desktopClinicSidebar {
+    display: none;
+}
+
+.detailMainContent {
+    width: 100%;
+}
+
+.sectionBlock {
+    scroll-margin-top: 85px;
+}
+
+.tabBlockHidden {
+    display: none;
+}
+
+.tabBlockActive {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+    animation: fadeIn var(--transitionFast) ease-out;
+}
+
 .tabContent {
     display: flex;
     flex-direction: column;
@@ -725,13 +753,183 @@
         margin: 2rem auto;
         padding: 0 2rem 3rem;
     }
+
+    /* Ocultar barra horizontal de pestañas en desktop ya que usamos el sidebar clínico */
+    .tabsNav {
+        display: none;
+    }
+
+    /* Layout Workspace en 2 columnas */
+    .workspace {
+        display: flex;
+        align-items: flex-start;
+        gap: 2rem;
+        position: relative;
+    }
+
+    /* Sidebar Clínico Sticky */
+    .desktopClinicSidebar {
+        display: block;
+        width: 270px;
+        flex-shrink: 0;
+    }
+
+    .sidebarStickyCard {
+        position: sticky;
+        top: 85px;
+        background: var(--bgCard);
+        backdrop-filter: var(--backdropBlur);
+        -webkit-backdrop-filter: var(--backdropBlur);
+        border: 1px solid var(--borderGlass);
+        border-radius: var(--radiusMd);
+        padding: 1.25rem;
+        box-shadow: var(--shadowCard);
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .sidebarHeader {
+        border-bottom: 1px solid var(--borderGlass);
+        padding-bottom: 0.75rem;
+    }
+
+    .sidebarSubtitle {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--colorPrimary);
+        display: block;
+    }
+
+    .sidebarDrugTitle {
+        font-family: var(--fontHeading);
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--textPrimary);
+        margin: 0.25rem 0 0 0;
+        text-transform: capitalize;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .sidebarNav {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+
+    .sidebarNavItem {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.65rem 0.85rem;
+        border-radius: var(--radiusSm);
+        border: 1px solid transparent;
+        background: transparent;
+        color: var(--textSecondary);
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-align: left;
+        transition: all var(--transitionFast);
+        width: 100%;
+    }
+
+    .sidebarNavItem svg {
+        color: var(--textMuted);
+        transition: color var(--transitionFast);
+        flex-shrink: 0;
+    }
+
+    .sidebarNavItem:hover {
+        background: rgba(56, 189, 248, 0.08);
+        color: var(--textPrimary);
+        border-color: rgba(56, 189, 248, 0.2);
+    }
+
+    .sidebarNavItem:hover svg {
+        color: var(--colorPrimary);
+    }
+
+    .sidebarNavItemActive {
+        background: rgba(56, 189, 248, 0.15);
+        color: #38bdf8;
+        border-color: rgba(56, 189, 248, 0.3);
+        font-weight: 700;
+    }
+
+    .sidebarNavItemActive svg {
+        color: #38bdf8;
+    }
+
+    .sidebarActionBox {
+        border-top: 1px solid var(--borderGlass);
+        padding-top: 1rem;
+    }
+
+    .sidebarCalcButton {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border-radius: var(--radiusSm);
+        background: linear-gradient(135deg, var(--colorPrimary) 0%, var(--colorTeal) 100%);
+        border: none;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+        box-shadow: 0 4px 14px var(--colorPrimaryGlow);
+        transition: all var(--transitionFast);
+    }
+
+    .sidebarCalcButton:hover {
+        filter: brightness(1.1);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px var(--colorPrimaryGlow);
+    }
+
+    /* Columna de Contenido Principal: Todas las secciones visibles en flujo continuo */
+    .detailMainContent {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .sectionBlock {
+        display: flex !important;
+        flex-direction: column;
+        gap: 1.5rem;
+        width: 100%;
+        scroll-margin-top: 90px;
+    }
+
+    .tabBlockHidden {
+        display: flex !important;
+    }
+
+    .tabBlockActive {
+        display: flex !important;
+    }
 }
 
 /* Progressive Scaling: Large Screens (>= 1440px) */
 @media (min-width: 1440px) {
     .container {
-        max-width: 1360px;
+        max-width: var(--containerDesktopMax, 1380px);
         margin: 2.5rem auto;
         padding: 0 2rem 3.5rem;
     }
+
+    .desktopClinicSidebar {
+        width: 300px;
+    }
 }
+

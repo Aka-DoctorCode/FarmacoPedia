@@ -1,3 +1,3 @@
-db.farmacos.find()
-db.farmacos.find({nombre:"Acetaminofen"})
-db.farmacos.find({familia:"Analgesico"})
+db.drugs.find()
+db.drugs.find({ name: "acetaminofen" })
+db.drugs.find({ "atc.subcategoryCode": "N02" })

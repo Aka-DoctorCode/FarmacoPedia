@@ -64,6 +64,11 @@
     --bottomNavHeight: 60px;
     --touchTargetMin: 44px;
 
+    /* Viewport layout specialization */
+    --containerMobilePadding: 1rem;
+    --containerDesktopMax: 1380px;
+    --sidebarDesktopWidth: 290px;
+
     /* Transitions */
     --transitionFast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     --transitionNormal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -131,7 +136,7 @@ button, a, input, select, textarea {
 .mainContent {
     flex: 1;
     width: 100%;
-    min-height: calc(100vh - 200px);
+    min-height: calc(100vh - 140px);
     display: flex;
     flex-direction: column;
 }

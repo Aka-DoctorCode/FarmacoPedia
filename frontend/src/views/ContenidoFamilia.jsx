@@ -248,7 +248,19 @@ const ContenidoFamilia = () => {
                     ) : (
                         <div className={styles.searchResultsList}>
                             {searchResults.map((item, idx) => (
-                                <div key={idx} className={styles.searchResultCard}>
+                                <div
+                                    key={idx}
+                                    className={styles.searchResultCard}
+                                    onClick={() => handleSelectSearchResult(item)}
+                                    role="button"
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            if (e.key === ' ') e.preventDefault();
+                                            handleSelectSearchResult(item);
+                                        }
+                                    }}
+                                >
                                     <div className={styles.searchResultMain}>
                                         <div className={styles.searchResultMeta}>
                                             <span className={item.type === 'drug' ? styles.drugResultBadge : styles.nodeResultBadge}>
@@ -279,7 +291,10 @@ const ContenidoFamilia = () => {
                                             <button
                                                 type="button"
                                                 className={styles.primaryActionBtn}
-                                                onClick={() => handleSelectSearchResult(item)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleSelectSearchResult(item);
+                                                }}
                                             >
                                                 Ver Ficha →
                                             </button>
@@ -287,7 +302,10 @@ const ContenidoFamilia = () => {
                                             <button
                                                 type="button"
                                                 className={styles.secondaryActionBtn}
-                                                onClick={() => handleSelectSearchResult(item)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleSelectSearchResult(item);
+                                                }}
                                             >
                                                 Explorar Grupo →
                                             </button>
@@ -414,7 +432,19 @@ const ContenidoFamilia = () => {
                                     {leafDrugs.map((drug) => {
                                         const atcCode = getDrugAtcCode(drug) || currentNode?.code;
                                         return (
-                                            <article key={drug.name} className={styles.drugCard}>
+                                            <article
+                                                key={drug.name}
+                                                className={styles.drugCard}
+                                                onClick={() => handleSelectDrug(drug)}
+                                                role="button"
+                                                tabIndex={0}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' || e.key === ' ') {
+                                                        if (e.key === ' ') e.preventDefault();
+                                                        handleSelectDrug(drug);
+                                                    }
+                                                }}
+                                            >
                                                 <div className={styles.drugCardTop}>
                                                     <div className={styles.drugCardMeta}>
                                                         <span className={styles.drugCardAtcPill}>
@@ -435,7 +465,10 @@ const ContenidoFamilia = () => {
                                                     <button
                                                         type="button"
                                                         className={styles.viewDrugDetailButton}
-                                                        onClick={() => handleSelectDrug(drug)}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleSelectDrug(drug);
+                                                        }}
                                                     >
                                                         <span>Ver Monografía Completa</span>
                                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">

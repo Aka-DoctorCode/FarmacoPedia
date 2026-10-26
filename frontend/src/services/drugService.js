@@ -38,8 +38,7 @@ class DrugService {
                 id: drug.name,
                 _id: drug.name,
                 name: drug.name,
-                categories: drug.categories,
-                atc: drug.atc,
+                                atc: drug.atc,
                 actionMechanism: drug.actionMechanism
             }));
             return { success: true, data: namesOnly, isOffline: true };
@@ -50,11 +49,13 @@ class DrugService {
         try {
             const response = await axios.get(`${this.apiBaseUrl}/drugs/families`, { timeout: 3000 });
             if (response.data && response.data.success && Array.isArray(response.data.data)) {
-                // If remote backend returned legacy flat strings, reject and fallback to structured ATC
-                if (response.data.data.length > 0 && typeof response.data.data[0] === 'string') {
-                    throw new Error('Backend returned legacy flat string families');
+                const validTree = response.data.data.filter(
+                    (item) => typeof item === 'object' && item !== null && typeof item.categoryCode === 'string' && item.categoryCode.trim().length > 0
+                );
+                if (validTree.length === 0) {
+                    throw new Error('Backend returned empty or legacy non-ATC families');
                 }
-                return { success: true, data: response.data.data, isOffline: false };
+                return { success: true, data: validTree, isOffline: false };
             }
             throw new Error('Invalid backend response');
         } catch (error) {
@@ -112,38 +113,57 @@ class DrugService {
                     id: drug.name,
                     _id: drug.name,
                     name: drug.name,
-                    categories: drug.categories,
-                    atc: drug.atc,
+                                        atc: drug.atc,
                     actionMechanism: drug.actionMechanism
                 }));
             return { success: true, data: matchedDrugs, isOffline: true };
         }
     }
 
-    async getDrugsByCategory(categoryName) {
+    async getDrugsByAtc(identifier) {
         try {
-            const response = await axios.get(`${this.apiBaseUrl}/drugs/categories/${encodeURIComponent(categoryName)}`, { timeout: 3000 });
+            const response = await axios.get(`${this.apiBaseUrl}/drugs/atc/${encodeURIComponent(identifier)}`, { timeout: 3000 });
             if (response.data && response.data.success && Array.isArray(response.data.data)) {
-                return { success: true, data: response.data.data, isOffline: false };
+                return { 
+                    success: true, 
+                    data: response.data.data, 
+                    atcGroup: response.data.atcGroup,
+                    count: response.data.count,
+                    isOffline: false 
+                };
             }
             throw new Error('Invalid backend response');
         } catch (error) {
+            const upper = (identifier || '').toUpperCase();
+            const lower = (identifier || '').toLowerCase();
             const matchedDrugs = this.fallbackDrugs
                 .filter((drug) => (drug.atc || []).some((a) => 
-                    a.subcategoryName?.toLowerCase() === categoryName.toLowerCase() ||
-                    a.categoryName?.toLowerCase() === categoryName.toLowerCase() ||
-                    a.subcategoryCode?.toLowerCase() === categoryName.toLowerCase() ||
-                    a.categoryCode?.toLowerCase() === categoryName.toLowerCase()
+                    a.code?.toUpperCase() === upper ||
+                    a.subcategoryCode?.toUpperCase() === upper ||
+                    a.categoryCode?.toUpperCase() === upper ||
+                    a.subcategoryName?.toLowerCase() === lower ||
+                    a.categoryName?.toLowerCase() === lower
                 ))
                 .map((drug) => ({
                     id: drug.name,
                     _id: drug.name,
                     name: drug.name,
                     atc: drug.atc,
-                    actionMechanism: drug.actionMechanism
+                    actionMechanism: drug.actionMechanism,
+                    indications: (drug.indications || []).slice(0, 3)
                 }));
-            return { success: true, data: matchedDrugs, isOffline: true };
+            return { 
+                success: true, 
+                data: matchedDrugs, 
+                atcGroup: { code: upper, name: identifier },
+                count: matchedDrugs.length,
+                isOffline: true 
+            };
         }
+    }
+
+    async getDrugsByCategory(categoryName) {
+        return this.getDrugsByAtc(categoryName);
     }
 
     async getDrugByName(drugName) {
@@ -205,14 +225,13 @@ class DrugService {
         return [
             {
                 name: 'paracetamol',
-                categories: ['analgesicos', 'antipireticos'],
                 atc: [
                     {
                         code: 'N02BE01',
                         categoryCode: 'N',
                         categoryName: 'Sistema Nervioso',
                         subcategoryCode: 'N02',
-                        subcategoryName: 'Analgésicos'
+                        subcategoryName: 'Analgésicos y Antipiréticos'
                     }
                 ],
                 actionMechanism: 'Inhibicion de la sintesis de prostaglandinas en el sistema nervioso central y bloqueo del impulso doloroso periférico.',
@@ -279,7 +298,6 @@ class DrugService {
             },
             {
                 name: 'ibuprofeno',
-                categories: ['antiinflamatorios no esteroideos', 'analgesicos', 'antipireticos'],
                 atc: [
                     {
                         code: 'M01AE01',
@@ -342,7 +360,6 @@ class DrugService {
             },
             {
                 name: 'amoxicilina',
-                categories: ['antibioticos', 'betalactamicos', 'penicilinas'],
                 atc: [
                     {
                         code: 'J01CA04',
@@ -405,7 +422,6 @@ class DrugService {
             },
             {
                 name: 'omeprazol',
-                categories: ['inhibidores de bomba de protones', 'antiulcerosos'],
                 atc: [
                     {
                         code: 'A02BC01',
@@ -468,7 +484,6 @@ class DrugService {
             },
             {
                 name: 'ceftriaxona',
-                categories: ['antibacterianos', 'cefalosporinas', 'betalactamicos'],
                 atc: [{
                     code: 'J01DD04',
                     categoryCode: 'J',
@@ -516,7 +531,6 @@ class DrugService {
             },
             {
                 name: 'meropenem',
-                categories: ['antibacterianos', 'carbapenem', 'betalactamicos'],
                 atc: [{
                     code: 'J01DH02',
                     categoryCode: 'J',
@@ -550,7 +564,6 @@ class DrugService {
             },
             {
                 name: 'ciprofloxacino',
-                categories: ['antibacterianos', 'quinolonas', 'fluoroquinolonas'],
                 atc: [{
                     code: 'J01MA02',
                     categoryCode: 'J',
@@ -584,7 +597,6 @@ class DrugService {
             },
             {
                 name: 'azitromicina',
-                categories: ['antibacterianos', 'macrolidos'],
                 atc: [{
                     code: 'J01FA10',
                     categoryCode: 'J',
@@ -618,7 +630,6 @@ class DrugService {
             },
             {
                 name: 'ampicilina',
-                categories: ['antibacterianos', 'penicilinas', 'betalactamicos'],
                 atc: [{
                     code: 'J01CA01',
                     categoryCode: 'J',
@@ -652,7 +663,6 @@ class DrugService {
             },
             {
                 name: 'salbutamol',
-                categories: ['broncodilatadores', 'adrenergicos'],
                 atc: [{
                     code: 'R03AC02',
                     categoryCode: 'R',
@@ -686,7 +696,6 @@ class DrugService {
             },
             {
                 name: 'loratadina',
-                categories: ['antihistaminicos'],
                 atc: [{
                     code: 'R06AX13',
                     categoryCode: 'R',
@@ -720,7 +729,6 @@ class DrugService {
             },
             {
                 name: 'losartan',
-                categories: ['antihipertensivos', 'ara-ii'],
                 atc: [{
                     code: 'C09CA01',
                     categoryCode: 'C',
@@ -754,7 +762,6 @@ class DrugService {
             },
             {
                 name: 'amlodipino',
-                categories: ['antihipertensivos', 'bloqueantes de canales de calcio'],
                 atc: [{
                     code: 'C08CA01',
                     categoryCode: 'C',
@@ -788,7 +795,6 @@ class DrugService {
             },
             {
                 name: 'hidroclorotiazida',
-                categories: ['diureticos', 'tiazidas'],
                 atc: [{
                     code: 'C03AA03',
                     categoryCode: 'C',
@@ -822,7 +828,6 @@ class DrugService {
             },
             {
                 name: 'furosemida',
-                categories: ['diureticos', 'diureticos del asa'],
                 atc: [{
                     code: 'C03CA01',
                     categoryCode: 'C',
@@ -855,7 +860,6 @@ class DrugService {
             },
             {
                 name: 'simvastatina',
-                categories: ['hipolipemiantes', 'estatinas'],
                 atc: [{
                     code: 'C10AA01',
                     categoryCode: 'C',
@@ -887,7 +891,6 @@ class DrugService {
             },
             {
                 name: 'atorvastatina',
-                categories: ['hipolipemiantes', 'estatinas'],
                 atc: [{
                     code: 'C10AA05',
                     categoryCode: 'C',
@@ -919,7 +922,6 @@ class DrugService {
             },
             {
                 name: 'metformina',
-                categories: ['antidiabeticos', 'biguanidas'],
                 atc: [{
                     code: 'A10BA02',
                     categoryCode: 'A',
@@ -951,7 +953,6 @@ class DrugService {
             },
             {
                 name: 'glibenclamida',
-                categories: ['antidiabeticos', 'sulfonilureas'],
                 atc: [{
                     code: 'A10BB01',
                     categoryCode: 'A',
@@ -983,7 +984,6 @@ class DrugService {
             },
             {
                 name: 'metoclopramida',
-                categories: ['antiemeticos', 'procineticos'],
                 atc: [{
                     code: 'A03FA01',
                     categoryCode: 'A',
@@ -1016,7 +1016,6 @@ class DrugService {
             },
             {
                 name: 'diazepam',
-                categories: ['ansioliticos', 'benzodiazepinas'],
                 atc: [{
                     code: 'N05BA01',
                     categoryCode: 'N',
@@ -1049,7 +1048,6 @@ class DrugService {
             },
             {
                 name: 'sertralina',
-                categories: ['antidepresivos', 'isrs'],
                 atc: [{
                     code: 'N06AB06',
                     categoryCode: 'N',

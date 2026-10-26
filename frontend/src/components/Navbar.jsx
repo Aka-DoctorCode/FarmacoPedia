@@ -10,6 +10,7 @@ const Navbar = () => {
         activeView,
         navigateToDrugs,
         navigateToFamilies,
+        setSearchModalOpen,
         isOffline
     } = useContext(counterContext);
 
@@ -32,6 +33,21 @@ const Navbar = () => {
                         <span className={styles.brandTitle}>{t.appName}</span>
                         <span className={styles.brandSubtitle}>{t.appTagline}</span>
                     </div>
+                </button>
+
+                {/* Desktop Global Search Shortcut Pill */}
+                <button
+                    type="button"
+                    className={styles.desktopSearchTrigger}
+                    onClick={() => setSearchModalOpen(true)}
+                    title="Búsqueda rápida en FarmacoPedia"
+                >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="m21 21-4.3-4.3" />
+                    </svg>
+                    <span className={styles.desktopSearchPlaceholder}>{t.searchPlaceholder || 'Buscar fármaco o código ATC...'}</span>
+                    <kbd className={styles.kbdShortcut}>⌘K</kbd>
                 </button>
 
                 <nav className={styles.navigationNav}>
@@ -60,6 +76,19 @@ const Navbar = () => {
                 </nav>
 
                 <div className={styles.rightControls}>
+                    {/* Mobile Search Button */}
+                    <button
+                        type="button"
+                        className={styles.mobileSearchBtn}
+                        onClick={() => setSearchModalOpen(true)}
+                        title={t.navSearch}
+                        aria-label={t.navSearch}
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.3-4.3" />
+                        </svg>
+                    </button>
                     {isOffline && (
                         <div className={styles.offlineBadge} title={t.backendOfflineNotice}>
                             <span>●</span> Offline Mode

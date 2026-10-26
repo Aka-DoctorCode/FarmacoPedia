@@ -6,10 +6,17 @@ import App from './App.jsx';
 import StateContext from './context/StateContext';
 
 
+const getBasename = () => {
+    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/FarmacoPedia')) {
+        return '/FarmacoPedia';
+    }
+    return '/';
+};
+
 ReactDOM.createRoot(document.getElementById('root')).render(
     <HelmetProvider>
         <BrowserRouter 
-            basename={import.meta.env.BASE_URL}
+            basename={getBasename()}
             future={{
                 v7_startTransition: true,
                 v7_relativeSplatPath: true,
@@ -17,7 +24,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         >
             <StateContext>
                 <Routes>
-                    <Route path='/' element={<App />} />
+                    <Route path='/*' element={<App />} />
                 </Routes>
             </StateContext>
         </BrowserRouter>

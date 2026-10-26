@@ -79,6 +79,73 @@
     font-weight: 500;
 }
 
+/* Desktop Search Pill (Hidden on Mobile) */
+.desktopSearchTrigger {
+    display: none;
+    align-items: center;
+    gap: 0.65rem;
+    background: var(--bgInput);
+    border: 1px solid var(--borderGlass);
+    padding: 0.45rem 0.85rem;
+    border-radius: var(--radiusPill);
+    color: var(--textSecondary);
+    cursor: pointer;
+    transition: all var(--transitionFast);
+    min-width: 260px;
+    max-width: 380px;
+    flex: 1;
+}
+
+.desktopSearchTrigger:hover {
+    border-color: var(--borderGlassHover);
+    color: var(--textPrimary);
+    background: var(--bgCard);
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.15);
+}
+
+.desktopSearchPlaceholder {
+    font-size: 0.825rem;
+    flex: 1;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--textMuted);
+}
+
+.kbdShortcut {
+    font-family: var(--fontMono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--textSecondary);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusSm);
+    padding: 0.15rem 0.4rem;
+}
+
+/* Mobile search button */
+.mobileSearchBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bgCard);
+    border: 1px solid var(--borderGlass);
+    color: var(--textSecondary);
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+    border-radius: var(--radiusPill);
+    cursor: pointer;
+    transition: all var(--transitionFast);
+}
+
+.mobileSearchBtn:hover, .mobileSearchBtn:active {
+    color: var(--colorPrimary);
+    border-color: var(--colorPrimary);
+}
+
 /* Desktop navigation hidden on mobile base (served by BottomNav) */
 .navigationNav {
     display: none;
@@ -191,6 +258,14 @@
         display: block;
     }
 
+    .mobileSearchBtn {
+        display: none;
+    }
+
+    .desktopSearchTrigger {
+        display: flex;
+    }
+
     .navigationNav {
         display: flex;
     }
@@ -211,6 +286,11 @@
 /* Large Desktop (>= 1024px) */
 @media (min-width: 1024px) {
     .navContainer {
+        max-width: var(--containerDesktopMax);
         gap: 2rem;
+    }
+
+    .desktopSearchTrigger {
+        max-width: 440px;
     }
 }

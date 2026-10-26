@@ -13,8 +13,38 @@ const DetalleFarmaco = () => {
         t
     } = useContext(counterContext);
 
-    const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'dosage' | 'risks' | 'safety'
+    const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'dosage' | 'risks' | 'safety' | 'references'
     const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
+
+    const effectiveAtc = useMemo(() => {
+        if (!selectedDrugData) return [];
+        if (selectedDrugData.atc && Array.isArray(selectedDrugData.atc) && selectedDrugData.atc.length > 0 && selectedDrugData.atc[0].code) {
+            return selectedDrugData.atc;
+        }
+        const code = getDrugAtcCode(selectedDrugData);
+        if (code) {
+            const parsed = parseAtcPath(code);
+            return [{
+                code,
+                categoryCode: parsed.l1.code,
+                categoryName: parsed.l1.name,
+                subcategoryCode: parsed.l2 ? parsed.l2.code : code.substring(0, 3),
+                subcategoryName: parsed.l2 ? parsed.l2.name : 'Subgrupo Terapéutico'
+            }];
+        }
+        return [];
+    }, [selectedDrugData]);
+
+    const scrollToSection = (sectionId) => {
+        const cleanTab = sectionId.replace(/^sec-/, '');
+        setActiveTab(cleanTab);
+        const element = document.getElementById(sectionId);
+        if (element) {
+            const yOffset = -85;
+            const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+    };
 
     if (isDrugLoading) {
         return (
@@ -56,24 +86,6 @@ const DetalleFarmaco = () => {
     const pediatricGuidanceEntries = drug.dosageGuidance?.pediatric
         ? Object.entries(drug.dosageGuidance.pediatric)
         : [];
-
-    const effectiveAtc = useMemo(() => {
-        if (drug.atc && Array.isArray(drug.atc) && drug.atc.length > 0 && drug.atc[0].code) {
-            return drug.atc;
-        }
-        const code = getDrugAtcCode(drug);
-        if (code) {
-            const parsed = parseAtcPath(code);
-            return [{
-                code,
-                categoryCode: parsed.l1.code,
-                categoryName: parsed.l1.name,
-                subcategoryCode: parsed.l2 ? parsed.l2.code : code.substring(0, 3),
-                subcategoryName: parsed.l2 ? parsed.l2.name : 'Subgrupo Terapéutico'
-            }];
-        }
-        return [];
-    }, [drug]);
 
     return (
         <section className={styles.container}>
@@ -145,7 +157,7 @@ const DetalleFarmaco = () => {
                 )}
             </div>
 
-            {/* Navigation Tabs */}
+            {/* Mobile Navigation Tabs */}
             <div className={styles.tabsNav} role="tablist">
                 <button
                     type="button"
@@ -216,9 +228,104 @@ const DetalleFarmaco = () => {
                 </button>
             </div>
 
-            {/* Tab 1: Overview & Indications */}
-            {activeTab === 'overview' && (
-                <div className={styles.tabContent}>
+            {/* Main Dual Workspace: Desktop Sidebar + Sections Stream */}
+            <div className={styles.workspace}>
+                {/* Desktop Sticky Clinic Sidebar */}
+                <aside className={styles.desktopClinicSidebar}>
+                    <div className={styles.sidebarStickyCard}>
+                        <div className={styles.sidebarHeader}>
+                            <span className={styles.sidebarSubtitle}>Índice Clínico</span>
+                            <h3 className={styles.sidebarDrugTitle}>{drug.name}</h3>
+                        </div>
+
+                        <nav className={styles.sidebarNav} aria-label="Navegación clínica rápida">
+                            <button
+                                type="button"
+                                className={`${styles.sidebarNavItem} ${activeTab === 'overview' ? styles.sidebarNavItemActive : ''}`}
+                                onClick={() => scrollToSection('sec-overview')}
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <path d="M12 16v-4" />
+                                    <path d="M12 8h.01" />
+                                </svg>
+                                <span>{t.tabOverview}</span>
+                            </button>
+                            <button
+                                type="button"
+                                className={`${styles.sidebarNavItem} ${activeTab === 'dosage' ? styles.sidebarNavItemActive : ''}`}
+                                onClick={() => scrollToSection('sec-dosage')}
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z" />
+                                    <path d="m8.5 8.5 7 7" />
+                                </svg>
+                                <span>{t.tabDosage}</span>
+                            </button>
+                            <button
+                                type="button"
+                                className={`${styles.sidebarNavItem} ${activeTab === 'risks' ? styles.sidebarNavItemActive : ''}`}
+                                onClick={() => scrollToSection('sec-risks')}
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                                    <line x1="12" y1="9" x2="12" y2="13" />
+                                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                                </svg>
+                                <span>{t.tabRisks}</span>
+                            </button>
+                            <button
+                                type="button"
+                                className={`${styles.sidebarNavItem} ${activeTab === 'safety' ? styles.sidebarNavItemActive : ''}`}
+                                onClick={() => scrollToSection('sec-safety')}
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+                                </svg>
+                                <span>{t.tabSafety}</span>
+                            </button>
+                            <button
+                                type="button"
+                                className={`${styles.sidebarNavItem} ${activeTab === 'references' ? styles.sidebarNavItemActive : ''}`}
+                                onClick={() => scrollToSection('sec-references')}
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+                                    <path d="M6 6h10" />
+                                    <path d="M6 10h10" />
+                                </svg>
+                                <span>{t.tabReferences}</span>
+                            </button>
+                        </nav>
+
+                        <div className={styles.sidebarActionBox}>
+                            <button
+                                type="button"
+                                className={styles.sidebarCalcButton}
+                                onClick={() => setIsCalculatorOpen(true)}
+                            >
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                    <rect width="16" height="20" x="4" y="2" rx="2" />
+                                    <line x1="8" x2="16" y1="6" y2="6" />
+                                    <line x1="16" x2="16" y1="14" y2="18" />
+                                    <path d="M16 10h.01" />
+                                    <path d="M12 10h.01" />
+                                    <path d="M8 10h.01" />
+                                    <path d="M12 14h.01" />
+                                    <path d="M8 14h.01" />
+                                    <path d="M12 18h.01" />
+                                    <path d="M8 18h.01" />
+                                </svg>
+                                <span>{t.openPediatricCalculator || 'Calculadora Pediátrica'}</span>
+                            </button>
+                        </div>
+                    </div>
+                </aside>
+
+                {/* Sections Stream Area */}
+                <div className={styles.detailMainContent}>
+                    {/* Section 1: Overview & Indications */}
+                    <div id="sec-overview" className={`${styles.sectionBlock} ${activeTab === 'overview' ? styles.tabBlockActive : styles.tabBlockHidden}`}>
                     <div className={styles.sectionCard}>
                         <div className={styles.sectionHeader}>
                             <span className={styles.sectionIcon}>
@@ -268,13 +375,11 @@ const DetalleFarmaco = () => {
                             <p className={styles.plainText}>{drug.overdose}</p>
                         </div>
                     )}
-                </div>
-            )}
+                    </div>
 
-            {/* Tab 2: Presentations & Dosage */}
-            {activeTab === 'dosage' && (
-                <div className={styles.tabContent}>
-                    <div className={styles.sectionCard}>
+                    {/* Section 2: Presentations & Dosage */}
+                    <div id="sec-dosage" className={`${styles.sectionBlock} ${activeTab === 'dosage' ? styles.tabBlockActive : styles.tabBlockHidden}`}>
+                        <div className={styles.sectionCard}>
                         <div className={styles.sectionHeader}>
                             <span className={styles.sectionIcon}>
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -427,13 +532,11 @@ const DetalleFarmaco = () => {
                             <p className={styles.plainText}>{t.noData}</p>
                         )}
                     </div>
-                </div>
-            )}
+                    </div>
 
-            {/* Tab 3: Clinical Risks & Organ Adjustments */}
-            {activeTab === 'risks' && (
-                <div className={styles.tabContent}>
-                    {drug.risk?.securityFlags && drug.risk.securityFlags.length > 0 && (
+                    {/* Section 3: Clinical Risks & Organ Adjustments */}
+                    <div id="sec-risks" className={`${styles.sectionBlock} ${activeTab === 'risks' ? styles.tabBlockActive : styles.tabBlockHidden}`}>
+                        {drug.risk?.securityFlags && drug.risk.securityFlags.length > 0 && (
                         <div className={styles.alertBox}>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
@@ -517,13 +620,11 @@ const DetalleFarmaco = () => {
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                    </div>
 
-            {/* Tab 4: Contraindications & Interactions */}
-            {activeTab === 'safety' && (
-                <div className={styles.tabContent}>
-                    <div className={styles.sectionCard}>
+                    {/* Section 4: Contraindications & Interactions */}
+                    <div id="sec-safety" className={`${styles.sectionBlock} ${activeTab === 'safety' ? styles.tabBlockActive : styles.tabBlockHidden}`}>
+                        <div className={styles.sectionCard}>
                         <div className={styles.sectionHeader}>
                             <span className={styles.sectionIcon}>
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -586,13 +687,11 @@ const DetalleFarmaco = () => {
                             <p className={styles.plainText}>{t.noData}</p>
                         )}
                     </div>
-                </div>
-            )}
+                    </div>
 
-            {/* Tab 5: References & Sources (Dedicated Tab) */}
-            {activeTab === 'references' && (
-                <div className={styles.tabContent}>
-                    <div className={styles.sectionCard}>
+                    {/* Section 5: References & Sources (Dedicated Section) */}
+                    <div id="sec-references" className={`${styles.sectionBlock} ${activeTab === 'references' ? styles.tabBlockActive : styles.tabBlockHidden}`}>
+                        <div className={styles.sectionCard}>
                         <div className={styles.sectionHeader}>
                             <span className={styles.sectionIcon}>
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -615,8 +714,9 @@ const DetalleFarmaco = () => {
                             <p className={styles.plainText}>{t.noData}</p>
                         )}
                     </div>
+                    </div>
                 </div>
-            )}
+            </div>
 
             <PediatricCalculatorModal
                 isOpen={isCalculatorOpen}
