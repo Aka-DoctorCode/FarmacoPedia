@@ -2,28 +2,28 @@
 .container {
     width: 100%;
     max-width: 100%;
-    margin: 1rem auto;
-    padding: 0 calc(1rem + env(safe-area-inset-right, 0px)) 2rem calc(1rem + env(safe-area-inset-left, 0px));
+    margin: 0.35rem auto 1rem;
+    padding: 0 calc(1rem + env(safe-area-inset-right, 0px)) 1.5rem calc(1rem + env(safe-area-inset-left, 0px));
     animation: fadeIn var(--transitionNormal) ease-out;
 }
 
 .heroHeader {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    margin-bottom: 1.25rem;
+    gap: 0.2rem;
+    margin-bottom: 0.65rem;
 }
 
 .heroTitleRow {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
 }
 
 .title {
     font-family: var(--fontHeading);
-    font-size: 1.6rem;
+    font-size: 1.35rem;
     font-weight: 800;
     color: var(--textPrimary);
     margin: 0;
@@ -35,26 +35,27 @@
     background: var(--colorInfoBg);
     color: var(--colorInfo);
     border: 1px solid rgba(129, 140, 248, 0.3);
-    padding: 0.2rem 0.65rem;
+    padding: 0.12rem 0.5rem;
     border-radius: var(--radiusPill);
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 600;
+    line-height: 1.2;
 }
 
 .subtitle {
     color: var(--textSecondary);
-    font-size: 0.925rem;
+    font-size: 0.825rem;
     margin: 0;
     max-width: 750px;
-    line-height: 1.45;
+    line-height: 1.35;
 }
 
 /* Mobile Filter Bar (Hidden on Desktop) */
 .mobileFilterBar {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
+    gap: 0.5rem;
+    margin-bottom: 0.85rem;
     width: 100%;
     min-width: 0;
 }
@@ -92,54 +93,71 @@
     box-shadow: 0 0 12px var(--colorPrimaryGlow);
 }
 
-.categoryChips {
-    display: flex;
-    gap: 0.5rem;
-    overflow-x: auto;
-    padding-bottom: 0.5rem;
-    padding-right: 1.5rem;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    scroll-snap-type: x proximity;
-    scroll-padding: 0.5rem;
+.categorySelectWrapper {
+    position: relative;
     width: 100%;
-    min-width: 0;
+    display: flex;
+    align-items: center;
 }
 
-.categoryChips::-webkit-scrollbar {
-    display: none;
+.selectIcon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--colorPrimary);
+    pointer-events: none;
+    z-index: 2;
 }
 
-.chipButton {
+.categorySelect {
+    width: 100%;
+    min-height: var(--touchTargetMin, 44px);
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
     background: var(--bgCard);
     border: 1px solid var(--borderGlass);
-    color: var(--textSecondary);
-    padding: 0.55rem 0.95rem;
-    min-height: var(--touchTargetMin, 44px);
     border-radius: var(--radiusPill);
-    font-size: 0.825rem;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
-    text-transform: none;
-    transition: all var(--transitionFast);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    scroll-snap-align: start;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.chipButton:hover {
-    border-color: var(--borderGlassHover);
+    padding: 0.65rem 2.6rem 0.65rem 2.5rem;
     color: var(--textPrimary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: var(--fontSans);
+    cursor: pointer;
+    transition: all var(--transitionFast);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.chipButtonActive {
-    background: var(--colorPrimary);
-    color: #ffffff;
-    border-color: var(--colorPrimary);
-    box-shadow: 0 2px 8px var(--colorPrimaryGlow);
+.categorySelect:focus {
+    outline: none;
+    border-color: var(--borderGlassFocus);
+    box-shadow: 0 0 12px var(--colorPrimaryGlow);
+}
+
+.categorySelect option {
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 0.5rem;
+}
+
+:global([data-theme='light']) .categorySelect option {
+    background: #ffffff;
+    color: #0f172a;
+}
+
+.chevronIcon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--textSecondary);
+    pointer-events: none;
+    z-index: 2;
 }
 
 /* Catalog Workspace: Mobile Base is simple vertical stack without sidebar */
@@ -382,12 +400,22 @@
     .container {
         max-width: 96%;
         width: 96%;
-        margin: 1.5rem auto;
-        padding: 0 1rem 3.5rem;
+        margin: 0.75rem auto 1.5rem;
+        padding: 0 1rem 2.5rem;
+    }
+
+    .heroHeader {
+        margin-bottom: 1rem;
+        gap: 0.25rem;
     }
 
     .title {
-        font-size: 2.25rem;
+        font-size: 1.75rem;
+    }
+
+    .subtitle {
+        font-size: 0.875rem;
+        line-height: 1.35;
     }
 
     /* Hide horizontal mobile chips on desktop */

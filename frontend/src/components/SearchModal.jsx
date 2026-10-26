@@ -96,8 +96,8 @@ const SearchModal = () => {
                 return;
             }
 
-            const fallbackResults = await drugService.searchFallback(trimmed);
-            if (isMounted) setResults(fallbackResults.slice(0, 25));
+            const searchResults = await drugService.searchDrugs(trimmed);
+            if (isMounted) setResults(searchResults.slice(0, 25));
         }, 200);
 
         return () => {

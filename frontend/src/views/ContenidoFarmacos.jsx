@@ -5,16 +5,20 @@ import { drugService } from '../services/drugService.js';
 import styles from './ContenidoFarmacos.module.css';
 
 const BATCH_SIZE = 24;
+const MOBILE_RANDOM_LIMIT = 5;
+
+// Helper to check if window is mobile viewport (< 1024px)
+const getIsMobile = () => (typeof window !== 'undefined' ? window.innerWidth < 1024 : false);
 
 const ContenidoFarmacos = () => {
     const {
         openDrugDetail,
         selectedFamily,
         setSelectedFamily,
-        setIsOffline,
         t
     } = useContext(counterContext);
 
+    const [isMobile, setIsMobile] = useState(getIsMobile);
     const [drugs, setDrugs] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(selectedFamily || 'all');
@@ -23,6 +27,15 @@ const ContenidoFarmacos = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
     const sentinelRef = useRef(null);
+
+    // Track resize for mobile vs desktop layout behavior
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(getIsMobile());
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     // Debounce search query to avoid thrashing CPU & memory allocations on keystrokes
     useEffect(() => {
@@ -50,7 +63,6 @@ const ContenidoFarmacos = () => {
             if (isMounted) {
                 if (drugsRes.success) {
                     setDrugs(drugsRes.data);
-                    if (drugsRes.isOffline) setIsOffline(true);
                 }
                 if (familiesRes.success) {
                     setCategories(familiesRes.data);
@@ -62,7 +74,7 @@ const ContenidoFarmacos = () => {
         return () => {
             isMounted = false;
         };
-    }, [setIsOffline]);
+    }, []);
 
     const categoryList = useMemo(() => {
         const mergedMap = new Map();
@@ -155,6 +167,22 @@ const ContenidoFarmacos = () => {
         });
     }, [drugs, selectedCategory, debouncedFilter]);
 
+    // En móvil, cuando no hay búsqueda de texto activa:
+    // Si la categoría es 'all', toma 5 fármacos aleatorios de toda la base de datos.
+    // Si el usuario decide voluntariamente filtrar por una categoría, muestra los fármacos de esa categoría (o hasta 5 aleatorios si hay muchos).
+    const randomMobileDrugs = useMemo(() => {
+        if (!isMobile || debouncedFilter) return null;
+        if (filteredDrugs.length <= MOBILE_RANDOM_LIMIT) return filteredDrugs;
+        
+        // Muestreo Fisher-Yates aleatorio de toda la base de datos (o de la categoría seleccionada si el usuario eligió una)
+        const pool = [...filteredDrugs];
+        for (let i = pool.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [pool[i], pool[j]] = [pool[j], pool[i]];
+        }
+        return pool.slice(0, MOBILE_RANDOM_LIMIT);
+    }, [isMobile, debouncedFilter, filteredDrugs]);
+
     // Reset pagination window whenever filters change
     useEffect(() => {
         setVisibleCount(BATCH_SIZE);
@@ -162,11 +190,15 @@ const ContenidoFarmacos = () => {
 
     // Slice only visible items to dramatically prune DOM tree and fiber memory
     const visibleDrugs = useMemo(() => {
+        if (isMobile && randomMobileDrugs) {
+            return randomMobileDrugs;
+        }
         return filteredDrugs.slice(0, visibleCount);
-    }, [filteredDrugs, visibleCount]);
+    }, [isMobile, randomMobileDrugs, filteredDrugs, visibleCount]);
 
-    // IntersectionObserver for progressive infinite scroll
+    // IntersectionObserver for progressive infinite scroll (disabled in mobile random 5 mode to keep footer easily accessible)
     useEffect(() => {
+        if (isMobile && randomMobileDrugs) return;
         if (visibleCount >= filteredDrugs.length) return;
 
         const currentSentinel = sentinelRef.current;
@@ -183,7 +215,7 @@ const ContenidoFarmacos = () => {
 
         observer.observe(currentSentinel);
         return () => observer.disconnect();
-    }, [visibleCount, filteredDrugs.length]);
+    }, [isMobile, randomMobileDrugs, visibleCount, filteredDrugs.length]);
 
     const handleLoadMore = () => {
         setVisibleCount((prev) => Math.min(prev + BATCH_SIZE, filteredDrugs.length));
@@ -222,24 +254,27 @@ const ContenidoFarmacos = () => {
                     />
                 </div>
 
-                <div className={styles.categoryChips}>
-                    <button
-                        type="button"
-                        className={`${styles.chipButton} ${selectedCategory === 'all' ? styles.chipButtonActive : ''}`}
-                        onClick={() => setSelectedCategory('all')}
+                <div className={styles.categorySelectWrapper}>
+                    <svg className={styles.selectIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                    </svg>
+                    <select
+                        id="mobileCategorySelect"
+                        className={styles.categorySelect}
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        aria-label="Filtrar por categoría ATC"
                     >
-                        {t.allCategories}
-                    </button>
-                    {categoryList.map((cat) => (
-                        <button
-                            key={cat.id}
-                            type="button"
-                            className={`${styles.chipButton} ${selectedCategory === cat.filterKey ? styles.chipButtonActive : ''}`}
-                            onClick={() => setSelectedCategory(cat.filterKey)}
-                        >
-                            {cat.label}
-                        </button>
-                    ))}
+                        <option value="all">{t.allCategories} ({drugs.length})</option>
+                        {categoryList.map((cat) => (
+                            <option key={cat.id} value={cat.filterKey}>
+                                {cat.label} ({categoryCounts.get(cat.filterKey) || 0})
+                            </option>
+                        ))}
+                    </select>
+                    <svg className={styles.chevronIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9" />
+                    </svg>
                 </div>
             </div>
 
@@ -295,7 +330,7 @@ const ContenidoFarmacos = () => {
             {isLoading ? (
                 <div className={styles.loadingBox}>
                     <div className={styles.spinner} />
-                    <p>Cargando fármacos...</p>
+                    <p>Cargando vademécum clínico...</p>
                 </div>
             ) : visibleDrugs.length > 0 ? (
                 <>
@@ -363,8 +398,8 @@ const ContenidoFarmacos = () => {
                         ))}
                     </div>
 
-                    {/* Progressive loading sentinel and manual fallback */}
-                    {visibleCount < filteredDrugs.length && (
+                    {/* Progressive loading sentinel and manual fallback (hidden when in mobile random 5 view to keep footer reachable) */}
+                    {!randomMobileDrugs && visibleCount < filteredDrugs.length && (
                         <div ref={sentinelRef} className={styles.scrollSentinel}>
                             <button
                                 type="button"

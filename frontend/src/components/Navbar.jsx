@@ -10,8 +10,7 @@ const Navbar = () => {
         activeView,
         navigateToDrugs,
         navigateToFamilies,
-        setSearchModalOpen,
-        isOffline
+        setSearchModalOpen
     } = useContext(counterContext);
 
     return (
@@ -89,11 +88,6 @@ const Navbar = () => {
                             <path d="m21 21-4.3-4.3" />
                         </svg>
                     </button>
-                    {isOffline && (
-                        <div className={styles.offlineBadge} title={t.backendOfflineNotice}>
-                            <span>●</span> Offline Mode
-                        </div>
-                    )}
 
                     <button
                         type="button"

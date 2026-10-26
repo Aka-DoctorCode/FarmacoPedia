@@ -60,7 +60,6 @@ const StateContext = ({ children }) => {
     const [selectedDrugData, setSelectedDrugData] = useState(null);
     const [isDrugLoading, setIsDrugLoading] = useState(false);
     const [selectedFamily, setSelectedFamily] = useState(null);
-    const [isOffline, setIsOffline] = useState(false);
 
     // Global Search Modal
     const [searchModalOpen, setSearchModalOpen] = useState(false);
@@ -78,7 +77,6 @@ const StateContext = ({ children }) => {
         const result = await drugService.getDrugByName(drugName);
         if (result.success) {
             setSelectedDrugData(result.data);
-            if (result.isOffline) setIsOffline(true);
         } else {
             setSelectedDrugData(null);
         }
@@ -140,8 +138,6 @@ const StateContext = ({ children }) => {
         setSearchModalOpen,
         searchQuery,
         setSearchQuery,
-        isOffline,
-        setIsOffline,
         // Legacy compatibility
         listaFarmacos,
         listaFarmacosMostrar,
@@ -173,8 +169,6 @@ const StateContext = ({ children }) => {
         setSearchModalOpen,
         searchQuery,
         setSearchQuery,
-        isOffline,
-        setIsOffline,
         listaFarmacos,
         listaFarmacosMostrar,
         listaFarmacosOcultar,

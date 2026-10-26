@@ -147,8 +147,7 @@ export const translations = {
         
         // Footer
         footerNotice: 'ClickSalud FarmacoPedia — Base de datos farmacológica de acceso libre para fines educativos.',
-        footerAllRights: 'Todos los derechos reservados.',
-        backendOfflineNotice: 'Modo Offline: Mostrando vademécum de demostración local.'
+        footerAllRights: 'Todos los derechos reservados.'
     },
     en: {
         appName: 'ClickSalud FarmacoPedia',
@@ -298,7 +297,6 @@ export const translations = {
         
         // Footer
         footerNotice: 'ClickSalud FarmacoPedia — Open access clinical pharmacological knowledge base for educational use.',
-        footerAllRights: 'All rights reserved.',
-        backendOfflineNotice: 'Offline Mode: Showing local clinical demonstration database.'
+        footerAllRights: 'All rights reserved.'
     }
 };

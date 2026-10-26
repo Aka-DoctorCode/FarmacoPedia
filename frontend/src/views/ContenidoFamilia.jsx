@@ -182,55 +182,56 @@ const ContenidoFamilia = () => {
                 />
             </Helmet>
 
-            {/* Hero Header */}
+            {/* Hero Header Compacto con Search integrado */}
             <header className={styles.heroHeader}>
-                <div className={styles.titleBadgeRow}>
-                    <span className={styles.whoBadge}>Estándar OMS / WHO</span>
-                    <span className={styles.levelBadge}>
-                        {isLeafView ? 'Nivel 5: Principios Activos' : currentLevelInfo.title.split('—')[0].trim()}
-                    </span>
-                </div>
-                <h1 className={styles.title}>Navegador de Familias ATC</h1>
-                <p className={styles.subtitle}>
-                    Explora fármacos a través de la clasificación Anatómica, Terapéutica y Química oficial en 5 niveles clínicos.
-                </p>
-            </header>
+                <div className={styles.heroTopRow}>
+                    <div className={styles.heroTitleGroup}>
+                        <h1 className={styles.title}>Navegador de Familias ATC</h1>
+                        <div className={styles.titleBadgeRow}>
+                            <span className={styles.whoBadge}>Estándar OMS</span>
+                            <span className={styles.levelBadge}>
+                                {isLeafView ? 'Nivel 5: Fármacos' : currentLevelInfo.title.split('—')[0].trim()}
+                            </span>
+                        </div>
+                    </div>
 
-            {/* Search Bar */}
-            <div className={styles.searchBarWrapper}>
-                <svg
-                    className={styles.searchIcon}
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                >
-                    <circle cx="11" cy="11" r="8" />
-                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-                <input
-                    type="search"
-                    className={styles.searchInput}
-                    placeholder="Buscar fármaco o código ATC (ej. Ceftriaxona, J01DD, N02BE)..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    aria-label="Buscar en catálogo ATC"
-                />
-                {searchQuery && (
-                    <button
-                        type="button"
-                        className={styles.clearSearchBtn}
-                        onClick={() => setSearchQuery('')}
-                        aria-label="Limpiar búsqueda"
-                    >
-                        ✕
-                    </button>
-                )}
-            </div>
+                    {/* Buscador integrado en el header */}
+                    <div className={styles.searchBarWrapper}>
+                        <svg
+                            className={styles.searchIcon}
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                        <input
+                            type="search"
+                            className={styles.searchInput}
+                            placeholder="Buscar fármaco o código ATC (ej. Ceftriaxona, J01DD, N02BE)..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            aria-label="Buscar en catálogo ATC"
+                        />
+                        {searchQuery && (
+                            <button
+                                type="button"
+                                className={styles.clearSearchBtn}
+                                onClick={() => setSearchQuery('')}
+                                aria-label="Limpiar búsqueda"
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </header>
 
             {/* LIVE SEARCH RESULTS VIEW */}
             {searchQuery.trim().length > 0 ? (
@@ -329,86 +330,88 @@ const ContenidoFamilia = () => {
             ) : (
                 /* DRILL-DOWN HIERARCHICAL NAVIGATION VIEW */
                 <>
-                    {/* Interactive Breadcrumbs Bar */}
-                    <nav className={styles.breadcrumbsNav} aria-label="Navegación taxonómica ATC">
-                        <ol className={styles.breadcrumbsList}>
-                            <li className={styles.breadcrumbItem}>
-                                <button
-                                    type="button"
-                                    className={`${styles.breadcrumbButton} ${currentPath.length === 0 ? styles.breadcrumbButtonActive : ''}`}
-                                    onClick={() => handleNavigateToBreadcrumb(-1)}
-                                >
-                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                                        <polyline points="9 22 9 12 15 12 15 22" />
-                                    </svg>
-                                    <span>Catálogo ATC</span>
-                                </button>
-                            </li>
+                    {/* Barra de Navegación Taxonómica y Control (Compacta) */}
+                    <div className={styles.taxonomicControlBar}>
+                        <div className={styles.breadcrumbsContainer}>
+                            <ol className={styles.breadcrumbsList} aria-label="Ruta taxonómica">
+                                <li className={styles.breadcrumbItem}>
+                                    <button
+                                        type="button"
+                                        className={`${styles.breadcrumbButton} ${currentPath.length === 0 ? styles.breadcrumbButtonActive : ''}`}
+                                        onClick={() => handleNavigateToBreadcrumb(-1)}
+                                    >
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                                            <polyline points="9 22 9 12 15 12 15 22" />
+                                        </svg>
+                                        <span>ATC</span>
+                                    </button>
+                                </li>
 
-                            {currentPath.map((step, index) => {
-                                const isCurrent = index === currentPath.length - 1;
-                                return (
-                                    <li key={step.code} className={styles.breadcrumbItem}>
-                                        <span className={styles.breadcrumbSeparator} aria-hidden="true">›</span>
-                                        <button
-                                            type="button"
-                                            className={`${styles.breadcrumbButton} ${isCurrent ? styles.breadcrumbButtonActive : ''}`}
-                                            onClick={() => handleNavigateToBreadcrumb(index)}
-                                            aria-current={isCurrent ? 'page' : undefined}
-                                            title={step.name}
-                                        >
-                                            <span className={styles.breadcrumbCode}>[{step.code}]</span>
-                                            <span className={styles.breadcrumbLabel}>{formatCategory(step.name)}</span>
-                                        </button>
-                                    </li>
-                                );
-                            })}
-                        </ol>
-                    </nav>
-
-                    {/* Level Description & Filter Bar */}
-                    <div className={styles.levelHeaderCard}>
-                        <div className={styles.levelHeaderInfo}>
-                            {currentPath.length > 0 && (
-                                <button
-                                    type="button"
-                                    className={styles.backButton}
-                                    onClick={handleBackOneLevel}
-                                >
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="m15 18-6-6 6-6" />
-                                    </svg>
-                                    <span>Volver</span>
-                                </button>
-                            )}
-                            <div>
-                                <h2 className={styles.levelHeaderTitle}>
-                                    {isLeafView
-                                        ? `Fármacos en [${currentNode?.code}] ${formatCategory(currentNode?.name)}`
-                                        : currentLevelInfo.title}
-                                </h2>
-                                <p className={styles.levelHeaderDesc}>
-                                    {isLeafView
-                                        ? 'Principios activos y moléculas registradas en FarmacoPedia bajo este subgrupo químico.'
-                                        : currentLevelInfo.desc}
-                                </p>
-                            </div>
+                                {currentPath.map((step, index) => {
+                                    const isCurrent = index === currentPath.length - 1;
+                                    return (
+                                        <li key={step.code} className={styles.breadcrumbItem}>
+                                            <span className={styles.breadcrumbSeparator} aria-hidden="true">›</span>
+                                            <button
+                                                type="button"
+                                                className={`${styles.breadcrumbButton} ${isCurrent ? styles.breadcrumbButtonActive : ''}`}
+                                                onClick={() => handleNavigateToBreadcrumb(index)}
+                                                aria-current={isCurrent ? 'page' : undefined}
+                                                title={step.name}
+                                            >
+                                                <span className={styles.breadcrumbCode}>[{step.code}]</span>
+                                                <span className={styles.breadcrumbLabel}>{formatCategory(step.name)}</span>
+                                            </button>
+                                        </li>
+                                    );
+                                })}
+                            </ol>
                         </div>
 
-                        {!isLeafView && (
-                            <label className={styles.filterToggle}>
-                                <input
-                                    type="checkbox"
-                                    checked={filterOnlyWithDrugs}
-                                    onChange={(e) => setFilterOnlyWithDrugs(e.target.checked)}
-                                    className={styles.filterCheckbox}
-                                />
-                                <span className={styles.filterToggleLabel}>
-                                    Solo grupos con fármacos registrados
-                                </span>
-                            </label>
-                        )}
+                        <div className={styles.levelStatusRow}>
+                            <div className={styles.levelHeaderInfo}>
+                                {currentPath.length > 0 && (
+                                    <button
+                                        type="button"
+                                        className={styles.backButton}
+                                        onClick={handleBackOneLevel}
+                                        aria-label="Volver un nivel"
+                                    >
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="m15 18-6-6 6-6" />
+                                        </svg>
+                                        <span>Atrás</span>
+                                    </button>
+                                )}
+                                <div className={styles.levelTitles}>
+                                    <h2 className={styles.levelHeaderTitle}>
+                                        {isLeafView
+                                            ? `[${currentNode?.code}] ${formatCategory(currentNode?.name)}`
+                                            : currentLevelInfo.title}
+                                    </h2>
+                                    <span className={styles.levelHeaderDesc}>
+                                        {isLeafView
+                                            ? 'Fármacos registrados en este subgrupo'
+                                            : currentLevelInfo.desc}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {!isLeafView && (
+                                <label className={styles.filterToggle}>
+                                    <input
+                                        type="checkbox"
+                                        checked={filterOnlyWithDrugs}
+                                        onChange={(e) => setFilterOnlyWithDrugs(e.target.checked)}
+                                        className={styles.filterCheckbox}
+                                    />
+                                    <span className={styles.filterToggleLabel}>
+                                        Solo con fármacos
+                                    </span>
+                                </label>
+                            )}
+                        </div>
                     </div>
 
                     {/* Content Section: Loading vs Leaf vs Grid Nodes */}

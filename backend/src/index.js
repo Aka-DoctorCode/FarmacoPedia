@@ -197,6 +197,15 @@ const asyncHandler = (fn) => (req, res, next) => {
 // Routes
 // --------------------------------------------------------------
 
+// Root & Health check endpoints for Render cold start and monitoring
+app.get("/", (req, res) => {
+    res.status(200).json({ success: true, message: "ClickSalud FarmacoPedia API is active", status: "online" });
+});
+
+app.get("/health", (req, res) => {
+    res.status(200).json({ success: true, status: "healthy", timestamp: Date.now() });
+});
+
 // POST: Add drug
 app.post("/drugs", asyncHandler(async (req, res) => {
     const newDrug = new Drug(req.body);
