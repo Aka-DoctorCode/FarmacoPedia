@@ -69,6 +69,48 @@ const DetalleFarmaco = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    const drug = selectedDrugData;
+
+    // Helper to safely format Map or Object presentations
+    const presentationsEntries = drug?.presentations
+        ? Object.entries(drug.presentations)
+        : [];
+
+    const adultGuidanceEntries = drug?.dosageGuidance?.adult
+        ? Object.entries(drug.dosageGuidance.adult)
+        : [];
+
+    const pediatricGuidanceEntries = drug?.dosageGuidance?.pediatric
+        ? Object.entries(drug.dosageGuidance.pediatric)
+        : [];
+
+    // Flatten presentations into rows for Table Matrix view
+    const flattenedPresentations = useMemo(() => {
+        const rows = [];
+        presentationsEntries.forEach(([formName, formValue]) => {
+            if (formValue?.dosage && Array.isArray(formValue.dosage)) {
+                formValue.dosage.forEach((d) => {
+                    rows.push({
+                        form: formName,
+                        amount: d.amount,
+                        unit: d.unit,
+                        useIn: d.useIn || '—',
+                        routes: d.route || []
+                    });
+                });
+            }
+        });
+        return rows;
+    }, [presentationsEntries]);
+
+    // Presentation list filtered when in 'tabs' view mode
+    const displayedPresentations = useMemo(() => {
+        if (presentationViewMode !== 'tabs' || selectedFormTab === 'ALL') {
+            return presentationsEntries;
+        }
+        return presentationsEntries.filter(([name]) => name === selectedFormTab);
+    }, [presentationsEntries, presentationViewMode, selectedFormTab]);
+
     if (isDrugLoading) {
         return (
             <div className={styles.container}>
@@ -94,48 +136,6 @@ const DetalleFarmaco = () => {
             </div>
         );
     }
-
-    const drug = selectedDrugData;
-
-    // Helper to safely format Map or Object presentations
-    const presentationsEntries = drug.presentations
-        ? Object.entries(drug.presentations)
-        : [];
-
-    // Flatten presentations into rows for Table Matrix view
-    const flattenedPresentations = useMemo(() => {
-        const rows = [];
-        presentationsEntries.forEach(([formName, formValue]) => {
-            if (formValue.dosage && Array.isArray(formValue.dosage)) {
-                formValue.dosage.forEach((d) => {
-                    rows.push({
-                        form: formName,
-                        amount: d.amount,
-                        unit: d.unit,
-                        useIn: d.useIn || '—',
-                        routes: d.route || []
-                    });
-                });
-            }
-        });
-        return rows;
-    }, [presentationsEntries]);
-
-    // Presentation list filtered when in 'tabs' view mode
-    const displayedPresentations = useMemo(() => {
-        if (presentationViewMode !== 'tabs' || selectedFormTab === 'ALL') {
-            return presentationsEntries;
-        }
-        return presentationsEntries.filter(([name]) => name === selectedFormTab);
-    }, [presentationsEntries, presentationViewMode, selectedFormTab]);
-
-    const adultGuidanceEntries = drug.dosageGuidance?.adult
-        ? Object.entries(drug.dosageGuidance.adult)
-        : [];
-
-    const pediatricGuidanceEntries = drug.dosageGuidance?.pediatric
-        ? Object.entries(drug.dosageGuidance.pediatric)
-        : [];
 
     return (
         <section className={styles.container}>
