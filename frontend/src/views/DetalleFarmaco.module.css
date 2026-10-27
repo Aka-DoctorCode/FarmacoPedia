@@ -905,110 +905,116 @@
 /* Progressive Scaling: Tablet (>= 768px) */
 @media (min-width: 768px) {
     .container {
-        padding: 0 calc(1.5rem + env(safe-area-inset-right, 0px)) 2.5rem calc(1.5rem + env(safe-area-inset-left, 0px));
-        margin: 1.5rem auto;
+        padding: 0 calc(1.25rem + env(safe-area-inset-right, 0px)) 2rem calc(1.25rem + env(safe-area-inset-left, 0px));
+        margin: 1rem auto;
     }
 
     .topBar {
-        margin-bottom: 1.5rem;
-        gap: 1rem;
+        margin-bottom: 0.85rem;
+        gap: 0.75rem;
     }
 
     .backButton {
         flex: 0 0 auto;
-        padding: 0.6rem 1.1rem;
-        font-size: 0.875rem;
+        padding: 0.45rem 0.95rem;
+        font-size: 0.825rem;
+        min-height: 38px;
     }
 
     .topBarCalcButton {
         flex: 0 0 auto;
-        padding: 0.6rem 1.25rem;
-        font-size: 0.875rem;
+        padding: 0.45rem 1rem;
+        font-size: 0.825rem;
+        min-height: 38px;
     }
 
     .headerCard {
-        padding: 2rem;
-        border-radius: var(--radiusLg);
-        margin-bottom: 1.5rem;
-        gap: 1rem;
+        padding: 1.15rem 1.4rem;
+        border-radius: var(--radiusMd);
+        margin-bottom: 1rem;
+        gap: 0.65rem;
     }
 
     .drugName {
-        font-size: 2.25rem;
+        font-size: 1.75rem;
     }
 
     .tabsNav {
-        gap: 0.75rem;
-        padding: 0.55rem 0.65rem;
-        margin-bottom: 1.75rem;
+        gap: 0.5rem;
+        padding: 0.4rem 0.5rem;
+        margin-bottom: 1.25rem;
         border-radius: var(--radiusPill);
     }
 
     .tabButton {
         flex: 1;
         min-width: 0;
-        padding: 0.75rem 1.25rem;
-        font-size: 0.9rem;
+        padding: 0.55rem 0.95rem;
+        font-size: 0.85rem;
+        min-height: 40px;
     }
 
     .tabContent {
-        gap: 1.5rem;
+        gap: 1.15rem;
     }
 
     .sectionCard {
-        padding: 1.5rem;
+        padding: 1.15rem 1.35rem;
     }
 
     .sectionTitle {
-        font-size: 1.25rem;
+        font-size: 1.15rem;
         font-weight: 800;
     }
 
     .mechanismSnippet {
-        font-size: 1.125rem;
+        font-size: 0.975rem;
+        line-height: 1.55;
     }
 
     .plainText {
-        font-size: 1.085rem;
+        font-size: 0.95rem;
+        line-height: 1.55;
     }
 
     .bulletList {
-        font-size: 1.05rem;
+        font-size: 0.95rem;
+        gap: 0.4rem;
     }
 
     .presentationsGrid {
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1rem;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 0.85rem;
     }
 
     .guidanceGrid {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 0.85rem;
     }
 
     .adjustmentsGrid {
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 0.85rem;
     }
 
     .referencesCard {
-        margin-top: 2rem;
-        padding: 1.5rem;
-        border-radius: var(--radiusLg);
+        margin-top: 1.25rem;
+        padding: 1.15rem;
+        border-radius: var(--radiusMd);
     }
 
     .referenceItem {
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
 }
 
-/* Progressive Scaling: Desktop (>= 1024px) */
+/* Progressive Scaling: Desktop (>= 1024px) - Optimizado para 720p (1280x720) */
 @media (min-width: 1024px) {
     .container {
         max-width: 96%;
         width: 96%;
-        margin: 1.5rem auto;
-        padding: 0 1rem 3.5rem;
+        margin: 0.85rem auto;
+        padding: 0 0.85rem 2rem;
     }
 
     /* Ocultar barra horizontal de pestañas en desktop ya que usamos el sidebar clínico */
@@ -1016,22 +1022,22 @@
         display: none;
     }
 
-    /* Layout Workspace en 2 columnas */
+    /* Layout Workspace compacto en 2 columnas */
     .workspace {
         display: flex;
         align-items: flex-start;
-        gap: 1.75rem;
+        gap: 1.15rem;
         position: relative;
     }
 
-    /* Sidebar Clínico Sticky */
+    /* Sidebar Clínico Sticky Optimizado */
     .desktopClinicSidebar {
         display: block;
-        width: 280px;
+        width: 240px;
         flex-shrink: 0;
         position: -webkit-sticky;
         position: sticky;
-        top: 85px;
+        top: 75px;
         align-self: flex-start;
         z-index: 20;
     }
@@ -1042,22 +1048,22 @@
         -webkit-backdrop-filter: var(--backdropBlur);
         border: 1px solid var(--borderGlass);
         border-radius: var(--radiusMd);
-        padding: 1.25rem;
+        padding: 0.95rem;
         box-shadow: var(--shadowCard);
         display: flex;
         flex-direction: column;
-        gap: 1.25rem;
-        max-height: calc(100vh - 105px);
+        gap: 0.85rem;
+        max-height: calc(100vh - 90px);
         overflow-y: auto;
     }
 
     .sidebarHeader {
         border-bottom: 1px solid var(--borderGlass);
-        padding-bottom: 0.75rem;
+        padding-bottom: 0.5rem;
     }
 
     .sidebarSubtitle {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
@@ -1067,10 +1073,10 @@
 
     .sidebarDrugTitle {
         font-family: var(--fontHeading);
-        font-size: 1.25rem;
+        font-size: 1.1rem;
         font-weight: 800;
         color: var(--textPrimary);
-        margin: 0.25rem 0 0 0;
+        margin: 0.15rem 0 0 0;
         text-transform: capitalize;
         white-space: nowrap;
         overflow: hidden;
@@ -1080,19 +1086,19 @@
     .sidebarNav {
         display: flex;
         flex-direction: column;
-        gap: 0.35rem;
+        gap: 0.25rem;
     }
 
     .sidebarNavItem {
         display: flex;
         align-items: center;
-        gap: 0.65rem;
-        padding: 0.65rem 0.85rem;
+        gap: 0.5rem;
+        padding: 0.5rem 0.65rem;
         border-radius: var(--radiusSm);
         border: 1px solid transparent;
         background: transparent;
         color: var(--textSecondary);
-        font-size: 0.875rem;
+        font-size: 0.8rem;
         font-weight: 600;
         cursor: pointer;
         text-align: left;
@@ -1104,6 +1110,8 @@
         color: var(--textMuted);
         transition: color var(--transitionFast);
         flex-shrink: 0;
+        width: 14px;
+        height: 14px;
     }
 
     .sidebarNavItem:hover {
@@ -1129,48 +1137,48 @@
 
     .sidebarActionBox {
         border-top: 1px solid var(--borderGlass);
-        padding-top: 1rem;
+        padding-top: 0.75rem;
     }
 
     .sidebarCalcButton {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
+        gap: 0.4rem;
         width: 100%;
-        padding: 0.75rem 1rem;
+        padding: 0.55rem 0.75rem;
         border-radius: var(--radiusSm);
         background: linear-gradient(135deg, var(--colorPrimary) 0%, var(--colorTeal) 100%);
         border: none;
         color: #ffffff;
         font-weight: 700;
-        font-size: 0.85rem;
+        font-size: 0.785rem;
         cursor: pointer;
-        box-shadow: 0 4px 14px var(--colorPrimaryGlow);
+        box-shadow: 0 3px 10px var(--colorPrimaryGlow);
         transition: all var(--transitionFast);
     }
 
     .sidebarCalcButton:hover {
         filter: brightness(1.1);
         transform: translateY(-1px);
-        box-shadow: 0 6px 18px var(--colorPrimaryGlow);
+        box-shadow: 0 4px 14px var(--colorPrimaryGlow);
     }
 
-    /* Columna de Contenido Principal: Todas las secciones visibles en flujo continuo */
+    /* Columna de Contenido Principal: Compacta y optimizada */
     .detailMainContent {
         flex: 1;
         min-width: 0;
         display: flex;
         flex-direction: column;
-        gap: 2rem;
+        gap: 1.15rem;
     }
 
     .sectionBlock {
         display: flex !important;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 1rem;
         width: 100%;
-        scroll-margin-top: 90px;
+        scroll-margin-top: 80px;
     }
 
     .tabBlockHidden {
@@ -1187,12 +1195,16 @@
     .container {
         max-width: min(96%, var(--containerDesktopMax, 1640px));
         width: 96%;
-        margin: 2rem auto;
-        padding: 0 1rem 3.5rem;
+        margin: 1.25rem auto;
+        padding: 0 1rem 3rem;
     }
 
     .desktopClinicSidebar {
-        width: 300px;
+        width: 270px;
+    }
+
+    .detailMainContent {
+        gap: 1.5rem;
     }
 }
 
