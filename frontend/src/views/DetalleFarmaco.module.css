@@ -895,6 +895,105 @@
 }
 
 /* Organ Adjustments Grid: Mobile Base is Single Column */
+/* Clinical Risks & Adjustments: Row Layout for Web / Desktop */
+.riskRowsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    width: 100%;
+}
+
+.riskTableRow {
+    background: var(--bgGlass);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusSm);
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: all var(--transitionFast);
+}
+
+.riskTableRow:hover {
+    border-color: rgba(56, 189, 248, 0.35);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.riskRowHeaderCol {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.riskRowIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: rgba(56, 189, 248, 0.12);
+    color: var(--colorPrimary);
+    flex-shrink: 0;
+}
+
+.riskRowTitle {
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: var(--textPrimary);
+}
+
+.riskRowBadge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--colorWarning);
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    padding: 0.15rem 0.55rem;
+    border-radius: var(--radiusPill);
+    text-transform: capitalize;
+}
+
+.riskRowContentCol {
+    flex: 1;
+    min-width: 0;
+}
+
+.riskRowText {
+    color: var(--textPrimary);
+    font-size: 0.925rem;
+    font-weight: 500;
+    line-height: 1.55;
+    margin: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+/* Tablet & Desktop Horizontal Row Arrangement */
+@media (min-width: 768px) {
+    .riskTableRow {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 1.25rem;
+        padding: 0.75rem 1.15rem;
+    }
+
+    .riskRowHeaderCol {
+        width: 200px;
+        flex-shrink: 0;
+        padding-top: 0.1rem;
+    }
+
+    .riskRowContentCol {
+        border-left: 1px solid var(--borderGlass);
+        padding-left: 1.25rem;
+    }
+}
+
+/* Legacy Adjustments Grid Fallback */
 .adjustmentsGrid {
     display: grid;
     grid-template-columns: 1fr;

@@ -643,59 +643,96 @@ const DetalleFarmaco = () => {
                             </span>
                             <h2 className={styles.sectionTitle}>{t.sectionRisks}</h2>
                         </div>
-                        <div className={styles.adjustmentsGrid}>
-                            <div className={styles.riskCard}>
-                                <span className={styles.riskTitle}>{t.sectionPregnancy}</span>
-                                <p className={styles.plainText}>{drug.risk?.pregnancy || t.noData}</p>
-                            </div>
-                            <div className={styles.riskCard}>
-                                <span className={styles.riskTitle}>{t.sectionLactation}</span>
-                                <p className={styles.plainText}>{drug.risk?.lactation || t.noData}</p>
-                            </div>
-                            <div className={styles.riskCard}>
-                                <span className={styles.riskTitle}>{t.sectionGeriatric}</span>
-                                <p className={styles.plainText}>{drug.risk?.geriatric || t.noData}</p>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div className={styles.sectionCard}>
-                        <div className={styles.sectionHeader}>
-                            <span className={styles.sectionIcon}>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
-                                    <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
-                                </svg>
-                            </span>
-                            <h2 className={styles.sectionTitle}>{t.sectionRenal}</h2>
-                        </div>
-                        <div className={styles.riskCard}>
-                            {drug.risk?.renal?.level && (
-                                <div className={styles.riskLevel}>{drug.risk.renal.level}</div>
-                            )}
-                            <div className={styles.riskAdjustment}>
-                                {drug.risk?.renal?.adjustment || t.noData}
+                        <div className={styles.riskRowsContainer}>
+                            {/* Fila Embarazo */}
+                            <div className={styles.riskTableRow}>
+                                <div className={styles.riskRowHeaderCol}>
+                                    <span className={styles.riskRowIcon}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <circle cx="12" cy="12" r="10" />
+                                            <path d="M12 8v8" />
+                                            <path d="M8 12h8" />
+                                        </svg>
+                                    </span>
+                                    <span className={styles.riskRowTitle}>{t.sectionPregnancy}</span>
+                                </div>
+                                <div className={styles.riskRowContentCol}>
+                                    <p className={styles.riskRowText}>{drug.risk?.pregnancy || t.noData}</p>
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div className={styles.sectionCard}>
-                        <div className={styles.sectionHeader}>
-                            <span className={styles.sectionIcon}>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
-                                    <path d="m4.93 4.93 4.24 4.24" />
-                                    <path d="m14.83 9.17 4.24-4.24" />
-                                </svg>
-                            </span>
-                            <h2 className={styles.sectionTitle}>{t.sectionHepatic}</h2>
-                        </div>
-                        <div className={styles.riskCard}>
-                            {drug.risk?.hepatic?.level && (
-                                <div className={styles.riskLevel}>{drug.risk.hepatic.level}</div>
-                            )}
-                            <div className={styles.riskAdjustment}>
-                                {drug.risk?.hepatic?.adjustment || t.noData}
+                            {/* Fila Lactancia */}
+                            <div className={styles.riskTableRow}>
+                                <div className={styles.riskRowHeaderCol}>
+                                    <span className={styles.riskRowIcon}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M12 21a9 9 0 0 0 9-9c0-4.97-4.03-9-9-9s-9 4.03-9 9a9 9 0 0 0 9 9Z" />
+                                            <path d="M12 7v5l3 3" />
+                                        </svg>
+                                    </span>
+                                    <span className={styles.riskRowTitle}>{t.sectionLactation}</span>
+                                </div>
+                                <div className={styles.riskRowContentCol}>
+                                    <p className={styles.riskRowText}>{drug.risk?.lactation || t.noData}</p>
+                                </div>
+                            </div>
+
+                            {/* Fila Geriatría */}
+                            <div className={styles.riskTableRow}>
+                                <div className={styles.riskRowHeaderCol}>
+                                    <span className={styles.riskRowIcon}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                            <circle cx="9" cy="7" r="4" />
+                                            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                        </svg>
+                                    </span>
+                                    <span className={styles.riskRowTitle}>{t.sectionGeriatric}</span>
+                                </div>
+                                <div className={styles.riskRowContentCol}>
+                                    <p className={styles.riskRowText}>{drug.risk?.geriatric || t.noData}</p>
+                                </div>
+                            </div>
+
+                            {/* Fila Renal */}
+                            <div className={styles.riskTableRow}>
+                                <div className={styles.riskRowHeaderCol}>
+                                    <span className={styles.riskRowIcon}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+                                            <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+                                        </svg>
+                                    </span>
+                                    <span className={styles.riskRowTitle}>{t.sectionRenal}</span>
+                                    {drug.risk?.renal?.level && (
+                                        <span className={styles.riskRowBadge}>{drug.risk.renal.level}</span>
+                                    )}
+                                </div>
+                                <div className={styles.riskRowContentCol}>
+                                    <p className={styles.riskRowText}>{drug.risk?.renal?.adjustment || t.noData}</p>
+                                </div>
+                            </div>
+
+                            {/* Fila Hepática */}
+                            <div className={styles.riskTableRow}>
+                                <div className={styles.riskRowHeaderCol}>
+                                    <span className={styles.riskRowIcon}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                                            <path d="m4.93 4.93 4.24 4.24" />
+                                            <path d="m14.83 9.17 4.24-4.24" />
+                                        </svg>
+                                    </span>
+                                    <span className={styles.riskRowTitle}>{t.sectionHepatic}</span>
+                                    {drug.risk?.hepatic?.level && (
+                                        <span className={styles.riskRowBadge}>{drug.risk.hepatic.level}</span>
+                                    )}
+                                </div>
+                                <div className={styles.riskRowContentCol}>
+                                    <p className={styles.riskRowText}>{drug.risk?.hepatic?.adjustment || t.noData}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
