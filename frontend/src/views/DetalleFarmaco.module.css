@@ -965,17 +965,106 @@
     color: var(--textPrimary);
 }
 
-.riskRowBadge {
+/* Clinical Alert Callout for Renal/Hepatic */
+.riskAlertCallout {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.6rem 0.85rem;
+    border-radius: var(--radiusSm);
+    margin-bottom: 0.55rem;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    transition: all var(--transitionFast);
+}
+
+.riskAlertCalloutIcon {
     display: inline-flex;
     align-items: center;
-    font-size: 0.75rem;
-    font-weight: 700;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+}
+
+.riskAlertCalloutBody {
+    flex: 1;
+    min-width: 0;
+}
+
+.riskAlertCalloutTag {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-right: 0.45rem;
+    opacity: 0.85;
+}
+
+.riskAlertCalloutText {
+    font-weight: 600;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.riskAlert_warning {
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-left: 3.5px solid var(--colorWarning);
+    color: #fbbf24;
+}
+
+.riskAlert_warning .riskAlertCalloutTag {
     color: var(--colorWarning);
-    background: rgba(245, 158, 11, 0.12);
-    border: 1px solid rgba(245, 158, 11, 0.3);
-    padding: 0.15rem 0.55rem;
-    border-radius: var(--radiusPill);
-    text-transform: capitalize;
+}
+
+.riskAlert_warning .riskAlertCalloutText {
+    color: #fef3c7;
+}
+
+.riskAlert_danger {
+    background: rgba(244, 63, 94, 0.08);
+    border: 1px solid rgba(244, 63, 94, 0.25);
+    border-left: 3.5px solid var(--colorDanger);
+    color: #f87171;
+}
+
+.riskAlert_danger .riskAlertCalloutTag {
+    color: var(--colorDanger);
+}
+
+.riskAlert_danger .riskAlertCalloutText {
+    color: #ffe4e6;
+}
+
+.riskAlert_success {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    border-left: 3.5px solid var(--colorSuccess);
+    color: #34d399;
+}
+
+.riskAlert_success .riskAlertCalloutTag {
+    color: var(--colorSuccess);
+}
+
+.riskAlert_success .riskAlertCalloutText {
+    color: #d1fae5;
+}
+
+.riskAlert_info {
+    background: rgba(14, 165, 233, 0.08);
+    border: 1px solid rgba(14, 165, 233, 0.25);
+    border-left: 3.5px solid var(--colorPrimary);
+    color: #38bdf8;
+}
+
+.riskAlert_info .riskAlertCalloutTag {
+    color: var(--colorPrimary);
+}
+
+.riskAlert_info .riskAlertCalloutText {
+    color: #e0f2fe;
 }
 
 .riskRowContentCol {

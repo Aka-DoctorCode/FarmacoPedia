@@ -6,6 +6,20 @@ import styles from './DetalleFarmaco.module.css';
 
 const PediatricCalculatorModal = lazy(() => import('../components/PediatricCalculatorModal.jsx'));
 
+const getRiskSeverity = (text) => {
+    if (!text) return 'info';
+    const lower = text.toLowerCase();
+    if (lower.includes('contraindicad') || lower.includes('evitar') || lower.includes('no recomendad')) {
+        return 'danger';
+    }
+    if (lower.includes('precauci') || lower.includes('ajuste') || lower.includes('monitoreo') || lower.includes('reducir') || lower.includes('grave') || lower.includes('severa') || lower.includes('moderad')) {
+        return 'warning';
+    }
+    if (lower.includes('seguro') || lower.includes('no requiere') || lower.includes('sin ajuste') || lower.includes('normal')) {
+        return 'success';
+    }
+    return 'info';
+};
 
 const DetalleFarmaco = () => {
     const {
@@ -706,12 +720,35 @@ const DetalleFarmaco = () => {
                                         </svg>
                                     </span>
                                     <span className={styles.riskRowTitle}>{t.sectionRenal}</span>
-                                    {drug.risk?.renal?.level && (
-                                        <span className={styles.riskRowBadge}>{drug.risk.renal.level}</span>
-                                    )}
                                 </div>
                                 <div className={styles.riskRowContentCol}>
-                                    <p className={styles.riskRowText}>{drug.risk?.renal?.adjustment || t.noData}</p>
+                                    {drug.risk?.renal?.level && (
+                                        <div className={`${styles.riskAlertCallout} ${styles['riskAlert_' + getRiskSeverity(drug.risk.renal.level)]}`}>
+                                            <span className={styles.riskAlertCalloutIcon}>
+                                                {getRiskSeverity(drug.risk.renal.level) === 'danger' && (
+                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                                                )}
+                                                {getRiskSeverity(drug.risk.renal.level) === 'warning' && (
+                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                                )}
+                                                {getRiskSeverity(drug.risk.renal.level) === 'success' && (
+                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                                )}
+                                                {getRiskSeverity(drug.risk.renal.level) === 'info' && (
+                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                                )}
+                                            </span>
+                                            <div className={styles.riskAlertCalloutBody}>
+                                                <span className={styles.riskAlertCalloutTag}>Criterio / Nivel:</span>
+                                                <span className={styles.riskAlertCalloutText}>{drug.risk.renal.level}</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {drug.risk?.renal?.adjustment ? (
+                                        <p className={styles.riskRowText}>{drug.risk.renal.adjustment}</p>
+                                    ) : (
+                                        !drug.risk?.renal?.level && <p className={styles.riskRowText}>{t.noData}</p>
+                                    )}
                                 </div>
                             </div>
 
@@ -726,12 +763,35 @@ const DetalleFarmaco = () => {
                                         </svg>
                                     </span>
                                     <span className={styles.riskRowTitle}>{t.sectionHepatic}</span>
-                                    {drug.risk?.hepatic?.level && (
-                                        <span className={styles.riskRowBadge}>{drug.risk.hepatic.level}</span>
-                                    )}
                                 </div>
                                 <div className={styles.riskRowContentCol}>
-                                    <p className={styles.riskRowText}>{drug.risk?.hepatic?.adjustment || t.noData}</p>
+                                    {drug.risk?.hepatic?.level && (
+                                        <div className={`${styles.riskAlertCallout} ${styles['riskAlert_' + getRiskSeverity(drug.risk.hepatic.level)]}`}>
+                                            <span className={styles.riskAlertCalloutIcon}>
+                                                {getRiskSeverity(drug.risk.hepatic.level) === 'danger' && (
+                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                                                )}
+                                                {getRiskSeverity(drug.risk.hepatic.level) === 'warning' && (
+                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                                )}
+                                                {getRiskSeverity(drug.risk.hepatic.level) === 'success' && (
+                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                                )}
+                                                {getRiskSeverity(drug.risk.hepatic.level) === 'info' && (
+                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                                )}
+                                            </span>
+                                            <div className={styles.riskAlertCalloutBody}>
+                                                <span className={styles.riskAlertCalloutTag}>Criterio / Nivel:</span>
+                                                <span className={styles.riskAlertCalloutText}>{drug.risk.hepatic.level}</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {drug.risk?.hepatic?.adjustment ? (
+                                        <p className={styles.riskRowText}>{drug.risk.hepatic.adjustment}</p>
+                                    ) : (
+                                        !drug.risk?.hepatic?.level && <p className={styles.riskRowText}>{t.noData}</p>
+                                    )}
                                 </div>
                             </div>
                         </div>
