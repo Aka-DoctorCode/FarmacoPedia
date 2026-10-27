@@ -975,12 +975,12 @@
 .riskAlertCallout {
     display: flex;
     align-items: flex-start;
-    gap: 0.45rem;
-    padding: 0.4rem 0.65rem;
+    gap: 0.5rem;
+    padding: 0.45rem 0.75rem;
     border-radius: var(--radiusSm);
-    margin-bottom: 0.35rem;
-    font-size: 0.8rem;
-    line-height: 1.42;
+    margin-bottom: 0.45rem;
+    background: var(--bgInput);
+    border: 1px solid var(--borderGlass);
     transition: all var(--transitionFast);
 }
 
@@ -989,7 +989,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    margin-top: 0.1rem;
+    margin-top: 0.12rem;
 }
 
 .riskAlertCalloutBody {
@@ -1003,74 +1003,56 @@
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-right: 0.35rem;
-    opacity: 0.85;
+    margin-right: 0.4rem;
 }
 
 .riskAlertCalloutText {
+    font-size: 0.84rem;
     font-weight: 600;
+    line-height: 1.45;
+    color: var(--textPrimary);
     word-break: break-word;
     overflow-wrap: break-word;
 }
 
 .riskAlert_warning {
-    background: rgba(245, 158, 11, 0.08);
-    border: 1px solid rgba(245, 158, 11, 0.25);
     border-left: 3.5px solid var(--colorWarning);
-    color: #fbbf24;
+    background: var(--colorWarningBg);
 }
 
+.riskAlert_warning .riskAlertCalloutIcon,
 .riskAlert_warning .riskAlertCalloutTag {
     color: var(--colorWarning);
 }
 
-.riskAlert_warning .riskAlertCalloutText {
-    color: #fef3c7;
-}
-
 .riskAlert_danger {
-    background: rgba(244, 63, 94, 0.08);
-    border: 1px solid rgba(244, 63, 94, 0.25);
     border-left: 3.5px solid var(--colorDanger);
-    color: #f87171;
+    background: var(--colorDangerBg);
 }
 
+.riskAlert_danger .riskAlertCalloutIcon,
 .riskAlert_danger .riskAlertCalloutTag {
     color: var(--colorDanger);
 }
 
-.riskAlert_danger .riskAlertCalloutText {
-    color: #ffe4e6;
-}
-
 .riskAlert_success {
-    background: rgba(16, 185, 129, 0.08);
-    border: 1px solid rgba(16, 185, 129, 0.25);
     border-left: 3.5px solid var(--colorSuccess);
-    color: #34d399;
+    background: var(--colorSuccessBg);
 }
 
+.riskAlert_success .riskAlertCalloutIcon,
 .riskAlert_success .riskAlertCalloutTag {
     color: var(--colorSuccess);
 }
 
-.riskAlert_success .riskAlertCalloutText {
-    color: #d1fae5;
-}
-
 .riskAlert_info {
-    background: rgba(14, 165, 233, 0.08);
-    border: 1px solid rgba(14, 165, 233, 0.25);
     border-left: 3.5px solid var(--colorPrimary);
-    color: #38bdf8;
+    background: var(--colorPrimaryBg);
 }
 
+.riskAlert_info .riskAlertCalloutIcon,
 .riskAlert_info .riskAlertCalloutTag {
     color: var(--colorPrimary);
-}
-
-.riskAlert_info .riskAlertCalloutText {
-    color: #e0f2fe;
 }
 
 .riskRowContentCol {
