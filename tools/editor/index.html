@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>FarmacoPedia · Editor local</title>
+  <meta name="description" content="Editor local de entradas de FarmacoPedia (no publicado)." />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="banner" id="banner">⚠ PRODUCCIÓN · https://farmacopedia.onrender.com</div>
+
+  <section id="login" class="login">
+    <form id="login-form">
+      <h1>Editor FarmacoPedia</h1>
+      <input id="password" type="password" placeholder="Contraseña de admin" autofocus />
+      <button id="login-btn" type="submit">Entrar</button>
+      <p id="login-error" class="err"></p>
+    </form>
+  </section>
+
+  <main id="app" class="app" hidden>
+    <aside class="side">
+      <div class="tabs">
+        <button id="tab-drugs" class="tab active">Fármacos</button>
+        <button id="tab-pending" class="tab">Pending</button>
+      </div>
+      <input id="search" type="search" placeholder="Buscar…" />
+      <button id="new-btn" class="ghost">+ Nuevo</button>
+      <ul id="list"></ul>
+    </aside>
+
+    <section class="editor">
+      <header class="bar">
+        <h2 id="title">Selecciona una entrada</h2>
+        <div class="actions">
+          <button id="discard-btn" class="ghost" disabled>Descartar</button>
+          <button id="delete-btn" class="danger" disabled>Eliminar</button>
+          <button id="save-btn" disabled>Guardar</button>
+        </div>
+      </header>
+      <textarea id="text" spellcheck="false" disabled></textarea>
+      <footer id="status" class="status">—</footer>
+    </section>
+  </main>
+
+  <dialog id="dlg">
+    <h3 id="dlg-title"></h3>
+    <pre id="dlg-body"></pre>
+    <input id="dlg-input" hidden />
+    <menu>
+      <button id="dlg-cancel" class="ghost" value="cancel">Cancelar</button>
+      <button id="dlg-ok" value="ok">Confirmar</button>
+    </menu>
+  </dialog>
+
+  <script src="/app.js"></script>
+</body>
+</html>

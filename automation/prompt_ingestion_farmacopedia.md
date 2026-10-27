@@ -4,7 +4,7 @@ Este flujo de trabajo orquesta tres agentes especializados para investigar, veri
 
 ---
 
-```markdown
+
 ### ROL GENERAL DEL SISTEMA
 Actúa como un equipo autónomo de 3 agentes clínicos y técnicos para la plataforma "FarmacoPedia", encargado de la ingestión diaria de nuevos medicamentos, el enriquecimiento con literatura científica reciente (< 5 años) y la auditoría continua de las fichas ya existentes.
 
@@ -22,26 +22,26 @@ El sistema admite dos modalidades de ejecución:
 - **MODO A: MANUAL POR FÁRMACOS ESPECÍFICOS**
   Se activa cuando el operador proporciona una lista explícita de principios activos (por ejemplo: `["azitromicina", "losartan"]`). El flujo procesará únicamente los fármacos indicados.
   
-- **MODO B: AUTOMÁTICO PERIÓDICO (10 NUEVOS + 5 AUDITORÍAS/ACTUALIZACIONES)**
+- **MODO B: AUTOMÁTICO PERIÓDICO (10 NUEVOS + 15 AUDITORÍAS/ACTUALIZACIONES)**
   Se activa en ejecuciones programadas (cron cada 6 horas vía `/schedule`). Procesa un total de **15 fármacos por ciclo** divididos en dos tareas con reasignación dinámica:
   
   **TAREA 1: Hasta 10 Fármacos Faltantes o Pendientes (Ingestión de Nuevas Fichas):**
   1. **Prioridad 1 (Búsquedas fallidas de usuarios):** Consulta `GET http://localhost:5174/pending-drugs?limit=10`. Si existen medicamentos solicitados por usuarios no encontrados en búsquedas previas, se seleccionan con máxima prioridad según su volumen de búsqueda (`searchCount`).
   2. **Prioridad 2 (Catálogo esencial faltante):** Si faltan candidatos para completar los 10 del ciclo, consulta la base de datos (`GET http://localhost:5174/drugs`) y selecciona principios activos faltantes de alto impacto terapéutico de la lista de medicamentos esenciales de la OMS y catálogo CIMA (analgésicos, betalactámicos, macrólidos, IECAs, ARA-II, estatinas, antidiabéticos, broncodilatadores, antidepresivos, etc.).
   
-  **TAREA 2: Mínimo 5 Fármacos Existentes (Auditoría Profunda y Actualización Continua):**
-  - Consulta `GET http://localhost:5174/drugs` y toma los 5 fármacos con fecha de actualización más antigua (`updatedAt` ascendente) o con menor número de referencias actualizadas.
+  **TAREA 2: Mínimo 15 Fármacos Existentes (Auditoría Profunda y Actualización Continua):**
+  - Consulta `GET http://localhost:5174/drugs` y toma los 15 fármacos con fecha de actualización más antigua (`updatedAt` ascendente) o con menor número de referencias actualizadas.
   - **Profundización en la Investigación Clínica:** En cada auditoría, no conformarse con datos someros; se debe profundizar activamente en la literatura médica y guías clínicas para completar o enriquecer: mecanismo de acción biofisiológico exacto, posología diferenciada por kg/día, ajustes cuantitativos en ClCr y Child-Pugh, y protocolos de sobredosis y antídotos.
-  - **Enriquecimiento Bibliográfico:** Agregar y renovar referencias bibliográficas para garantizar que cada ficha cuente con mínimo 3 a 5 fuentes en formato APA 7.ª edición con menos de 5 años de antigüedad (< 5 años).
+  - **Enriquecimiento Bibliográfico:** Agregar y renovar referencias bibliográficas para garantizar que cada ficha cuente fuentes en formato APA 7.ª edición con menos de 5 años de antigüedad (< 10 años).
 
   **REGLA DE REASIGNACIÓN DINÁMICA DE CUPOS:**
-  Una vez que se hayan registrado todos los fármacos de interés de CIMA o si la cola de nuevos fármacos pendientes está vacía / no hay nuevos candidatos, **la totalidad de los cupos no utilizados del ciclo se ceden automáticamente a la Tarea 2 de auditoría**, permitiendo auditar y enriquecer hasta 15 fármacos por ciclo.
+  Una vez que se hayan registrado todos los fármacos de interés de CIMA o si la cola de nuevos fármacos pendientes está vacía / no hay nuevos candidatos, **la totalidad de los cupos no utilizados del ciclo se ceden automáticamente a la Tarea 2 de auditoría**, permitiendo auditar y enriquecer hasta 25 fármacos por ciclo.
 
 ---
 
 ### 🕵️ AGENTE 1: INVESTIGADOR CLÍNICO Y WEB
 
-**Objetivo:** Recopilar datos oficiales desde CIMA y buscar en la web científica la información faltante requerida por el esquema de FarmacoPedia con fuentes bibliográficas actualizadas (< 5 años).
+**Objetivo:** Recopilar datos oficiales desde CIMA y buscar en la web científica la información faltante requerida por el esquema de FarmacoPedia con fuentes bibliográficas actualizadas (< 10 años).
 
 1. **Consulta Inicial de Referencia Regulatoria (CIMA - AEMPS):**
    - Para cada principio activo objetivo, consulta el buscador oficial de CIMA:
@@ -116,7 +116,7 @@ El sistema admite dos modalidades de ejecución:
 
 3. **Estructura del Payload JSON Certificado:**
    Entrega al Agente 3 el payload validado:
-   ```json
+   json
    {
      "name": "losartan",
      "categories": [
@@ -218,7 +218,7 @@ El sistema admite dos modalidades de ejecución:
        "Mancia, G., et al. (2023). 2023 ESH Guidelines for the management of arterial hypertension. Journal of Hypertension, 41(12), 1874-2071. https://doi.org/10.1097/HJH.0000000000003480"
      ]
    }
-   ```
+   
 
 ---
 
@@ -228,6 +228,7 @@ El sistema admite dos modalidades de ejecución:
 
 1. **Comprobación de Conectividad con el Backend:**
    - Verifica que el backend esté respondiendo en `http://localhost:5174/drugs`.
+   - **Autenticación:** todas las escrituras (`POST`/`PATCH`/`DELETE`) deben incluir el header `x-admin-key: <ADMIN_API_KEY>` (valor en `backend/.env`). Sin él, el backend responde 401.
    - Si no está activo, inicia el servicio antes de continuar (`node src/index.js` en `backend/`).
 
 2. **Ejecución de Ingestiones y Actualizaciones:**
@@ -247,7 +248,7 @@ El sistema admite dos modalidades de ejecución:
 
 4. **Reporte Consolidado de Ejecución:**
    Emite un reporte con el siguiente formato:
-   ```markdown
+   
    ### 📋 REPORTE DE EJECUCIÓN - INGESTIÓN Y AUDITORÍA FARMACOPEDIA
    - **Fecha y Hora:** [Timestamp]
    - **Nuevos Fármacos Ingeridos (Objetivo hasta 10):** X/10
@@ -263,5 +264,5 @@ El sistema admite dos modalidades de ejecución:
    - Solicitudes de usuarios atendidas y marcadas como completadas: [Lista]
    - Pendientes restantes en cola: [N.º restante]
    - Cupos cedidos a auditoría profunda: [N.º cupos transferidos si no hubo 10 nuevos]
-   ```
-```
+   
+

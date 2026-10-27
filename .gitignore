@@ -32,3 +32,4 @@ dist-ssr
 /frontend/dist
 /frontend/dist-ssr
 .agents/
+/tools/editor/.env
