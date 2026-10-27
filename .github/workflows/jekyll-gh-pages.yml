@@ -15,7 +15,6 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Check if backend code is valid (Optional, but good practice)
   backend-check:
     runs-on: ubuntu-24.04
     steps:
