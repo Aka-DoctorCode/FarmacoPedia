@@ -16,6 +16,8 @@ const DetalleFarmaco = () => {
     } = useContext(counterContext);
 
     const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'dosage' | 'risks' | 'safety' | 'references'
+    const [presentationViewMode, setPresentationViewMode] = useState('tabs'); // 'tabs' | 'table' | 'cards'
+    const [selectedFormTab, setSelectedFormTab] = useState('ALL');
     const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
     const effectiveAtc = useMemo(() => {
@@ -99,6 +101,33 @@ const DetalleFarmaco = () => {
     const presentationsEntries = drug.presentations
         ? Object.entries(drug.presentations)
         : [];
+
+    // Flatten presentations into rows for Table Matrix view
+    const flattenedPresentations = useMemo(() => {
+        const rows = [];
+        presentationsEntries.forEach(([formName, formValue]) => {
+            if (formValue.dosage && Array.isArray(formValue.dosage)) {
+                formValue.dosage.forEach((d) => {
+                    rows.push({
+                        form: formName,
+                        amount: d.amount,
+                        unit: d.unit,
+                        useIn: d.useIn || '—',
+                        routes: d.route || []
+                    });
+                });
+            }
+        });
+        return rows;
+    }, [presentationsEntries]);
+
+    // Presentation list filtered when in 'tabs' view mode
+    const displayedPresentations = useMemo(() => {
+        if (presentationViewMode !== 'tabs' || selectedFormTab === 'ALL') {
+            return presentationsEntries;
+        }
+        return presentationsEntries.filter(([name]) => name === selectedFormTab);
+    }, [presentationsEntries, presentationViewMode, selectedFormTab]);
 
     const adultGuidanceEntries = drug.dosageGuidance?.adult
         ? Object.entries(drug.dosageGuidance.adult)
@@ -401,46 +430,187 @@ const DetalleFarmaco = () => {
                     {/* Section 2: Presentations & Dosage */}
                     <div id="sec-dosage" className={`${styles.sectionBlock} ${activeTab === 'dosage' ? styles.tabBlockActive : styles.tabBlockHidden}`}>
                         <div className={styles.sectionCard}>
-                        <div className={styles.sectionHeader}>
-                            <span className={styles.sectionIcon}>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                                </svg>
-                            </span>
-                            <h2 className={styles.sectionTitle}>{t.sectionPresentations}</h2>
+                        <div className={styles.sectionHeaderBetween}>
+                            <div className={styles.sectionHeaderLeft}>
+                                <span className={styles.sectionIcon}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                    </svg>
+                                </span>
+                                <h2 className={styles.sectionTitle}>{t.sectionPresentations}</h2>
+                            </div>
+
+                            {/* View Mode Switcher */}
+                            {presentationsEntries.length > 0 && (
+                                <div className={styles.viewModeSwitcher} role="group" aria-label="Modo de visualización de presentaciones">
+                                    <button
+                                        type="button"
+                                        className={`${styles.viewModeBtn} ${presentationViewMode === 'tabs' ? styles.viewModeBtnActive : ''}`}
+                                        onClick={() => setPresentationViewMode('tabs')}
+                                        title={t.viewModeTabs}
+                                    >
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <rect width="18" height="18" x="3" y="3" rx="2" />
+                                            <path d="M3 9h18" />
+                                            <path d="M9 21V9" />
+                                        </svg>
+                                        <span>{t.viewModeTabs}</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={`${styles.viewModeBtn} ${presentationViewMode === 'table' ? styles.viewModeBtnActive : ''}`}
+                                        onClick={() => setPresentationViewMode('table')}
+                                        title={t.viewModeTable}
+                                    >
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M12 3v18" />
+                                            <rect width="18" height="18" x="3" y="3" rx="2" />
+                                            <path d="M3 9h18" />
+                                            <path d="M3 15h18" />
+                                        </svg>
+                                        <span>{t.viewModeTable}</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={`${styles.viewModeBtn} ${presentationViewMode === 'cards' ? styles.viewModeBtnActive : ''}`}
+                                        onClick={() => setPresentationViewMode('cards')}
+                                        title={t.viewModeGrid}
+                                    >
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <rect width="7" height="7" x="3" y="3" rx="1" />
+                                            <rect width="7" height="7" x="14" y="3" rx="1" />
+                                            <rect width="7" height="7" x="14" y="14" rx="1" />
+                                            <rect width="7" height="7" x="3" y="14" rx="1" />
+                                        </svg>
+                                        <span>{t.viewModeGrid}</span>
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         {presentationsEntries.length > 0 ? (
-                            <div className={styles.presentationsGrid}>
-                                {presentationsEntries.map(([formName, formValue], index) => (
-                                    <div key={index} className={styles.presentationCard}>
-                                        <div className={styles.presentationTitle}>{formName}</div>
-                                        <div className={styles.dosageItemList}>
-                                            {formValue.dosage && formValue.dosage.map((dose, doseIdx) => (
-                                                <div key={doseIdx} className={styles.dosageItem}>
-                                                    <span className={styles.dosageAmount}>
-                                                        {dose.amount} {dose.unit}
+                            <>
+                                {/* Sub-selector de Formas Farmacéuticas (chips/pills) para modo 'tabs' */}
+                                {presentationViewMode === 'tabs' && presentationsEntries.length > 1 && (
+                                    <div className={styles.formSelectorScroll}>
+                                        <button
+                                            type="button"
+                                            className={`${styles.formChip} ${selectedFormTab === 'ALL' ? styles.formChipActive : ''}`}
+                                            onClick={() => setSelectedFormTab('ALL')}
+                                        >
+                                            {t.allForms} ({presentationsEntries.length})
+                                        </button>
+                                        {presentationsEntries.map(([name, val]) => (
+                                            <button
+                                                key={name}
+                                                type="button"
+                                                className={`${styles.formChip} ${selectedFormTab === name ? styles.formChipActive : ''}`}
+                                                onClick={() => setSelectedFormTab(name)}
+                                            >
+                                                <span>{name}</span>
+                                                {val.dosage && (
+                                                    <span className={styles.formChipBadge}>
+                                                        {val.dosage.length}
                                                     </span>
-                                                    {dose.useIn && (
-                                                        <span className={styles.useInBadge}>
-                                                            {dose.useIn}
-                                                        </span>
-                                                    )}
-                                                    {dose.route && dose.route.length > 0 && (
-                                                        <div className={styles.routeBadges}>
-                                                            {dose.route.map((r, rIdx) => (
-                                                                <span key={rIdx} className={styles.routeBadge}>
-                                                                    {r}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            ))}
-                                        </div>
+                                                )}
+                                            </button>
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
+                                )}
+
+                                {/* VISTA 1 & 3: Tarjetas (filtradas en tabs o completas en cards) */}
+                                {(presentationViewMode === 'tabs' || presentationViewMode === 'cards') && (
+                                    <div className={presentationViewMode === 'tabs' && selectedFormTab !== 'ALL' ? styles.presentationsSingleCol : styles.presentationsGrid}>
+                                        {displayedPresentations.map(([formName, formValue], index) => (
+                                            <div key={index} className={styles.presentationCard}>
+                                                <div className={styles.presentationCardHeader}>
+                                                    <div className={styles.presentationTitle}>{formName}</div>
+                                                    <span className={styles.presentationCountTag}>
+                                                        {formValue.dosage?.length || 0} {formValue.dosage?.length === 1 ? 'dosis' : 'dosis'}
+                                                    </span>
+                                                </div>
+                                                <div className={styles.dosageItemList}>
+                                                    {formValue.dosage && formValue.dosage.map((dose, doseIdx) => (
+                                                        <div key={doseIdx} className={styles.dosageItem}>
+                                                            <div className={styles.dosageItemPrimary}>
+                                                                <span className={styles.dosageAmount}>
+                                                                    {dose.amount} {dose.unit}
+                                                                </span>
+                                                                {dose.useIn && (
+                                                                    <span className={styles.useInBadge}>
+                                                                        {dose.useIn}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            {dose.route && dose.route.length > 0 && (
+                                                                <div className={styles.routeBadges}>
+                                                                    {dose.route.map((r, rIdx) => (
+                                                                        <span key={rIdx} className={styles.routeBadge}>
+                                                                            {r}
+                                                                        </span>
+                                                                    ))}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* VISTA 2: Matriz / Tabla Clínica Consolidada */}
+                                {presentationViewMode === 'table' && (
+                                    <div className={styles.tableWrapper}>
+                                        <table className={styles.dosageMatrixTable}>
+                                            <thead>
+                                                <tr>
+                                                    <th>{t.pharmaceuticalForm}</th>
+                                                    <th>{t.doseConcentration}</th>
+                                                    <th>{t.targetPopulation}</th>
+                                                    <th>{t.adminRoute}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {flattenedPresentations.map((row, rIdx) => (
+                                                    <tr key={rIdx}>
+                                                        <td className={styles.tableFormName}>
+                                                            <strong>{row.form}</strong>
+                                                        </td>
+                                                        <td className={styles.tableAmount}>
+                                                            <span className={styles.dosageAmountMono}>
+                                                                {row.amount} {row.unit}
+                                                            </span>
+                                                        </td>
+                                                        <td className={styles.tableUseIn}>
+                                                            {row.useIn !== '—' ? (
+                                                                <span className={styles.useInBadge}>
+                                                                    {row.useIn}
+                                                                </span>
+                                                            ) : (
+                                                                <span className={styles.emptyDash}>—</span>
+                                                            )}
+                                                        </td>
+                                                        <td className={styles.tableRoutes}>
+                                                            {row.routes.length > 0 ? (
+                                                                <div className={styles.routeBadges}>
+                                                                    {row.routes.map((r, i) => (
+                                                                        <span key={i} className={styles.routeBadge}>
+                                                                            {r}
+                                                                        </span>
+                                                                    ))}
+                                                                </div>
+                                                            ) : (
+                                                                <span className={styles.emptyDash}>—</span>
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                )}
+                            </>
                         ) : (
                             <p className={styles.plainText}>{t.noData}</p>
                         )}

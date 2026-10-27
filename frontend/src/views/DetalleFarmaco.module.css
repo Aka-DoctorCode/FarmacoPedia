@@ -414,6 +414,122 @@
     color: var(--colorPrimary);
 }
 
+/* Presentations Header with View Switcher */
+.sectionHeaderBetween {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.15rem;
+}
+
+.sectionHeaderLeft {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+/* View Mode Switcher (Pills segmented control) */
+.viewModeSwitcher {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bgInput);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusFull, 9999px);
+    padding: 0.25rem;
+    gap: 0.25rem;
+}
+
+.viewModeBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    background: transparent;
+    border: none;
+    border-radius: var(--radiusFull, 9999px);
+    color: var(--textSecondary);
+    font-family: var(--fontBody);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--transitionNormal);
+    white-space: nowrap;
+}
+
+.viewModeBtn:hover {
+    color: var(--textPrimary);
+    background: var(--bgGlassHover);
+}
+
+.viewModeBtnActive {
+    background: var(--colorPrimary);
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(14, 165, 233, 0.35);
+}
+
+/* Form Selector Scroll (Chips para Modo 'Por Forma') */
+.formSelectorScroll {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.65rem;
+    margin-bottom: 1rem;
+    scrollbar-width: thin;
+}
+
+.formChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.9rem;
+    background: var(--bgGlass);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusFull, 9999px);
+    color: var(--textSecondary);
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--transitionNormal);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.formChip:hover {
+    background: var(--bgGlassHover);
+    color: var(--textPrimary);
+    border-color: var(--colorPrimary);
+    transform: translateY(-1px);
+}
+
+.formChipActive {
+    background: var(--colorPrimaryBg, rgba(14, 165, 233, 0.15));
+    border-color: var(--colorPrimary);
+    color: var(--colorPrimary);
+    font-weight: 800;
+}
+
+.formChipBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding: 0 0.35rem;
+    border-radius: 9999px;
+    background: var(--bgInput);
+    color: var(--textPrimary);
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.formChipActive .formChipBadge {
+    background: var(--colorPrimary);
+    color: #ffffff;
+}
+
 /* Presentations Grid: Mobile Base is Single Column */
 .presentationsGrid {
     display: grid;
@@ -422,21 +538,54 @@
     width: 100%;
 }
 
+.presentationsSingleCol {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 800px;
+}
+
 .presentationCard {
     background: var(--bgGlass);
     border: 1px solid var(--borderGlass);
-    border-radius: var(--radiusSm);
-    padding: 0.85rem;
+    border-radius: var(--radiusMd);
+    padding: 1rem 1.15rem;
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
+    gap: 0.85rem;
     width: 100%;
+    transition: border-color var(--transitionNormal), transform var(--transitionNormal);
+}
+
+.presentationCard:hover {
+    border-color: var(--colorPrimary);
+}
+
+.presentationCardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    border-bottom: 1px dashed var(--borderGlass);
+    padding-bottom: 0.65rem;
 }
 
 .presentationTitle {
     font-weight: 800;
     font-size: 1.05rem;
     color: var(--textPrimary);
+}
+
+.presentationCountTag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.55rem;
+    background: var(--bgInput);
+    color: var(--textSecondary);
+    border-radius: var(--radiusSm);
 }
 
 .dosageItemList {
@@ -448,19 +597,27 @@
 
 .dosageItem {
     background: var(--bgInput);
+    border: 1px solid var(--borderGlass);
     border-radius: var(--radiusSm);
     padding: 0.65rem 0.85rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.65rem;
     width: 100%;
     font-size: 0.95rem;
     font-weight: 600;
     color: var(--textPrimary);
     overflow-wrap: break-word;
     word-break: break-word;
+}
+
+.dosageItemPrimary {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-wrap: wrap;
 }
 
 .dosageAmount {
@@ -478,11 +635,94 @@
 
 .routeBadge {
     background: var(--colorSuccessBg);
-    color: var(--colorSuccess);
-    font-size: 0.775rem;
-    padding: 0.2rem 0.6rem;
-    border-radius: var(--radiusPill);
+    color: var(--colorSuccessText);
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--radiusFull, 9999px);
+    font-size: 0.78rem;
     font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+/* ==========================================================================
+   Table Matrix View (Matriz / Tabla Clínica)
+   ========================================================================== */
+.tableWrapper {
+    width: 100%;
+    overflow-x: auto;
+    background: var(--bgGlass);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusMd);
+    -webkit-overflow-scrolling: touch;
+}
+
+.dosageMatrixTable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.92rem;
+}
+
+.dosageMatrixTable thead tr {
+    background: var(--bgInput);
+    border-bottom: 2px solid var(--borderGlass);
+}
+
+.dosageMatrixTable th {
+    padding: 0.85rem 1.15rem;
+    font-family: var(--fontHeading);
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--textSecondary);
+    white-space: nowrap;
+}
+
+.dosageMatrixTable tbody tr {
+    border-bottom: 1px solid var(--borderGlass);
+    transition: background var(--transitionFast);
+}
+
+.dosageMatrixTable tbody tr:last-child {
+    border-bottom: none;
+}
+
+.dosageMatrixTable tbody tr:hover {
+    background: var(--bgGlassHover);
+}
+
+.dosageMatrixTable td {
+    padding: 0.85rem 1.15rem;
+    vertical-align: middle;
+}
+
+.tableFormName {
+    color: var(--textPrimary);
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.tableAmount {
+    white-space: nowrap;
+}
+
+.dosageAmountMono {
+    font-family: var(--fontMono);
+    font-weight: 800;
+    color: var(--colorPrimary);
+    font-size: 0.98rem;
+}
+
+.tableUseIn {
+    color: var(--textSecondary);
+    font-weight: 600;
+}
+
+.emptyDash {
+    color: var(--textMuted, #64748b);
+    font-weight: 600;
 }
 
 .useInBadge {
@@ -721,8 +961,8 @@
     }
 
     .presentationsGrid {
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(290px, 420px));
+        gap: 1.15rem;
     }
 
     .guidanceGrid {
