@@ -16,13 +16,13 @@
   "author": "Francisco Jose Molina Castillo (Aka-DoctorCode)",
   "license": "SEE LICENSE IN ../LICENSE",
   "dependencies": {
-    "axios": "^1.13.6",
+    "axios": "^1.20.0",
     "cors": "^2.8.6",
     "cowsay": "^1.6.0",
     "dotenv": "^16.6.1",
-    "express": "^4.22.1",
-    "iconv-lite": "^0.7.2",
-    "mongoose": "^7.8.9",
+    "express": "^4.22.3",
+    "iconv-lite": "^0.7.3",
+    "mongoose": "^7.8.13",
     "nodemon": "^3.1.14"
   }
 }

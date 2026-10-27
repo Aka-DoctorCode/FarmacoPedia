@@ -27,6 +27,7 @@ const ContenidoFarmacos = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
     const sentinelRef = useRef(null);
+    const contentRef = useRef(null);
 
     // Track resize for mobile vs desktop layout behavior
     useEffect(() => {
@@ -210,7 +211,10 @@ const ContenidoFarmacos = () => {
                     setVisibleCount((prev) => Math.min(prev + BATCH_SIZE, filteredDrugs.length));
                 }
             },
-            { rootMargin: '300px' }
+            {
+                root: isMobile ? null : contentRef.current,
+                rootMargin: '250px'
+            }
         );
 
         observer.observe(currentSentinel);
@@ -324,7 +328,7 @@ const ContenidoFarmacos = () => {
                     </div>
                 </aside>
 
-                <div className={styles.catalogMainContent}>
+                <div ref={contentRef} className={styles.catalogMainContent}>
 
             {/* Loading & Content */}
             {isLoading ? (

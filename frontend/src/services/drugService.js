@@ -4,6 +4,7 @@ import { CANONICAL_DRUG_ATC, parseAtcPath } from '../utils/atcTree.js';
 class DrugService {
     constructor() {
         this.apiBaseUrl = (typeof import.meta !== 'undefined' && import.meta?.env?.VITE_API_URL) ||
+            // eslint-disable-next-line no-undef
             (typeof process !== 'undefined' && process.env?.VITE_API_URL) ||
             'https://farmacopedia.onrender.com';
         this.cachedDrugs = null;
@@ -160,7 +161,7 @@ class DrugService {
         try {
             const response = await axios.get(`${this.apiBaseUrl}/pending-drugs?limit=${limit}`, { timeout: 15000 });
             return response.data;
-        } catch (error) {
+        } catch {
             return { success: false, data: [] };
         }
     }

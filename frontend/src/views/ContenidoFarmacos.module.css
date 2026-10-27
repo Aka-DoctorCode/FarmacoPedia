@@ -431,6 +431,31 @@
         align-items: start;
     }
 
+    .catalogMainContent {
+        max-height: calc(100vh - 105px);
+        overflow-y: auto;
+        padding-right: 0.5rem;
+        scrollbar-width: thin;
+        overscroll-behavior: contain;
+    }
+
+    .catalogMainContent::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .catalogMainContent::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .catalogMainContent::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 9999px;
+    }
+
+    .catalogMainContent::-webkit-scrollbar-thumb:hover {
+        background: var(--colorPrimary);
+    }
+
     .desktopSidebar {
         display: block;
         position: -webkit-sticky;
