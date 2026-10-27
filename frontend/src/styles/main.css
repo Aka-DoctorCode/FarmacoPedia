@@ -45,10 +45,11 @@
     --backdropBlurHeavy: blur(24px);
 
     /* Radii */
+    /* Radii */
     --radiusSm: 6px;
-    --radiusMd: 12px;
-    --radiusLg: 18px;
-    --radiusXl: 24px;
+    --radiusMd: 10px;
+    --radiusLg: 14px;
+    --radiusXl: 20px;
     --radiusPill: 9999px;
 
     /* Typography */
@@ -61,13 +62,13 @@
     --safeAreaBottom: env(safe-area-inset-bottom, 0px);
     --safeAreaLeft: env(safe-area-inset-left, 0px);
     --safeAreaRight: env(safe-area-inset-right, 0px);
-    --bottomNavHeight: 60px;
-    --touchTargetMin: 44px;
+    --bottomNavHeight: 52px;
+    --touchTargetMin: 38px;
 
     /* Viewport layout specialization */
-    --containerMobilePadding: 1rem;
+    --containerMobilePadding: 0.75rem;
     --containerDesktopMax: 1640px;
-    --sidebarDesktopWidth: 300px;
+    --sidebarDesktopWidth: 260px;
 
     /* Transitions */
     --transitionFast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
@@ -102,6 +103,22 @@
 
 *, *::before, *::after {
     box-sizing: border-box;
+}
+
+html {
+    font-size: 15px; /* Compact clinical base scale across the application */
+}
+
+@media (max-width: 640px) {
+    html {
+        font-size: 14.5px; /* High density mobile screen adaptation */
+    }
+}
+
+@media (min-width: 1024px) and (max-height: 800px) {
+    html {
+        font-size: 14.5px; /* Tailored 720p / laptop screen compactness */
+    }
 }
 
 html, body {

@@ -2,8 +2,8 @@
 .container {
     width: 100%;
     max-width: 100%;
-    margin: 1rem auto;
-    padding: 0 calc(1rem + env(safe-area-inset-right, 0px)) calc(7.5rem + env(safe-area-inset-bottom, 0px)) calc(1rem + env(safe-area-inset-left, 0px));
+    margin: 0.5rem auto;
+    padding: 0 calc(0.75rem + env(safe-area-inset-right, 0px)) calc(6.5rem + env(safe-area-inset-bottom, 0px)) calc(0.75rem + env(safe-area-inset-left, 0px));
     animation: fadeIn var(--transitionNormal) ease-out;
 }
 
@@ -11,8 +11,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.6rem;
-    margin-bottom: 1rem;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
     width: 100%;
 }
 
@@ -20,14 +20,14 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.4rem;
+    gap: 0.35rem;
     background: var(--bgCard);
     border: 1px solid var(--borderGlass);
     color: var(--textSecondary);
-    padding: 0.55rem 0.85rem;
-    min-height: var(--touchTargetMin, 44px);
+    padding: 0.35rem 0.65rem;
+    min-height: 34px;
     border-radius: var(--radiusPill);
-    font-size: 0.825rem;
+    font-size: 0.78rem;
     font-weight: 600;
     cursor: pointer;
     transition: all var(--transitionFast);
@@ -49,17 +49,17 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.4rem;
+    gap: 0.35rem;
     background: linear-gradient(135deg, var(--colorPrimary) 0%, var(--colorTeal) 100%);
     border: none;
     color: #ffffff;
-    padding: 0.55rem 0.85rem;
-    min-height: var(--touchTargetMin, 44px);
+    padding: 0.35rem 0.75rem;
+    min-height: 34px;
     border-radius: var(--radiusPill);
-    font-size: 0.825rem;
+    font-size: 0.78rem;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 2px 10px var(--colorPrimaryGlow);
+    box-shadow: 0 2px 8px var(--colorPrimaryGlow);
     transition: all var(--transitionFast);
     -webkit-tap-highlight-color: transparent;
     flex: 1;
@@ -72,7 +72,7 @@
 .topBarCalcButton:hover {
     transform: translateY(-1px);
     filter: brightness(1.08);
-    box-shadow: 0 4px 14px var(--colorPrimaryGlow);
+    box-shadow: 0 3px 12px var(--colorPrimaryGlow);
 }
 
 .topBarCalcButton:active {
@@ -84,13 +84,13 @@
     backdrop-filter: var(--backdropBlur);
     -webkit-backdrop-filter: var(--backdropBlur);
     border: 1px solid var(--borderGlass);
-    border-radius: var(--radiusMd);
-    padding: 1.25rem;
-    margin-bottom: 1.25rem;
+    border-radius: var(--radiusSm);
+    padding: 0.75rem 0.85rem;
+    margin-bottom: 0.75rem;
     box-shadow: var(--shadowCard);
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
+    gap: 0.55rem;
     position: relative;
     overflow: hidden;
 }
@@ -101,7 +101,7 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
+    height: 3px;
     background: linear-gradient(90deg, var(--colorPrimary) 0%, var(--colorTeal) 50%, var(--colorInfo) 100%);
 }
 
@@ -110,12 +110,12 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 .drugName {
     font-family: var(--fontHeading);
-    font-size: 1.65rem;
+    font-size: 1.25rem;
     font-weight: 800;
     color: var(--textPrimary);
     text-transform: capitalize;
@@ -129,20 +129,20 @@
 .nameAndAtcGroup {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
+    gap: 0.25rem;
 }
 
 .atcBadges {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.35rem;
     align-items: center;
 }
 
 .atcBadgeGroup {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.3rem;
     flex-wrap: wrap;
 }
 
@@ -152,9 +152,9 @@
     background: rgba(14, 165, 233, 0.14);
     color: var(--colorPrimary);
     border: 1px solid rgba(14, 165, 233, 0.4);
-    padding: 0.25rem 0.65rem;
+    padding: 0.15rem 0.5rem;
     border-radius: var(--radiusPill);
-    font-size: 0.8rem;
+    font-size: 0.72rem;
     font-weight: 800;
     font-family: var(--fontMono);
     letter-spacing: 0.03em;
@@ -166,9 +166,9 @@
     background: var(--colorInfoBg);
     color: var(--colorInfo);
     border: 1px solid rgba(129, 140, 248, 0.35);
-    padding: 0.25rem 0.75rem;
+    padding: 0.15rem 0.55rem;
     border-radius: var(--radiusPill);
-    font-size: 0.8rem;
+    font-size: 0.72rem;
     font-weight: 700;
 }
 
@@ -178,28 +178,28 @@
     background: var(--bgGlass);
     color: var(--textSecondary);
     border: 1px solid var(--borderGlass);
-    padding: 0.25rem 0.65rem;
+    padding: 0.15rem 0.5rem;
     border-radius: var(--radiusPill);
-    font-size: 0.775rem;
+    font-size: 0.7rem;
     font-weight: 600;
 }
 
 .mechanismSnippet {
     color: var(--textPrimary);
-    font-size: 1.05rem;
+    font-size: 0.86rem;
     font-weight: 500;
-    line-height: 1.65;
+    line-height: 1.48;
     margin: 0;
 }
 
 /* Mobile Section Dropdown Navigation - Fijo sobre BottomNav */
 .mobileSectionDropdownWrapper {
     position: fixed;
-    bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(48px + env(safe-area-inset-bottom, 0px));
     left: 0;
     right: 0;
     z-index: 95;
-    padding: 0.45rem calc(0.75rem + env(safe-area-inset-right, 0px)) 0.45rem calc(0.75rem + env(safe-area-inset-left, 0px));
+    padding: 0.35rem calc(0.75rem + env(safe-area-inset-right, 0px)) 0.35rem calc(0.75rem + env(safe-area-inset-left, 0px));
     background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.75) 75%, transparent 100%);
     backdrop-filter: var(--backdropBlur);
     -webkit-backdrop-filter: var(--backdropBlur);
@@ -211,16 +211,16 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    max-width: 500px;
+    max-width: 460px;
     margin: 0 auto;
     background: var(--bgModal);
     backdrop-filter: var(--backdropBlurHeavy);
     -webkit-backdrop-filter: var(--backdropBlurHeavy);
     border: 1px solid var(--borderGlassHover);
     border-radius: var(--radiusPill);
-    padding: 0.55rem 1rem;
+    padding: 0.38rem 0.85rem;
     cursor: pointer;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45), 0 0 15px rgba(56, 189, 248, 0.15);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4), 0 0 12px rgba(56, 189, 248, 0.12);
     transition: all var(--transitionFast);
     -webkit-tap-highlight-color: transparent;
     text-align: left;
@@ -230,14 +230,14 @@
 .mobileSectionDropdownButton:hover,
 .mobileSectionDropdownButtonActive {
     border-color: var(--colorPrimary);
-    box-shadow: 0 4px 22px rgba(0, 0, 0, 0.5), 0 0 20px var(--colorPrimaryGlow);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45), 0 0 16px var(--colorPrimaryGlow);
     transform: translateY(-1px);
 }
 
 .mobileDropdownCurrentInfo {
     display: flex;
     align-items: center;
-    gap: 0.65rem;
+    gap: 0.5rem;
     min-width: 0;
 }
 
@@ -245,8 +245,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
     border-radius: var(--radiusPill);
     background: rgba(56, 189, 248, 0.15);
     color: var(--colorPrimary);
@@ -254,8 +254,8 @@
 }
 
 .mobileDropdownIcon svg {
-    width: 15px;
-    height: 15px;
+    width: 13px;
+    height: 13px;
 }
 
 .mobileDropdownTextGroup {
@@ -265,7 +265,7 @@
 }
 
 .mobileDropdownLabel {
-    font-size: 0.68rem;
+    font-size: 0.6rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -274,7 +274,7 @@
 }
 
 .mobileDropdownCurrentTitle {
-    font-size: 0.88rem;
+    font-size: 0.8rem;
     font-weight: 800;
     color: var(--textPrimary);
     white-space: nowrap;
@@ -290,7 +290,7 @@
     color: var(--textMuted);
     transition: transform var(--transitionFast), color var(--transitionFast);
     flex-shrink: 0;
-    margin-left: 0.5rem;
+    margin-left: 0.4rem;
 }
 
 .mobileDropdownChevronOpen {
@@ -314,21 +314,21 @@
 
 .mobileDropdownMenu {
     position: fixed;
-    bottom: calc(118px + env(safe-area-inset-bottom, 0px));
-    left: 1rem;
-    right: 1rem;
-    max-width: 480px;
+    bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+    left: 0.75rem;
+    right: 0.75rem;
+    max-width: 440px;
     margin: 0 auto;
     background: var(--bgModal);
     backdrop-filter: var(--backdropBlurHeavy);
     -webkit-backdrop-filter: var(--backdropBlurHeavy);
     border: 1px solid var(--borderGlassHover);
-    border-radius: var(--radiusMd);
-    box-shadow: 0 -10px 35px rgba(0, 0, 0, 0.5), 0 0 25px rgba(56, 189, 248, 0.15);
-    padding: 0.45rem;
+    border-radius: var(--radiusSm);
+    box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.12);
+    padding: 0.35rem;
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.15rem;
     z-index: 98;
     animation: slideUp 0.18s cubic-bezier(0.16, 1, 0.3, 1);
     pointer-events: auto;
@@ -337,14 +337,14 @@
 .mobileDropdownItem {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.55rem;
     width: 100%;
-    padding: 0.7rem 0.85rem;
+    padding: 0.45rem 0.65rem;
     border-radius: var(--radiusSm);
     border: none;
     background: transparent;
     color: var(--textSecondary);
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
     text-align: left;
@@ -358,6 +358,11 @@
     justify-content: center;
     color: var(--textMuted);
     flex-shrink: 0;
+}
+
+.mobileDropdownItemIcon svg {
+    width: 14px;
+    height: 14px;
 }
 
 .mobileDropdownItemTitle {
@@ -412,7 +417,7 @@
 }
 
 .sectionBlock {
-    scroll-margin-top: 85px;
+    scroll-margin-top: 75px;
 }
 
 .tabBlockHidden {
@@ -422,7 +427,7 @@
 .tabBlockActive {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 0.75rem;
     width: 100%;
     animation: fadeIn var(--transitionFast) ease-out;
 }
@@ -430,7 +435,7 @@
 .tabContent {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 0.75rem;
     width: 100%;
 }
 
@@ -439,8 +444,8 @@
     backdrop-filter: var(--backdropBlur);
     -webkit-backdrop-filter: var(--backdropBlur);
     border: 1px solid var(--borderGlass);
-    border-radius: var(--radiusMd);
-    padding: 1.15rem;
+    border-radius: var(--radiusSm);
+    padding: 0.75rem 0.85rem;
     box-shadow: var(--shadowCard);
     width: 100%;
     overflow-x: hidden;
@@ -449,9 +454,9 @@
 .sectionHeader {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    margin-bottom: 0.85rem;
-    padding-bottom: 0.65rem;
+    gap: 0.5rem;
+    margin-bottom: 0.55rem;
+    padding-bottom: 0.45rem;
     border-bottom: 1px solid var(--borderGlass);
 }
 
@@ -460,29 +465,29 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 0.6rem;
-    margin-bottom: 0.85rem;
-    padding-bottom: 0.65rem;
+    gap: 0.5rem;
+    margin-bottom: 0.55rem;
+    padding-bottom: 0.45rem;
     border-bottom: 1px solid var(--borderGlass);
 }
 
 .sectionHeaderTitleGroup {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
 }
 
 .calculatorTriggerBtn {
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
-    min-height: 40px;
-    padding: 0.4rem 0.85rem;
+    gap: 0.35rem;
+    min-height: 32px;
+    padding: 0.25rem 0.65rem;
     background: linear-gradient(135deg, var(--colorPrimary) 0%, var(--colorTeal) 100%);
     color: #ffffff;
     border: none;
     border-radius: var(--radiusPill);
-    font-size: 0.82rem;
+    font-size: 0.76rem;
     font-weight: 700;
     cursor: pointer;
     box-shadow: 0 2px 8px var(--colorPrimaryGlow);
@@ -492,7 +497,7 @@
 
 .calculatorTriggerBtn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px var(--colorPrimaryGlow);
+    box-shadow: 0 3px 10px var(--colorPrimaryGlow);
     filter: brightness(1.08);
 }
 
@@ -509,7 +514,7 @@
 
 .sectionTitle {
     font-family: var(--fontHeading);
-    font-size: 1.15rem;
+    font-size: 0.98rem;
     font-weight: 800;
     color: var(--textPrimary);
     margin: 0;
@@ -517,9 +522,9 @@
 
 .plainText {
     color: var(--textPrimary);
-    font-size: 1.025rem;
+    font-size: 0.88rem;
     font-weight: 500;
-    line-height: 1.68;
+    line-height: 1.5;
     margin: 0;
     overflow-wrap: anywhere;
     word-break: break-word;
@@ -527,14 +532,14 @@
 
 .bulletList {
     margin: 0;
-    padding-left: 1.35rem;
+    padding-left: 1.15rem;
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
+    gap: 0.35rem;
     color: var(--textPrimary);
-    font-size: 1rem;
+    font-size: 0.88rem;
     font-weight: 500;
-    line-height: 1.65;
+    line-height: 1.5;
     overflow-wrap: anywhere;
     word-break: break-word;
 }
@@ -606,7 +611,7 @@
 .presentationsCompactList {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
     width: 100%;
 }
 
@@ -614,10 +619,10 @@
     background: var(--bgGlass);
     border: 1px solid var(--borderGlass);
     border-radius: var(--radiusSm);
-    padding: 0.85rem 1rem;
+    padding: 0.55rem 0.75rem;
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
+    gap: 0.45rem;
     transition: border-color var(--transitionFast);
 }
 
@@ -628,7 +633,7 @@
 .compactPresentationHeader {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.45rem;
     flex-wrap: wrap;
 }
 
@@ -636,9 +641,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 26px;
-    height: 26px;
-    border-radius: 6px;
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
     background: rgba(56, 189, 248, 0.12);
     color: var(--colorPrimary);
     flex-shrink: 0;
@@ -646,17 +651,17 @@
 
 .compactPresentationTitle {
     font-weight: 800;
-    font-size: 1rem;
+    font-size: 0.88rem;
     color: var(--textPrimary);
     text-transform: capitalize;
 }
 
 .compactDosageCountBadge {
-    font-size: 0.725rem;
+    font-size: 0.68rem;
     font-weight: 600;
     color: var(--textMuted);
     background: var(--bgInput);
-    padding: 0.15rem 0.5rem;
+    padding: 0.1rem 0.4rem;
     border-radius: var(--radiusPill);
     border: 1px solid var(--borderGlass);
 }
@@ -664,19 +669,19 @@
 .compactDoseChipsWrapper {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.35rem;
     width: 100%;
 }
 
 .compactDoseChip {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.35rem;
     background: var(--bgInput);
     border: 1px solid var(--borderGlass);
     border-radius: var(--radiusSm);
-    padding: 0.45rem 0.75rem;
-    font-size: 0.875rem;
+    padding: 0.25rem 0.55rem;
+    font-size: 0.78rem;
     transition: transform var(--transitionFast);
 }
 
@@ -689,6 +694,7 @@
     font-weight: 800;
     font-family: var(--fontMono);
     color: var(--colorPrimary);
+    font-size: 0.82rem;
 }
 
 /* Modo 2: Cuadrícula Clásica Mejorada */
@@ -702,15 +708,15 @@
 .presentationTabsContainer {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.75rem;
     width: 100%;
 }
 
 .subTabsPills {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.35rem;
     overflow-x: auto;
-    padding-bottom: 0.35rem;
+    padding-bottom: 0.25rem;
     scrollbar-width: thin;
     -webkit-overflow-scrolling: touch;
 }
@@ -719,9 +725,9 @@
     background: var(--bgGlass);
     border: 1px solid var(--borderGlass);
     color: var(--textSecondary);
-    padding: 0.45rem 0.95rem;
+    padding: 0.35rem 0.75rem;
     border-radius: var(--radiusPill);
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
@@ -738,29 +744,29 @@
     color: #ffffff;
     border-color: var(--colorPrimary);
     font-weight: 700;
-    box-shadow: 0 2px 8px var(--colorPrimaryGlow);
+    box-shadow: 0 2px 6px var(--colorPrimaryGlow);
 }
 
 .tabPresentationCardActive {
     background: var(--bgGlass);
     border: 1px solid var(--borderGlass);
     border-radius: var(--radiusSm);
-    padding: 1.15rem;
+    padding: 0.85rem;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .tabPresentationCardHeader {
     display: flex;
     align-items: center;
-    gap: 0.65rem;
+    gap: 0.5rem;
     border-bottom: 1px solid var(--borderGlass);
-    padding-bottom: 0.65rem;
+    padding-bottom: 0.5rem;
 }
 
 .tabPresentationHeading {
-    font-size: 1.15rem;
+    font-size: 0.98rem;
     font-weight: 800;
     color: var(--textPrimary);
     margin: 0;
@@ -769,39 +775,39 @@
 
 .tabDosageListGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.55rem;
 }
 
 .tabDosageCardItem {
     background: var(--bgInput);
     border: 1px solid var(--borderGlass);
     border-radius: var(--radiusSm);
-    padding: 0.75rem 0.95rem;
+    padding: 0.55rem 0.75rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.35rem;
 }
 
 .tabDoseItemMain {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.5rem;
+    gap: 0.35rem;
 }
 
 .tabDosageAmount {
     font-weight: 800;
     font-family: var(--fontMono);
     color: var(--colorPrimary);
-    font-size: 1.05rem;
+    font-size: 0.88rem;
 }
 
 /* Presentations Grid: Mobile Base is Single Column */
 .presentationsGrid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0.85rem;
+    gap: 0.65rem;
     width: 100%;
 }
 
@@ -809,24 +815,24 @@
     background: var(--bgGlass);
     border: 1px solid var(--borderGlass);
     border-radius: var(--radiusSm);
-    padding: 0.85rem;
+    padding: 0.65rem;
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
+    gap: 0.45rem;
     width: 100%;
     align-self: stretch;
 }
 
 .presentationTitle {
     font-weight: 800;
-    font-size: 1.05rem;
+    font-size: 0.92rem;
     color: var(--textPrimary);
 }
 
 .dosageItemList {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.35rem;
     width: 100%;
     height: 100%;
 }
@@ -834,14 +840,14 @@
 .dosageItem {
     background: var(--bgInput);
     border-radius: var(--radiusSm);
-    padding: 0.65rem 0.85rem;
+    padding: 0.45rem 0.65rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.35rem;
     width: 100%;
-    font-size: 0.95rem;
+    font-size: 0.82rem;
     font-weight: 600;
     color: var(--textPrimary);
     overflow-wrap: break-word;
@@ -852,27 +858,27 @@
     font-weight: 800;
     font-family: var(--fontMono);
     color: var(--colorPrimary);
-    font-size: 1.025rem;
+    font-size: 0.88rem;
 }
 
 .routeBadges {
     display: flex;
-    gap: 0.35rem;
+    gap: 0.25rem;
     flex-wrap: wrap;
 }
 
 .routeBadge {
     background: var(--colorSuccessBg);
     color: var(--colorSuccess);
-    font-size: 0.775rem;
-    padding: 0.2rem 0.6rem;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.45rem;
     border-radius: var(--radiusPill);
     font-weight: 700;
 }
 
 .useInBadge {
-    font-size: 0.775rem;
-    padding: 0.2rem 0.6rem;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.45rem;
     border-radius: var(--radiusPill);
     background: rgba(255, 255, 255, 0.08);
     color: var(--textSecondary);
@@ -883,7 +889,7 @@
 .guidanceGrid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0.85rem;
+    gap: 0.55rem;
     width: 100%;
 }
 
@@ -891,28 +897,28 @@
     background: var(--bgGlass);
     border: 1px solid var(--borderGlass);
     border-radius: var(--radiusSm);
-    padding: 0.85rem;
+    padding: 0.6rem 0.75rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.35rem;
     width: 100%;
 }
 
 .guidanceRouteName {
     font-weight: 800;
     color: var(--textPrimary);
-    font-size: 1.05rem;
+    font-size: 0.88rem;
     border-bottom: 1px solid var(--borderGlass);
-    padding-bottom: 0.35rem;
+    padding-bottom: 0.25rem;
 }
 
 .guidanceItemTitle {
-    font-size: 0.825rem;
+    font-size: 0.72rem;
     color: var(--textMuted);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    margin-top: 0.25rem;
+    margin-top: 0.15rem;
 }
 
 /* Organ Adjustments Grid: Mobile Base is Single Column */
@@ -920,7 +926,7 @@
 .riskRowsContainer {
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
+    gap: 0.45rem;
     width: 100%;
 }
 
@@ -928,10 +934,10 @@
     background: var(--bgGlass);
     border: 1px solid var(--borderGlass);
     border-radius: var(--radiusSm);
-    padding: 0.75rem 1rem;
+    padding: 0.55rem 0.75rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.35rem;
     transition: all var(--transitionFast);
 }
 
@@ -943,7 +949,7 @@
 .riskRowHeaderCol {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.45rem;
     flex-wrap: wrap;
 }
 
@@ -951,9 +957,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
     background: rgba(56, 189, 248, 0.12);
     color: var(--colorPrimary);
     flex-shrink: 0;
@@ -961,7 +967,7 @@
 
 .riskRowTitle {
     font-weight: 800;
-    font-size: 0.95rem;
+    font-size: 0.86rem;
     color: var(--textPrimary);
 }
 
@@ -969,12 +975,12 @@
 .riskAlertCallout {
     display: flex;
     align-items: flex-start;
-    gap: 0.65rem;
-    padding: 0.6rem 0.85rem;
+    gap: 0.45rem;
+    padding: 0.4rem 0.65rem;
     border-radius: var(--radiusSm);
-    margin-bottom: 0.55rem;
-    font-size: 0.88rem;
-    line-height: 1.5;
+    margin-bottom: 0.35rem;
+    font-size: 0.8rem;
+    line-height: 1.42;
     transition: all var(--transitionFast);
 }
 
@@ -983,7 +989,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    margin-top: 0.15rem;
+    margin-top: 0.1rem;
 }
 
 .riskAlertCalloutBody {
@@ -993,11 +999,11 @@
 
 .riskAlertCalloutTag {
     display: inline-block;
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-right: 0.45rem;
+    margin-right: 0.35rem;
     opacity: 0.85;
 }
 
@@ -1074,9 +1080,9 @@
 
 .riskRowText {
     color: var(--textPrimary);
-    font-size: 0.925rem;
+    font-size: 0.85rem;
     font-weight: 500;
-    line-height: 1.55;
+    line-height: 1.45;
     margin: 0;
     overflow-wrap: break-word;
     word-break: break-word;
@@ -1087,19 +1093,19 @@
     .riskTableRow {
         flex-direction: row;
         align-items: flex-start;
-        gap: 1.25rem;
-        padding: 0.75rem 1.15rem;
+        gap: 0.85rem;
+        padding: 0.55rem 0.85rem;
     }
 
     .riskRowHeaderCol {
-        width: 200px;
+        width: 160px;
         flex-shrink: 0;
         padding-top: 0.1rem;
     }
 
     .riskRowContentCol {
         border-left: 1px solid var(--borderGlass);
-        padding-left: 1.25rem;
+        padding-left: 0.85rem;
     }
 }
 
@@ -1107,7 +1113,7 @@
 .adjustmentsGrid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0.85rem;
+    gap: 0.65rem;
     width: 100%;
 }
 
@@ -1115,30 +1121,30 @@
     background: var(--bgGlass);
     border: 1px solid var(--borderGlass);
     border-radius: var(--radiusSm);
-    padding: 0.85rem;
+    padding: 0.65rem 0.75rem;
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.35rem;
     width: 100%;
 }
 
 .riskTitle {
     font-weight: 800;
-    font-size: 1.05rem;
+    font-size: 0.92rem;
     color: var(--textPrimary);
 }
 
 .riskLevel {
     font-weight: 700;
     color: var(--colorWarning);
-    font-size: 0.925rem;
+    font-size: 0.82rem;
 }
 
 .riskAdjustment {
     color: var(--textPrimary);
-    font-size: 0.975rem;
+    font-size: 0.85rem;
     font-weight: 500;
-    line-height: 1.6;
+    line-height: 1.48;
     overflow-wrap: break-word;
 }
 
@@ -1146,20 +1152,23 @@
     background: var(--colorDangerBg);
     border: 1px solid rgba(244, 63, 94, 0.3);
     border-radius: var(--radiusSm);
-    padding: 0.85rem 1rem;
+    padding: 0.55rem 0.75rem;
     color: var(--colorDanger);
     display: flex;
     align-items: flex-start;
-    gap: 0.6rem;
-    font-size: 0.975rem;
+    gap: 0.5rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    line-height: 1.55;
+    line-height: 1.48;
     overflow-wrap: anywhere;
     word-break: break-word;
 }
 
 .alertBox svg {
     flex-shrink: 0;
+    margin-top: 0.1rem;
+    width: 15px;
+    height: 15px;
 }
 
 .alertBox > div {
@@ -1169,17 +1178,17 @@
 
 .loadingBox {
     text-align: center;
-    padding: 4rem 1rem;
+    padding: 3rem 1rem;
     color: var(--textMuted);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .spinner {
-    width: 36px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
     border: 3px solid rgba(14, 165, 233, 0.2);
     border-top-color: var(--colorPrimary);
     border-radius: 50%;
@@ -1187,22 +1196,22 @@
 }
 
 .referencesCard {
-    margin-top: 1.5rem;
+    margin-top: 0.75rem;
     background: var(--bgCard);
     backdrop-filter: var(--backdropBlur);
     -webkit-backdrop-filter: var(--backdropBlur);
     border: 1px solid var(--borderGlass);
-    border-radius: var(--radiusMd);
-    padding: 1.15rem;
+    border-radius: var(--radiusSm);
+    padding: 0.75rem 0.85rem;
     box-shadow: var(--shadowCard);
     width: 100%;
     overflow-x: hidden;
 }
 
 .referenceItem {
-    line-height: 1.65;
-    margin-bottom: 0.85rem;
-    font-size: 0.95rem;
+    line-height: 1.45;
+    margin-bottom: 0.45rem;
+    font-size: 0.82rem;
     font-weight: 500;
     color: var(--textPrimary);
     list-style-type: disc;
@@ -1222,116 +1231,116 @@
 /* Progressive Scaling: Tablet (>= 768px) */
 @media (min-width: 768px) {
     .container {
-        padding: 0 calc(1.25rem + env(safe-area-inset-right, 0px)) 2rem calc(1.25rem + env(safe-area-inset-left, 0px));
-        margin: 1rem auto;
+        padding: 0 calc(0.85rem + env(safe-area-inset-right, 0px)) 1.5rem calc(0.85rem + env(safe-area-inset-left, 0px));
+        margin: 0.5rem auto;
     }
 
     .topBar {
-        margin-bottom: 0.85rem;
-        gap: 0.75rem;
+        margin-bottom: 0.65rem;
+        gap: 0.65rem;
     }
 
     .backButton {
         flex: 0 0 auto;
-        padding: 0.45rem 0.95rem;
-        font-size: 0.825rem;
-        min-height: 38px;
+        padding: 0.35rem 0.75rem;
+        font-size: 0.78rem;
+        min-height: 34px;
     }
 
     .topBarCalcButton {
         flex: 0 0 auto;
-        padding: 0.45rem 1rem;
-        font-size: 0.825rem;
-        min-height: 38px;
+        padding: 0.35rem 0.85rem;
+        font-size: 0.78rem;
+        min-height: 34px;
     }
 
     .headerCard {
-        padding: 1.15rem 1.4rem;
-        border-radius: var(--radiusMd);
-        margin-bottom: 1rem;
-        gap: 0.65rem;
+        padding: 0.75rem 1.1rem;
+        border-radius: var(--radiusSm);
+        margin-bottom: 0.75rem;
+        gap: 0.5rem;
     }
 
     .drugName {
-        font-size: 1.75rem;
+        font-size: 1.35rem;
     }
 
     .tabsNav {
-        gap: 0.5rem;
-        padding: 0.4rem 0.5rem;
-        margin-bottom: 1.25rem;
+        gap: 0.35rem;
+        padding: 0.3rem 0.4rem;
+        margin-bottom: 0.85rem;
         border-radius: var(--radiusPill);
     }
 
     .tabButton {
         flex: 1;
         min-width: 0;
-        padding: 0.55rem 0.95rem;
-        font-size: 0.85rem;
-        min-height: 40px;
+        padding: 0.4rem 0.75rem;
+        font-size: 0.8rem;
+        min-height: 34px;
     }
 
     .tabContent {
-        gap: 1.15rem;
+        gap: 0.75rem;
     }
 
     .sectionCard {
-        padding: 1.15rem 1.35rem;
+        padding: 0.75rem 1rem;
     }
 
     .sectionTitle {
-        font-size: 1.15rem;
+        font-size: 1rem;
         font-weight: 800;
     }
 
     .mechanismSnippet {
-        font-size: 0.975rem;
-        line-height: 1.55;
+        font-size: 0.88rem;
+        line-height: 1.5;
     }
 
     .plainText {
-        font-size: 0.95rem;
-        line-height: 1.55;
+        font-size: 0.88rem;
+        line-height: 1.5;
     }
 
     .bulletList {
-        font-size: 0.95rem;
-        gap: 0.4rem;
+        font-size: 0.88rem;
+        gap: 0.3rem;
     }
 
     .presentationsGrid {
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 0.85rem;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 0.65rem;
     }
 
     .guidanceGrid {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 0.85rem;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 0.65rem;
     }
 
     .adjustmentsGrid {
-        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-        gap: 0.85rem;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.65rem;
     }
 
     .referencesCard {
-        margin-top: 1.25rem;
-        padding: 1.15rem;
-        border-radius: var(--radiusMd);
+        margin-top: 0.85rem;
+        padding: 0.85rem;
+        border-radius: var(--radiusSm);
     }
 
     .referenceItem {
-        font-size: 0.9rem;
+        font-size: 0.82rem;
     }
 }
 
 /* Progressive Scaling: Desktop (>= 1024px) - Optimizado para 720p (1280x720) */
 @media (min-width: 1024px) {
     .container {
-        max-width: 96%;
-        width: 96%;
-        margin: 0.85rem auto;
-        padding: 0 0.85rem 2rem;
+        max-width: 98%;
+        width: 98%;
+        margin: 0.5rem auto;
+        padding: 0 0.75rem 1.5rem;
     }
 
     /* Ocultar selector móvil en desktop ya que usamos el sidebar clínico */
@@ -1343,18 +1352,18 @@
     .workspace {
         display: flex;
         align-items: flex-start;
-        gap: 1.15rem;
+        gap: 0.85rem;
         position: relative;
     }
 
     /* Sidebar Clínico Sticky Optimizado */
     .desktopClinicSidebar {
         display: block;
-        width: 240px;
+        width: 210px;
         flex-shrink: 0;
         position: -webkit-sticky;
         position: sticky;
-        top: 75px;
+        top: 58px;
         align-self: flex-start;
         z-index: 20;
     }
@@ -1364,23 +1373,23 @@
         backdrop-filter: var(--backdropBlur);
         -webkit-backdrop-filter: var(--backdropBlur);
         border: 1px solid var(--borderGlass);
-        border-radius: var(--radiusMd);
-        padding: 0.95rem;
+        border-radius: var(--radiusSm);
+        padding: 0.65rem 0.75rem;
         box-shadow: var(--shadowCard);
         display: flex;
         flex-direction: column;
-        gap: 0.85rem;
-        max-height: calc(100vh - 90px);
+        gap: 0.55rem;
+        max-height: calc(100vh - 75px);
         overflow-y: auto;
     }
 
     .sidebarHeader {
         border-bottom: 1px solid var(--borderGlass);
-        padding-bottom: 0.5rem;
+        padding-bottom: 0.35rem;
     }
 
     .sidebarSubtitle {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
@@ -1390,10 +1399,10 @@
 
     .sidebarDrugTitle {
         font-family: var(--fontHeading);
-        font-size: 1.1rem;
+        font-size: 0.92rem;
         font-weight: 800;
         color: var(--textPrimary);
-        margin: 0.15rem 0 0 0;
+        margin: 0.1rem 0 0 0;
         text-transform: capitalize;
         white-space: nowrap;
         overflow: hidden;
@@ -1403,19 +1412,19 @@
     .sidebarNav {
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
+        gap: 0.15rem;
     }
 
     .sidebarNavItem {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 0.65rem;
+        gap: 0.4rem;
+        padding: 0.35rem 0.5rem;
         border-radius: var(--radiusSm);
         border: 1px solid transparent;
         background: transparent;
         color: var(--textSecondary);
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         font-weight: 600;
         cursor: pointer;
         text-align: left;
@@ -1427,8 +1436,8 @@
         color: var(--textMuted);
         transition: color var(--transitionFast);
         flex-shrink: 0;
-        width: 14px;
-        height: 14px;
+        width: 13px;
+        height: 13px;
     }
 
     .sidebarNavItem:hover {
@@ -1454,31 +1463,31 @@
 
     .sidebarActionBox {
         border-top: 1px solid var(--borderGlass);
-        padding-top: 0.75rem;
+        padding-top: 0.55rem;
     }
 
     .sidebarCalcButton {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.4rem;
+        gap: 0.35rem;
         width: 100%;
-        padding: 0.55rem 0.75rem;
+        padding: 0.45rem 0.65rem;
         border-radius: var(--radiusSm);
         background: linear-gradient(135deg, var(--colorPrimary) 0%, var(--colorTeal) 100%);
         border: none;
         color: #ffffff;
         font-weight: 700;
-        font-size: 0.785rem;
+        font-size: 0.75rem;
         cursor: pointer;
-        box-shadow: 0 3px 10px var(--colorPrimaryGlow);
+        box-shadow: 0 2px 8px var(--colorPrimaryGlow);
         transition: all var(--transitionFast);
     }
 
     .sidebarCalcButton:hover {
         filter: brightness(1.1);
         transform: translateY(-1px);
-        box-shadow: 0 4px 14px var(--colorPrimaryGlow);
+        box-shadow: 0 3px 12px var(--colorPrimaryGlow);
     }
 
     /* Columna de Contenido Principal: Compacta y optimizada */
@@ -1487,15 +1496,15 @@
         min-width: 0;
         display: flex;
         flex-direction: column;
-        gap: 1.15rem;
+        gap: 0.75rem;
     }
 
     .sectionBlock {
         display: flex !important;
         flex-direction: column;
-        gap: 1rem;
+        gap: 0.75rem;
         width: 100%;
-        scroll-margin-top: 80px;
+        scroll-margin-top: 70px;
     }
 
     .tabBlockHidden {
@@ -1510,18 +1519,18 @@
 /* Progressive Scaling: Large Screens (>= 1440px) */
 @media (min-width: 1440px) {
     .container {
-        max-width: min(96%, var(--containerDesktopMax, 1640px));
+        max-width: 1600px;
         width: 96%;
-        margin: 1.25rem auto;
-        padding: 0 1rem 3rem;
+        margin: 0.75rem auto;
+        padding: 0 1rem 2rem;
     }
 
     .desktopClinicSidebar {
-        width: 270px;
+        width: 230px;
     }
 
     .detailMainContent {
-        gap: 1.5rem;
+        gap: 0.85rem;
     }
 }
 
