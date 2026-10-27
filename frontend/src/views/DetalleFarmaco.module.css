@@ -414,120 +414,258 @@
     color: var(--colorPrimary);
 }
 
-/* Presentations Header with View Switcher */
 .sectionHeaderBetween {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
     flex-wrap: wrap;
-    margin-bottom: 1.15rem;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--borderGlass);
 }
 
-.sectionHeaderLeft {
+.sectionHeaderTitleGroup {
     display: flex;
     align-items: center;
     gap: 0.65rem;
 }
 
-/* View Mode Switcher (Pills segmented control) */
-.viewModeSwitcher {
+/* View Mode Switcher Toggle */
+.viewModeToggleGroup {
     display: inline-flex;
     align-items: center;
     background: var(--bgInput);
     border: 1px solid var(--borderGlass);
-    border-radius: var(--radiusFull, 9999px);
-    padding: 0.25rem;
-    gap: 0.25rem;
+    border-radius: var(--radiusPill);
+    padding: 2px;
+    gap: 2px;
 }
 
-.viewModeBtn {
+.viewModeButton {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.35rem 0.75rem;
-    background: transparent;
+    gap: 0.35rem;
+    padding: 0.35rem 0.65rem;
     border: none;
-    border-radius: var(--radiusFull, 9999px);
+    background: transparent;
     color: var(--textSecondary);
-    font-family: var(--fontBody);
-    font-size: 0.82rem;
-    font-weight: 700;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: var(--radiusPill);
     cursor: pointer;
-    transition: all var(--transitionNormal);
-    white-space: nowrap;
+    transition: all var(--transitionFast);
+    -webkit-tap-highlight-color: transparent;
 }
 
-.viewModeBtn:hover {
+.viewModeButton:hover {
     color: var(--textPrimary);
-    background: var(--bgGlassHover);
 }
 
-.viewModeBtnActive {
+.viewModeButtonActive {
     background: var(--colorPrimary);
-    color: #ffffff !important;
-    box-shadow: 0 2px 8px rgba(14, 165, 233, 0.35);
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 2px 6px var(--colorPrimaryGlow);
 }
 
-/* Form Selector Scroll (Chips para Modo 'Por Forma') */
-.formSelectorScroll {
+.viewModeButtonLabel {
+    display: inline-block;
+}
+
+/* Modo 1: Lista Compacta / Fila de Alta Densidad Médica */
+.presentationsCompactList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.compactPresentationRow {
+    background: var(--bgGlass);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusSm);
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    transition: border-color var(--transitionFast);
+}
+
+.compactPresentationRow:hover {
+    border-color: rgba(56, 189, 248, 0.35);
+}
+
+.compactPresentationHeader {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    overflow-x: auto;
-    padding-bottom: 0.65rem;
-    margin-bottom: 1rem;
-    scrollbar-width: thin;
+    flex-wrap: wrap;
 }
 
-.formChip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.45rem 0.9rem;
-    background: var(--bgGlass);
-    border: 1px solid var(--borderGlass);
-    border-radius: var(--radiusFull, 9999px);
-    color: var(--textSecondary);
-    font-size: 0.88rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all var(--transitionNormal);
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.formChip:hover {
-    background: var(--bgGlassHover);
-    color: var(--textPrimary);
-    border-color: var(--colorPrimary);
-    transform: translateY(-1px);
-}
-
-.formChipActive {
-    background: var(--colorPrimaryBg, rgba(14, 165, 233, 0.15));
-    border-color: var(--colorPrimary);
-    color: var(--colorPrimary);
-    font-weight: 800;
-}
-
-.formChipBadge {
+.compactFormIcon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 1.25rem;
-    height: 1.25rem;
-    padding: 0 0.35rem;
-    border-radius: 9999px;
-    background: var(--bgInput);
-    color: var(--textPrimary);
-    font-size: 0.72rem;
-    font-weight: 800;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: rgba(56, 189, 248, 0.12);
+    color: var(--colorPrimary);
+    flex-shrink: 0;
 }
 
-.formChipActive .formChipBadge {
+.compactPresentationTitle {
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--textPrimary);
+    text-transform: capitalize;
+}
+
+.compactDosageCountBadge {
+    font-size: 0.725rem;
+    font-weight: 600;
+    color: var(--textMuted);
+    background: var(--bgInput);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radiusPill);
+    border: 1px solid var(--borderGlass);
+}
+
+.compactDoseChipsWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.compactDoseChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bgInput);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusSm);
+    padding: 0.45rem 0.75rem;
+    font-size: 0.875rem;
+    transition: transform var(--transitionFast);
+}
+
+.compactDoseChip:hover {
+    transform: translateY(-1px);
+    border-color: rgba(56, 189, 248, 0.4);
+}
+
+.compactDoseAmount {
+    font-weight: 800;
+    font-family: var(--fontMono);
+    color: var(--colorPrimary);
+}
+
+/* Modo 2: Cuadrícula Clásica Mejorada */
+.presentationCardHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Modo 3: Pestañas / Tabs por Forma Farmacéutica */
+.presentationTabsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+}
+
+.subTabsPills {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.35rem;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+}
+
+.subTabPill {
+    background: var(--bgGlass);
+    border: 1px solid var(--borderGlass);
+    color: var(--textSecondary);
+    padding: 0.45rem 0.95rem;
+    border-radius: var(--radiusPill);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transitionFast);
+}
+
+.subTabPill:hover {
+    color: var(--textPrimary);
+    border-color: var(--colorPrimary);
+}
+
+.subTabPillActive {
     background: var(--colorPrimary);
     color: #ffffff;
+    border-color: var(--colorPrimary);
+    font-weight: 700;
+    box-shadow: 0 2px 8px var(--colorPrimaryGlow);
+}
+
+.tabPresentationCardActive {
+    background: var(--bgGlass);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusSm);
+    padding: 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.tabPresentationCardHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    border-bottom: 1px solid var(--borderGlass);
+    padding-bottom: 0.65rem;
+}
+
+.tabPresentationHeading {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--textPrimary);
+    margin: 0;
+    text-transform: capitalize;
+}
+
+.tabDosageListGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
+}
+
+.tabDosageCardItem {
+    background: var(--bgInput);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusSm);
+    padding: 0.75rem 0.95rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.tabDoseItemMain {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.tabDosageAmount {
+    font-weight: 800;
+    font-family: var(--fontMono);
+    color: var(--colorPrimary);
+    font-size: 1.05rem;
 }
 
 /* Presentations Grid: Mobile Base is Single Column */
@@ -538,37 +676,16 @@
     width: 100%;
 }
 
-.presentationsSingleCol {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    width: 100%;
-    max-width: 800px;
-}
-
 .presentationCard {
     background: var(--bgGlass);
     border: 1px solid var(--borderGlass);
-    border-radius: var(--radiusMd);
-    padding: 1rem 1.15rem;
+    border-radius: var(--radiusSm);
+    padding: 0.85rem;
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
+    gap: 0.65rem;
     width: 100%;
-    transition: border-color var(--transitionNormal), transform var(--transitionNormal);
-}
-
-.presentationCard:hover {
-    border-color: var(--colorPrimary);
-}
-
-.presentationCardHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    border-bottom: 1px dashed var(--borderGlass);
-    padding-bottom: 0.65rem;
+    align-self: stretch;
 }
 
 .presentationTitle {
@@ -577,47 +694,29 @@
     color: var(--textPrimary);
 }
 
-.presentationCountTag {
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 0.2rem 0.55rem;
-    background: var(--bgInput);
-    color: var(--textSecondary);
-    border-radius: var(--radiusSm);
-}
-
 .dosageItemList {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     width: 100%;
+    height: 100%;
 }
 
 .dosageItem {
     background: var(--bgInput);
-    border: 1px solid var(--borderGlass);
     border-radius: var(--radiusSm);
     padding: 0.65rem 0.85rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 0.65rem;
+    gap: 0.5rem;
     width: 100%;
     font-size: 0.95rem;
     font-weight: 600;
     color: var(--textPrimary);
     overflow-wrap: break-word;
     word-break: break-word;
-}
-
-.dosageItemPrimary {
-    display: flex;
-    align-items: center;
-    gap: 0.65rem;
-    flex-wrap: wrap;
 }
 
 .dosageAmount {
@@ -635,94 +734,11 @@
 
 .routeBadge {
     background: var(--colorSuccessBg);
-    color: var(--colorSuccessText);
-    padding: 0.2rem 0.55rem;
-    border-radius: var(--radiusFull, 9999px);
-    font-size: 0.78rem;
+    color: var(--colorSuccess);
+    font-size: 0.775rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radiusPill);
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    white-space: nowrap;
-}
-
-/* ==========================================================================
-   Table Matrix View (Matriz / Tabla Clínica)
-   ========================================================================== */
-.tableWrapper {
-    width: 100%;
-    overflow-x: auto;
-    background: var(--bgGlass);
-    border: 1px solid var(--borderGlass);
-    border-radius: var(--radiusMd);
-    -webkit-overflow-scrolling: touch;
-}
-
-.dosageMatrixTable {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-    font-size: 0.92rem;
-}
-
-.dosageMatrixTable thead tr {
-    background: var(--bgInput);
-    border-bottom: 2px solid var(--borderGlass);
-}
-
-.dosageMatrixTable th {
-    padding: 0.85rem 1.15rem;
-    font-family: var(--fontHeading);
-    font-size: 0.82rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--textSecondary);
-    white-space: nowrap;
-}
-
-.dosageMatrixTable tbody tr {
-    border-bottom: 1px solid var(--borderGlass);
-    transition: background var(--transitionFast);
-}
-
-.dosageMatrixTable tbody tr:last-child {
-    border-bottom: none;
-}
-
-.dosageMatrixTable tbody tr:hover {
-    background: var(--bgGlassHover);
-}
-
-.dosageMatrixTable td {
-    padding: 0.85rem 1.15rem;
-    vertical-align: middle;
-}
-
-.tableFormName {
-    color: var(--textPrimary);
-    font-size: 0.95rem;
-    white-space: nowrap;
-}
-
-.tableAmount {
-    white-space: nowrap;
-}
-
-.dosageAmountMono {
-    font-family: var(--fontMono);
-    font-weight: 800;
-    color: var(--colorPrimary);
-    font-size: 0.98rem;
-}
-
-.tableUseIn {
-    color: var(--textSecondary);
-    font-weight: 600;
-}
-
-.emptyDash {
-    color: var(--textMuted, #64748b);
-    font-weight: 600;
 }
 
 .useInBadge {
@@ -961,8 +977,8 @@
     }
 
     .presentationsGrid {
-        grid-template-columns: repeat(auto-fit, minmax(290px, 420px));
-        gap: 1.15rem;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1rem;
     }
 
     .guidanceGrid {
