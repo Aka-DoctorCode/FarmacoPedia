@@ -52,7 +52,7 @@ const REGEX_DRUG_NAME = /^[a-záéíóúüñ0-9\s\-()/+,%αβγ.]+$/i;
 const REGEX_DOSAGE_AMOUNT = /^[0-9\-/.,\s]+$/;
 
 // Soporta texto médico completo, signos de puntuación, unidades, comparadores, corchetes y símbolos clínicos
-const REGEX_CLINICAL_TEXT = /^[a-záéíóúüñ0-9\s.,;:()[\]—–\-_/&?="'#%ªº+*/<>≤≥±°αβγμ]+$/i;
+const REGEX_CLINICAL_TEXT = /^[a-záéíóúüñ0-9\s.,;:()[\]—–\-_/&?="'#%ªº+*/<>≤≥±°÷αβγμ~^]+$/i;
 
 // Soporta códigos alfanuméricos ATC (ej. "N", "N02B", "N02BE01")
 const REGEX_ATC_CODE = /^[a-z0-9]+$/i;
@@ -62,25 +62,25 @@ const REGEX_ATC_CODE = /^[a-z0-9]+$/i;
 // --------------------------------------------------------------
 
 const dosageEntrySchema = new mongoose.Schema({
-    amount: { 
-        type: String, 
-        trim: true, 
+    amount: {
+        type: String,
+        trim: true,
         match: [REGEX_DOSAGE_AMOUNT, "Formato de cantidad de dosis inválido."]
     },
-    unit: { 
-        type: String, 
-        trim: true, 
+    unit: {
+        type: String,
+        trim: true,
         match: [REGEX_CLINICAL_TEXT, "Formato de unidad de dosis inválido."]
     },
-    route: [{ 
-        type: String, 
+    route: [{
+        type: String,
         trim: true,
         match: [REGEX_CLINICAL_TEXT, "Formato de vía de administración inválido."]
     }],
-    useIn: { 
-        type: String, 
+    useIn: {
+        type: String,
         trim: true,
-        enum: ["Adultos", "Niños", "Ambos"] 
+        enum: ["Adultos", "Niños", "Ambos"]
     }
 }, { _id: false });
 
@@ -89,56 +89,56 @@ const presentationGroupSchema = new mongoose.Schema({
 }, { _id: false });
 
 const routeGuidanceSchema = new mongoose.Schema({
-    guidelines: [{ 
-        type: String, 
+    guidelines: [{
+        type: String,
         trim: true,
         match: [REGEX_CLINICAL_TEXT, "Carácter no permitido en pautas de dosificación."]
     }],
-    maxDose: [{ 
-        type: String, 
+    maxDose: [{
+        type: String,
         trim: true,
         match: [REGEX_CLINICAL_TEXT, "Carácter no permitido en dosis máxima."]
     }]
 }, { _id: false });
 
 const atcEntrySchema = new mongoose.Schema({
-    code: { 
-        type: String, 
-        trim: true, 
+    code: {
+        type: String,
+        trim: true,
         uppercase: true,
         match: [REGEX_ATC_CODE, "Código ATC inválido."]
     },
-    categoryCode: { 
-        type: String, 
-        trim: true, 
+    categoryCode: {
+        type: String,
+        trim: true,
         uppercase: true,
         match: [REGEX_ATC_CODE, "Código de categoría ATC inválido."]
     },
-    categoryName: { 
-        type: String, 
+    categoryName: {
+        type: String,
         trim: true,
         match: [REGEX_CLINICAL_TEXT, "Nombre de categoría ATC inválido."]
     },
-    subcategoryCode: { 
-        type: String, 
-        trim: true, 
+    subcategoryCode: {
+        type: String,
+        trim: true,
         uppercase: true,
         match: [REGEX_ATC_CODE, "Código de subcategoría ATC inválido."]
     },
-    subcategoryName: { 
-        type: String, 
+    subcategoryName: {
+        type: String,
         trim: true,
         match: [REGEX_CLINICAL_TEXT, "Nombre de subcategoría ATC inválido."]
     }
 }, { _id: false });
 
 const drugSchema = new mongoose.Schema({
-    name: { 
-        type: String, 
-        unique: true, 
-        required: [true, "El nombre del fármaco es obligatorio."], 
-        trim: true, 
-        lowercase: true, 
+    name: {
+        type: String,
+        unique: true,
+        required: [true, "El nombre del fármaco es obligatorio."],
+        trim: true,
+        lowercase: true,
         match: [REGEX_DRUG_NAME, "El nombre del fármaco contiene caracteres no válidos."]
     },
     atc: {
@@ -156,9 +156,9 @@ const drugSchema = new mongoose.Schema({
         trim: true,
         match: [REGEX_CLINICAL_TEXT, "Carácter no válido en indicaciones."]
     }],
-    presentations: { 
-        type: Map, 
-        of: presentationGroupSchema 
+    presentations: {
+        type: Map,
+        of: presentationGroupSchema
     },
     dosageGuidance: {
         adult: { type: Map, of: routeGuidanceSchema },
@@ -167,13 +167,13 @@ const drugSchema = new mongoose.Schema({
     risk: {
         pregnancy: { type: String, trim: true, match: REGEX_CLINICAL_TEXT },
         lactation: { type: String, trim: true, match: REGEX_CLINICAL_TEXT },
-        renal: { 
-            level: { type: String, trim: true, match: REGEX_CLINICAL_TEXT }, 
-            adjustment: { type: String, trim: true, match: REGEX_CLINICAL_TEXT } 
+        renal: {
+            level: { type: String, trim: true, match: REGEX_CLINICAL_TEXT },
+            adjustment: { type: String, trim: true, match: REGEX_CLINICAL_TEXT }
         },
-        hepatic: { 
-            level: { type: String, trim: true, match: REGEX_CLINICAL_TEXT }, 
-            adjustment: { type: String, trim: true, match: REGEX_CLINICAL_TEXT } 
+        hepatic: {
+            level: { type: String, trim: true, match: REGEX_CLINICAL_TEXT },
+            adjustment: { type: String, trim: true, match: REGEX_CLINICAL_TEXT }
         },
         geriatric: { type: String, trim: true, match: REGEX_CLINICAL_TEXT },
         securityFlags: [{ type: String, trim: true, match: REGEX_CLINICAL_TEXT }]
@@ -271,11 +271,11 @@ const getEnrichedAtcDrugs = async (identifier) => {
     };
 
     const drugs = await Drug.find(
-        filter, 
+        filter,
         "name atc actionMechanism indications"
     )
-    .sort({ name: 1 })
-    .lean();
+        .sort({ name: 1 })
+        .lean();
 
     if (!drugs || drugs.length === 0) {
         return null;
@@ -299,7 +299,7 @@ const getEnrichedAtcDrugs = async (identifier) => {
                 };
                 break;
             } else if (
-                (item.subcategoryCode && exactRegex.test(item.subcategoryCode)) || 
+                (item.subcategoryCode && exactRegex.test(item.subcategoryCode)) ||
                 (item.subcategoryName && exactRegex.test(item.subcategoryName))
             ) {
                 matchedMetadata = {
@@ -311,7 +311,7 @@ const getEnrichedAtcDrugs = async (identifier) => {
                 };
                 break;
             } else if (
-                (item.categoryCode && exactRegex.test(item.categoryCode)) || 
+                (item.categoryCode && exactRegex.test(item.categoryCode)) ||
                 (item.categoryName && exactRegex.test(item.categoryName))
             ) {
                 matchedMetadata = {
@@ -471,11 +471,11 @@ app.get("/drugs/families", asyncHandler(async (req, res) => {
 app.get("/drugs/atc/subcategories/:code", asyncHandler(async (req, res) => {
     const rawCode = (req.params.code || "").trim().toUpperCase();
     const drugs = await Drug.find(
-        { "atc.subcategoryCode": rawCode }, 
+        { "atc.subcategoryCode": rawCode },
         "name atc actionMechanism"
     )
-    .sort({ name: 1 })
-    .lean();
+        .sort({ name: 1 })
+        .lean();
 
     res.status(200).json({ success: true, count: drugs.length, data: drugs });
 }));
@@ -511,8 +511,8 @@ app.get("/drugs/categories/:category", asyncHandler(async (req, res) => {
 // GET: Single drug (accent-insensitive match)
 app.get("/drugs/:name", asyncHandler(async (req, res) => {
     const rawName = (req.params.name || "").trim();
-    const drugFound = await Drug.findOne({ 
-        name: buildAccentInsensitiveRegex(rawName, true) 
+    const drugFound = await Drug.findOne({
+        name: buildAccentInsensitiveRegex(rawName, true)
     }).lean();
 
     if (!drugFound) {
@@ -539,8 +539,8 @@ app.patch("/drugs/:name", requireAdmin, asyncHandler(async (req, res) => {
 // DELETE: Remove drug
 app.delete("/drugs/:name", requireAdmin, asyncHandler(async (req, res) => {
     const rawName = (req.params.name || "").trim();
-    const deletedDrug = await Drug.findOneAndDelete({ 
-        name: buildAccentInsensitiveRegex(rawName, true) 
+    const deletedDrug = await Drug.findOneAndDelete({
+        name: buildAccentInsensitiveRegex(rawName, true)
     }).lean();
 
     if (!deletedDrug) {
@@ -562,16 +562,16 @@ app.post("/pending-drugs", asyncHandler(async (req, res) => {
     const normalizedName = name.trim().toLowerCase();
 
     // Verificar primero si el fármaco ya existe en la colección principal Drug
-    const existingDrug = await Drug.findOne({ 
-        name: buildAccentInsensitiveRegex(normalizedName, true) 
+    const existingDrug = await Drug.findOne({
+        name: buildAccentInsensitiveRegex(normalizedName, true)
     }).lean();
 
     if (existingDrug) {
-        return res.status(200).json({ 
-            success: true, 
-            message: "Drug already exists in main database", 
+        return res.status(200).json({
+            success: true,
+            message: "Drug already exists in main database",
             alreadyExists: true,
-            data: { name: existingDrug.name, status: "completed" } 
+            data: { name: existingDrug.name, status: "completed" }
         });
     }
 
