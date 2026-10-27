@@ -148,63 +148,75 @@ const SearchModal = () => {
                         <>
                             <span className={styles.sectionLabel}>Familias y categorías ATC</span>
                             {categoryResults.map((node) => (
-                                <button
+                                <div
                                     key={node.code}
-                                    type="button"
+                                    role="button"
+                                    tabIndex={0}
                                     className={styles.resultCard}
                                     onClick={() => {
                                         setSearchModalOpen(false);
                                         navigateToFamilies(node.code);
                                     }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            setSearchModalOpen(false);
+                                            navigateToFamilies(node.code);
+                                        }
+                                    }}
                                 >
                                     <div className={styles.resultTitleRow}>
-                                        <div className={styles.resultNameAndAtc}>
-                                            <span className={styles.resultName}>{node.name}</span>
-                                            <span className={styles.atcResultBadge}>{node.code}</span>
-                                        </div>
-                                        <div className={styles.resultCategories}>
-                                            <span className={styles.resultBadge}>Nivel {node.level} ATC</span>
-                                        </div>
+                                        <span className={styles.resultName}>{node.name}</span>
+                                        <span className={styles.atcResultBadge}>{node.code}</span>
                                     </div>
-                                </button>
+                                    <div className={styles.resultCategories}>
+                                        <span className={styles.resultBadge}>Nivel {node.level} ATC</span>
+                                    </div>
+                                </div>
                             ))}
                             {results.length > 0 && <span className={styles.sectionLabel}>Fármacos</span>}
                         </>
                     )}
                     {results.length > 0 ? (
                         results.map((drug) => (
-                            <button
+                            <div
                                 key={drug.id || drug._id || drug.name}
-                                type="button"
+                                role="button"
+                                tabIndex={0}
                                 className={styles.resultCard}
                                 onClick={() => {
                                     setSearchModalOpen(false);
                                     openDrugDetail(drug);
                                 }}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        setSearchModalOpen(false);
+                                        openDrugDetail(drug);
+                                    }
+                                }}
                             >
                                 <div className={styles.resultTitleRow}>
-                                    <div className={styles.resultNameAndAtc}>
-                                        <span className={styles.resultName}>{drug.name}</span>
-                                        {drug.atc && drug.atc.length > 0 && (
-                                            <span className={styles.atcResultBadge}>
-                                                {drug.atc[0].code}
-                                            </span>
-                                        )}
-                                    </div>
+                                    <span className={styles.resultName}>{drug.name}</span>
                                     {drug.atc && drug.atc.length > 0 && (
-                                        <div className={styles.resultCategories}>
-                                            {drug.atc.map((item, idx) => (
-                                                <span key={idx} className={styles.resultBadge}>
-                                                    {item.subcategoryName || item.categoryName}
-                                                </span>
-                                            ))}
-                                        </div>
+                                        <span className={styles.atcResultBadge}>
+                                            {drug.atc[0].code}
+                                        </span>
                                     )}
                                 </div>
+                                {drug.atc && drug.atc.length > 0 && (
+                                    <div className={styles.resultCategories}>
+                                        {drug.atc.map((item, idx) => (
+                                            <span key={idx} className={styles.resultBadge}>
+                                                {item.subcategoryName || item.categoryName}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
                                 {drug.actionMechanism && (
                                     <span className={styles.resultSnippet}>{drug.actionMechanism}</span>
                                 )}
-                            </button>
+                            </div>
                         ))
                     ) : categoryResults.length > 0 ? null : (
                         <div className={styles.emptyState}>

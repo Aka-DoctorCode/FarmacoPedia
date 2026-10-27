@@ -112,46 +112,48 @@
 .resultCard {
     background: var(--bgCard);
     border: 1px solid var(--borderGlass);
-    border-radius: var(--radiusMd);
-    padding: 0.85rem 1rem;
+    border-radius: var(--radiusSm);
+    padding: 0.65rem 0.85rem;
     cursor: pointer;
     text-align: left;
     transition: all var(--transitionFast);
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
-    min-height: var(--touchTargetMin, 44px);
     width: 100%;
     -webkit-tap-highlight-color: transparent;
-    overflow-wrap: break-word;
+    user-select: none;
+    box-sizing: border-box;
+    position: relative;
 }
 
 .resultCard:hover {
     border-color: var(--colorPrimary);
     background: var(--bgCardHover);
-    transform: translateX(4px);
+    transform: translateX(2px);
+}
+
+.resultCard:focus-visible {
+    outline: 2px solid var(--colorPrimary);
+    outline-offset: 2px;
 }
 
 .resultTitleRow {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 0.5rem;
     flex-wrap: wrap;
-}
-
-.resultNameAndAtc {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    width: 100%;
 }
 
 .resultName {
     font-family: var(--fontHeading);
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: var(--textPrimary);
     text-transform: capitalize;
+    line-height: 1.3;
 }
 
 .atcResultBadge {
@@ -163,35 +165,41 @@
     color: var(--colorPrimary);
     background: rgba(14, 165, 233, 0.12);
     border: 1px solid rgba(14, 165, 233, 0.3);
-    padding: 0.12rem 0.45rem;
+    padding: 0.1rem 0.45rem;
     border-radius: var(--radiusPill);
     white-space: nowrap;
+    line-height: 1.2;
+    flex-shrink: 0;
 }
 
 .resultCategories {
     display: flex;
     gap: 0.35rem;
     flex-wrap: wrap;
+    width: 100%;
 }
 
 .resultBadge {
     font-size: 0.7rem;
-    padding: 0.15rem 0.5rem;
+    padding: 0.12rem 0.45rem;
     border-radius: var(--radiusPill);
     background: var(--colorInfoBg);
     color: var(--colorInfo);
     text-transform: none;
     font-weight: 600;
+    line-height: 1.25;
+    border: 1px solid rgba(129, 140, 248, 0.25);
+    word-break: break-word;
 }
 
 .resultSnippet {
-    font-size: 0.825rem;
+    font-size: 0.8rem;
     color: var(--textSecondary);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    line-height: 1.35;
+    line-height: 1.4;
     margin: 0;
 }
 
