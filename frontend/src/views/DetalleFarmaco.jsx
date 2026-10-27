@@ -17,25 +17,6 @@ const DetalleFarmaco = () => {
 
     const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'dosage' | 'risks' | 'safety' | 'references'
     const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
-    
-    // View modes for drug presentations: 'table' (compact rows) | 'grid' (cards) | 'tabs' (single presentation focus)
-    const [presentationViewMode, setPresentationViewMode] = useState(() => {
-        try {
-            return localStorage.getItem('farmacopedia_presentation_view') || 'table';
-        } catch {
-            return 'table';
-        }
-    });
-    const [selectedPresentationTab, setSelectedPresentationTab] = useState(0);
-
-    const handlePresentationViewModeChange = (mode) => {
-        setPresentationViewMode(mode);
-        try {
-            localStorage.setItem('farmacopedia_presentation_view', mode);
-        } catch {
-            // ignore localStorage quota errors
-        }
-    };
 
     const effectiveAtc = useMemo(() => {
         if (!selectedDrugData) return [];
@@ -192,9 +173,6 @@ const DetalleFarmaco = () => {
                         )}
                     </div>
                 </div>
-                {drug.actionMechanism && (
-                    <p className={styles.mechanismSnippet}>{drug.actionMechanism}</p>
-                )}
             </div>
 
             {/* Mobile Navigation Tabs */}
@@ -420,211 +398,57 @@ const DetalleFarmaco = () => {
                     {/* Section 2: Presentations & Dosage */}
                     <div id="sec-dosage" className={`${styles.sectionBlock} ${activeTab === 'dosage' ? styles.tabBlockActive : styles.tabBlockHidden}`}>
                         <div className={styles.sectionCard}>
-                        <div className={styles.sectionHeaderBetween}>
-                            <div className={styles.sectionHeaderTitleGroup}>
-                                <span className={styles.sectionIcon}>
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                                    </svg>
-                                </span>
-                                <h2 className={styles.sectionTitle}>{t.sectionPresentations}</h2>
-                            </div>
-
-                            {presentationsEntries.length > 0 && (
-                                <div className={styles.viewModeToggleGroup} role="group" aria-label={t.viewModeLabel || 'Modo de visualización'}>
-                                    <button
-                                        type="button"
-                                        className={`${styles.viewModeButton} ${presentationViewMode === 'table' ? styles.viewModeButtonActive : ''}`}
-                                        onClick={() => handlePresentationViewModeChange('table')}
-                                        title={t.viewModeTable}
-                                    >
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                            <line x1="3" y1="6" x2="21" y2="6" />
-                                            <line x1="3" y1="12" x2="21" y2="12" />
-                                            <line x1="3" y1="18" x2="21" y2="18" />
-                                        </svg>
-                                        <span className={styles.viewModeButtonLabel}>{t.viewModeTable}</span>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className={`${styles.viewModeButton} ${presentationViewMode === 'grid' ? styles.viewModeButtonActive : ''}`}
-                                        onClick={() => handlePresentationViewModeChange('grid')}
-                                        title={t.viewModeGrid}
-                                    >
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                            <rect x="3" y="3" width="7" height="7" rx="1.5" />
-                                            <rect x="14" y="3" width="7" height="7" rx="1.5" />
-                                            <rect x="14" y="14" width="7" height="7" rx="1.5" />
-                                            <rect x="3" y="14" width="7" height="7" rx="1.5" />
-                                        </svg>
-                                        <span className={styles.viewModeButtonLabel}>{t.viewModeGrid}</span>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className={`${styles.viewModeButton} ${presentationViewMode === 'tabs' ? styles.viewModeButtonActive : ''}`}
-                                        onClick={() => handlePresentationViewModeChange('tabs')}
-                                        title={t.viewModeTabs}
-                                    >
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                            <path d="M4 6h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" />
-                                            <line x1="2" y1="11" x2="22" y2="11" />
-                                            <line x1="9" y1="6" x2="9" y2="11" />
-                                        </svg>
-                                        <span className={styles.viewModeButtonLabel}>{t.viewModeTabs}</span>
-                                    </button>
-                                </div>
-                            )}
+                        <div className={styles.sectionHeader}>
+                            <span className={styles.sectionIcon}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                </svg>
+                            </span>
+                            <h2 className={styles.sectionTitle}>{t.sectionPresentations}</h2>
                         </div>
 
                         {presentationsEntries.length > 0 ? (
-                            <>
-                                {/* Modo 1: Tabla / Fila Compacta (Clean High-Density Medical Rows) */}
-                                {presentationViewMode === 'table' && (
-                                    <div className={styles.presentationsCompactList}>
-                                        {presentationsEntries.map(([formName, formValue], index) => (
-                                            <div key={index} className={styles.compactPresentationRow}>
-                                                <div className={styles.compactPresentationHeader}>
-                                                    <span className={styles.compactFormIcon}>
-                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                            <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z" />
-                                                            <path d="m8.5 8.5 7 7" />
-                                                        </svg>
+                            <div className={styles.presentationsCompactList}>
+                                {presentationsEntries.map(([formName, formValue], index) => (
+                                    <div key={index} className={styles.compactPresentationRow}>
+                                        <div className={styles.compactPresentationHeader}>
+                                            <span className={styles.compactFormIcon}>
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z" />
+                                                    <path d="m8.5 8.5 7 7" />
+                                                </svg>
+                                            </span>
+                                            <span className={styles.compactPresentationTitle}>{formName}</span>
+                                            <span className={styles.compactDosageCountBadge}>
+                                                {formValue.dosage?.length || 0} {formValue.dosage?.length === 1 ? 'dosis' : 'dosis'}
+                                            </span>
+                                        </div>
+                                        <div className={styles.compactDoseChipsWrapper}>
+                                            {formValue.dosage && formValue.dosage.map((dose, doseIdx) => (
+                                                <div key={doseIdx} className={styles.compactDoseChip}>
+                                                    <span className={styles.compactDoseAmount}>
+                                                        {dose.amount} {dose.unit}
                                                     </span>
-                                                    <span className={styles.compactPresentationTitle}>{formName}</span>
-                                                    <span className={styles.compactDosageCountBadge}>
-                                                        {formValue.dosage?.length || 0} {formValue.dosage?.length === 1 ? 'dosis' : 'dosis'}
-                                                    </span>
-                                                </div>
-                                                <div className={styles.compactDoseChipsWrapper}>
-                                                    {formValue.dosage && formValue.dosage.map((dose, doseIdx) => (
-                                                        <div key={doseIdx} className={styles.compactDoseChip}>
-                                                            <span className={styles.compactDoseAmount}>
-                                                                {dose.amount} {dose.unit}
-                                                            </span>
-                                                            {dose.useIn && (
-                                                                <span className={styles.useInBadge}>
-                                                                    {dose.useIn}
+                                                    {dose.useIn && (
+                                                        <span className={styles.useInBadge}>
+                                                            {dose.useIn}
+                                                        </span>
+                                                    )}
+                                                    {dose.route && dose.route.length > 0 && (
+                                                        <div className={styles.routeBadges}>
+                                                            {dose.route.map((r, rIdx) => (
+                                                                <span key={rIdx} className={styles.routeBadge}>
+                                                                    {r}
                                                                 </span>
-                                                            )}
-                                                            {dose.route && dose.route.length > 0 && (
-                                                                <div className={styles.routeBadges}>
-                                                                    {dose.route.map((r, rIdx) => (
-                                                                        <span key={rIdx} className={styles.routeBadge}>
-                                                                            {r}
-                                                                        </span>
-                                                                    ))}
-                                                                </div>
-                                                            )}
+                                                            ))}
                                                         </div>
-                                                    ))}
+                                                    )}
                                                 </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-
-                                {/* Modo 2: Cuadrícula de Tarjetas Clásica Mejorada */}
-                                {presentationViewMode === 'grid' && (
-                                    <div className={styles.presentationsGrid}>
-                                        {presentationsEntries.map(([formName, formValue], index) => (
-                                            <div key={index} className={styles.presentationCard}>
-                                                <div className={styles.presentationCardHeader}>
-                                                    <span className={styles.compactFormIcon}>
-                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                            <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z" />
-                                                            <path d="m8.5 8.5 7 7" />
-                                                        </svg>
-                                                    </span>
-                                                    <div className={styles.presentationTitle}>{formName}</div>
-                                                </div>
-                                                <div className={styles.dosageItemList}>
-                                                    {formValue.dosage && formValue.dosage.map((dose, doseIdx) => (
-                                                        <div key={doseIdx} className={styles.dosageItem}>
-                                                            <span className={styles.dosageAmount}>
-                                                                {dose.amount} {dose.unit}
-                                                            </span>
-                                                            {dose.useIn && (
-                                                                <span className={styles.useInBadge}>
-                                                                    {dose.useIn}
-                                                                </span>
-                                                            )}
-                                                            {dose.route && dose.route.length > 0 && (
-                                                                <div className={styles.routeBadges}>
-                                                                    {dose.route.map((r, rIdx) => (
-                                                                        <span key={rIdx} className={styles.routeBadge}>
-                                                                            {r}
-                                                                        </span>
-                                                                    ))}
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-
-                                {/* Modo 3: Pestañas / Tabs por Forma Farmacéutica */}
-                                {presentationViewMode === 'tabs' && (
-                                    <div className={styles.presentationTabsContainer}>
-                                        <div className={styles.subTabsPills} role="tablist">
-                                            {presentationsEntries.map(([formName], idx) => (
-                                                <button
-                                                    key={idx}
-                                                    type="button"
-                                                    role="tab"
-                                                    aria-selected={selectedPresentationTab === idx}
-                                                    className={`${styles.subTabPill} ${selectedPresentationTab === idx ? styles.subTabPillActive : ''}`}
-                                                    onClick={() => setSelectedPresentationTab(idx)}
-                                                >
-                                                    {formName}
-                                                </button>
                                             ))}
                                         </div>
-                                        {presentationsEntries[selectedPresentationTab] && (
-                                            <div className={styles.tabPresentationCardActive}>
-                                                <div className={styles.tabPresentationCardHeader}>
-                                                    <span className={styles.compactFormIcon}>
-                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                            <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z" />
-                                                            <path d="m8.5 8.5 7 7" />
-                                                        </svg>
-                                                    </span>
-                                                    <h3 className={styles.tabPresentationHeading}>
-                                                        {presentationsEntries[selectedPresentationTab][0]}
-                                                    </h3>
-                                                </div>
-                                                <div className={styles.tabDosageListGrid}>
-                                                    {presentationsEntries[selectedPresentationTab][1]?.dosage?.map((dose, doseIdx) => (
-                                                        <div key={doseIdx} className={styles.tabDosageCardItem}>
-                                                            <div className={styles.tabDoseItemMain}>
-                                                                <span className={styles.tabDosageAmount}>
-                                                                    {dose.amount} {dose.unit}
-                                                                </span>
-                                                                {dose.useIn && (
-                                                                    <span className={styles.useInBadge}>
-                                                                        {dose.useIn}
-                                                                    </span>
-                                                                )}
-                                                            </div>
-                                                            {dose.route && dose.route.length > 0 && (
-                                                                <div className={styles.routeBadges}>
-                                                                    {dose.route.map((r, rIdx) => (
-                                                                        <span key={rIdx} className={styles.routeBadge}>
-                                                                            {r}
-                                                                        </span>
-                                                                    ))}
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
                                     </div>
-                                )}
-                            </>
+                                ))}
+                            </div>
                         ) : (
                             <p className={styles.plainText}>{t.noData}</p>
                         )}
