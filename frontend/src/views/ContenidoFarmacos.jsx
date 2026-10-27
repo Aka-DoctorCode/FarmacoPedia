@@ -349,11 +349,14 @@ const ContenidoFarmacos = () => {
                                     </div>
                                     {drug.atc && drug.atc.length > 0 && (
                                         <div className={styles.itemCategoriesRow}>
-                                            {drug.atc.map((item, idx) => (
-                                                <span key={idx} className={styles.categoryPill}>
-                                                    {item.subcategoryName || item.categoryName}
-                                                </span>
-                                            ))}
+                                            {drug.atc.map((item, idx) => {
+                                                const catName = item.subcategoryName || item.categoryName;
+                                                return (
+                                                    <span key={idx} className={styles.categoryPill} title={catName}>
+                                                        {catName}
+                                                    </span>
+                                                );
+                                            })}
                                         </div>
                                     )}
                                 </div>
