@@ -192,75 +192,183 @@
     margin: 0;
 }
 
-/* Tabs Navigation: Segmented Control with Horizontal Touch Scrolling on Mobile */
-.tabsNav {
-    display: flex;
-    gap: 0.6rem;
-    background: var(--bgGlass);
-    padding: 0.45rem 0.55rem;
-    border-radius: var(--radiusLg);
-    border: 1px solid var(--borderGlass);
-    margin-bottom: 1.5rem;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    scroll-snap-type: x proximity;
-    scroll-padding: 0.55rem;
+/* Mobile Section Dropdown Navigation */
+.mobileSectionDropdownWrapper {
+    position: relative;
     width: 100%;
+    margin-bottom: 1.15rem;
+    z-index: 40;
+}
+
+.mobileSectionDropdownButton {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: var(--bgCard);
+    backdrop-filter: var(--backdropBlur);
+    -webkit-backdrop-filter: var(--backdropBlur);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusMd);
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    box-shadow: var(--shadowCard);
+    transition: all var(--transitionFast);
+    -webkit-tap-highlight-color: transparent;
+    text-align: left;
+}
+
+.mobileSectionDropdownButton:hover,
+.mobileSectionDropdownButtonActive {
+    border-color: var(--colorPrimary);
+    box-shadow: 0 4px 14px rgba(56, 189, 248, 0.15);
+}
+
+.mobileDropdownCurrentInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
     min-width: 0;
 }
 
-.tabsNav::-webkit-scrollbar {
-    display: none;
-}
-
-.tabButton {
-    flex: 0 0 auto;
-    min-width: auto;
-    min-height: var(--touchTargetMin, 44px);
-    background: var(--bgCard);
-    border: 1px solid var(--borderGlass);
-    color: var(--textSecondary);
-    padding: 0.65rem 1.15rem;
-    border-radius: var(--radiusPill);
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all var(--transitionFast);
+.mobileDropdownIcon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    white-space: nowrap;
-    scroll-snap-align: start;
-    -webkit-tap-highlight-color: transparent;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-}
-
-.tabButton svg {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radiusSm);
+    background: rgba(56, 189, 248, 0.12);
     color: var(--colorPrimary);
-    transition: all var(--transitionFast);
     flex-shrink: 0;
 }
 
-.tabButton:hover {
-    color: var(--textPrimary);
-    background: var(--bgCardHover);
-    border-color: var(--borderGlassHover);
-    transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+.mobileDropdownTextGroup {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
 }
 
-.tabButtonActive {
-    background: linear-gradient(135deg, var(--colorPrimary) 0%, var(--colorPrimaryDark) 100%);
-    border-color: transparent;
-    color: #ffffff;
-    box-shadow: 0 4px 14px var(--colorPrimaryGlow);
+.mobileDropdownLabel {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--colorPrimary);
+}
+
+.mobileDropdownCurrentTitle {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--textPrimary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mobileDropdownChevron {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--textMuted);
+    transition: transform var(--transitionFast), color var(--transitionFast);
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+}
+
+.mobileDropdownChevronOpen {
+    transform: rotate(180deg);
+    color: var(--colorPrimary);
+}
+
+/* Dropdown Backdrop & Menu */
+.mobileDropdownBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 45;
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+}
+
+.mobileDropdownMenu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: var(--bgCard);
+    backdrop-filter: var(--backdropBlur);
+    -webkit-backdrop-filter: var(--backdropBlur);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusMd);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    padding: 0.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    z-index: 50;
+    animation: fadeIn 0.15s ease-out;
+}
+
+.mobileDropdownItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem 0.85rem;
+    border-radius: var(--radiusSm);
+    border: none;
+    background: transparent;
+    color: var(--textSecondary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    transition: all var(--transitionFast);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.mobileDropdownItemIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--textMuted);
+    flex-shrink: 0;
+}
+
+.mobileDropdownItemTitle {
+    flex: 1;
+    min-width: 0;
+}
+
+.mobileDropdownCheck {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--colorPrimary);
+    flex-shrink: 0;
+}
+
+.mobileDropdownItem:hover {
+    background: rgba(56, 189, 248, 0.08);
+    color: var(--textPrimary);
+}
+
+.mobileDropdownItem:hover .mobileDropdownItemIcon {
+    color: var(--colorPrimary);
+}
+
+.mobileDropdownItemActive {
+    background: rgba(56, 189, 248, 0.15);
+    color: var(--colorPrimary);
     font-weight: 700;
 }
 
-.tabButtonActive svg {
-    color: #ffffff;
+.mobileDropdownItemActive .mobileDropdownItemIcon {
+    color: var(--colorPrimary);
 }
 
 .tabButtonActive:hover {
@@ -1017,8 +1125,8 @@
         padding: 0 0.85rem 2rem;
     }
 
-    /* Ocultar barra horizontal de pestañas en desktop ya que usamos el sidebar clínico */
-    .tabsNav {
+    /* Ocultar selector móvil en desktop ya que usamos el sidebar clínico */
+    .mobileSectionDropdownWrapper {
         display: none;
     }
 

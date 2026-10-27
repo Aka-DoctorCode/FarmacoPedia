@@ -17,6 +17,62 @@ const DetalleFarmaco = () => {
 
     const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'dosage' | 'risks' | 'safety' | 'references'
     const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
+    const [isSectionDropdownOpen, setIsSectionDropdownOpen] = useState(false);
+
+    const clinicalSections = useMemo(() => [
+        {
+            id: 'overview',
+            title: t.tabOverview,
+            icon: (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 16v-4" />
+                    <path d="M12 8h.01" />
+                </svg>
+            )
+        },
+        {
+            id: 'dosage',
+            title: t.tabDosage,
+            icon: (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z" />
+                    <path d="m8.5 8.5 7 7" />
+                </svg>
+            )
+        },
+        {
+            id: 'risks',
+            title: t.tabRisks,
+            icon: (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+            )
+        },
+        {
+            id: 'safety',
+            title: t.tabSafety,
+            icon: (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+                </svg>
+            )
+        },
+        {
+            id: 'references',
+            title: t.tabReferences,
+            icon: (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+                    <path d="M6 6h10" />
+                    <path d="M6 10h10" />
+                </svg>
+            )
+        }
+    ], [t]);
 
     const effectiveAtc = useMemo(() => {
         if (!selectedDrugData) return [];
@@ -176,74 +232,68 @@ const DetalleFarmaco = () => {
             </div>
 
             {/* Mobile Navigation Tabs */}
-            <div className={styles.tabsNav} role="tablist">
+            {/* Mobile Section Dropdown Navigation */}
+            <div className={styles.mobileSectionDropdownWrapper}>
                 <button
                     type="button"
-                    className={`${styles.tabButton} ${activeTab === 'overview' ? styles.tabButtonActive : ''}`}
-                    onClick={() => setActiveTab('overview')}
-                    role="tab"
-                    aria-selected={activeTab === 'overview'}
+                    className={`${styles.mobileSectionDropdownButton} ${isSectionDropdownOpen ? styles.mobileSectionDropdownButtonActive : ''}`}
+                    onClick={() => setIsSectionDropdownOpen(!isSectionDropdownOpen)}
+                    aria-expanded={isSectionDropdownOpen}
+                    aria-haspopup="listbox"
+                    aria-label="Seleccionar sección clínica"
                 >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="M12 16v-4" />
-                        <path d="M12 8h.01" />
-                    </svg>
-                    {t.tabOverview}
+                    <div className={styles.mobileDropdownCurrentInfo}>
+                        <span className={styles.mobileDropdownIcon}>
+                            {clinicalSections.find(s => s.id === activeTab)?.icon}
+                        </span>
+                        <div className={styles.mobileDropdownTextGroup}>
+                            <span className={styles.mobileDropdownLabel}>Sección clínica</span>
+                            <span className={styles.mobileDropdownCurrentTitle}>
+                                {clinicalSections.find(s => s.id === activeTab)?.title}
+                            </span>
+                        </div>
+                    </div>
+                    <span className={`${styles.mobileDropdownChevron} ${isSectionDropdownOpen ? styles.mobileDropdownChevronOpen : ''}`}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </span>
                 </button>
-                <button
-                    type="button"
-                    className={`${styles.tabButton} ${activeTab === 'dosage' ? styles.tabButtonActive : ''}`}
-                    onClick={() => setActiveTab('dosage')}
-                    role="tab"
-                    aria-selected={activeTab === 'dosage'}
-                >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z" />
-                        <path d="m8.5 8.5 7 7" />
-                    </svg>
-                    {t.tabDosage}
-                </button>
-                <button
-                    type="button"
-                    className={`${styles.tabButton} ${activeTab === 'risks' ? styles.tabButtonActive : ''}`}
-                    onClick={() => setActiveTab('risks')}
-                    role="tab"
-                    aria-selected={activeTab === 'risks'}
-                >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
-                        <line x1="12" y1="9" x2="12" y2="13" />
-                        <line x1="12" y1="17" x2="12.01" y2="17" />
-                    </svg>
-                    {t.tabRisks}
-                </button>
-                <button
-                    type="button"
-                    className={`${styles.tabButton} ${activeTab === 'safety' ? styles.tabButtonActive : ''}`}
-                    onClick={() => setActiveTab('safety')}
-                    role="tab"
-                    aria-selected={activeTab === 'safety'}
-                >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
-                    </svg>
-                    {t.tabSafety}
-                </button>
-                <button
-                    type="button"
-                    className={`${styles.tabButton} ${activeTab === 'references' ? styles.tabButtonActive : ''}`}
-                    onClick={() => setActiveTab('references')}
-                    role="tab"
-                    aria-selected={activeTab === 'references'}
-                >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
-                        <path d="M6 6h10" />
-                        <path d="M6 10h10" />
-                    </svg>
-                    {t.tabReferences}
-                </button>
+
+                {isSectionDropdownOpen && (
+                    <>
+                        <div
+                            className={styles.mobileDropdownBackdrop}
+                            onClick={() => setIsSectionDropdownOpen(false)}
+                            aria-hidden="true"
+                        />
+                        <div className={styles.mobileDropdownMenu} role="listbox">
+                            {clinicalSections.map((sec) => (
+                                <button
+                                    key={sec.id}
+                                    type="button"
+                                    role="option"
+                                    aria-selected={activeTab === sec.id}
+                                    className={`${styles.mobileDropdownItem} ${activeTab === sec.id ? styles.mobileDropdownItemActive : ''}`}
+                                    onClick={() => {
+                                        setActiveTab(sec.id);
+                                        setIsSectionDropdownOpen(false);
+                                    }}
+                                >
+                                    <span className={styles.mobileDropdownItemIcon}>{sec.icon}</span>
+                                    <span className={styles.mobileDropdownItemTitle}>{sec.title}</span>
+                                    {activeTab === sec.id && (
+                                        <span className={styles.mobileDropdownCheck}>
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                <polyline points="20 6 9 17 4 12" />
+                                            </svg>
+                                        </span>
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+                    </>
+                )}
             </div>
 
             {/* Main Dual Workspace: Desktop Sidebar + Sections Stream */}
