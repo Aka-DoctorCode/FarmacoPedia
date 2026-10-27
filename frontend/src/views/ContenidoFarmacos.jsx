@@ -2,6 +2,7 @@ import { useContext, useEffect, useState, useMemo, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { counterContext } from '../context/counterContext.js';
 import { drugService } from '../services/drugService.js';
+import { filterDrugsByQuery } from '../utils/drugSearch.js';
 import styles from './ContenidoFarmacos.module.css';
 
 const BATCH_SIZE = 24;
@@ -13,15 +14,13 @@ const getIsMobile = () => (typeof window !== 'undefined' ? window.innerWidth < 1
 const ContenidoFarmacos = () => {
     const {
         openDrugDetail,
-        selectedFamily,
-        setSelectedFamily,
         t
     } = useContext(counterContext);
 
     const [isMobile, setIsMobile] = useState(getIsMobile);
     const [drugs, setDrugs] = useState([]);
     const [categories, setCategories] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState(selectedFamily || 'all');
+    const [selectedCategory, setSelectedCategory] = useState('all');
     const [filterInput, setFilterInput] = useState('');
     const [debouncedFilter, setDebouncedFilter] = useState('');
     const [isLoading, setIsLoading] = useState(true);
@@ -45,12 +44,6 @@ const ContenidoFarmacos = () => {
         }, 250);
         return () => clearTimeout(timer);
     }, [filterInput]);
-
-    useEffect(() => {
-        if (selectedFamily) {
-            setSelectedCategory(selectedFamily);
-        }
-    }, [selectedFamily]);
 
     useEffect(() => {
         let isMounted = true;
@@ -142,30 +135,19 @@ const ContenidoFarmacos = () => {
         const selLower = String(selectedCategory || 'all').toLowerCase();
         const query = debouncedFilter;
 
-        return drugs.filter((drug) => {
-            const matchesCategory =
-                selLower === 'all' ||
-                drug.atc?.some((a) => 
+        const inCategory = selLower === 'all'
+            ? drugs
+            : drugs.filter((drug) =>
+                drug.atc?.some((a) =>
                     a.categoryCode?.toLowerCase() === selLower ||
                     a.categoryName?.toLowerCase() === selLower ||
                     a.subcategoryCode?.toLowerCase() === selLower ||
                     a.subcategoryName?.toLowerCase() === selLower ||
                     a.code?.toLowerCase() === selLower
-                );
+                )
+            );
 
-            const matchesQuery =
-                !query ||
-                drug.name?.toLowerCase().includes(query) ||
-                drug.actionMechanism?.toLowerCase().includes(query) ||
-                drug.atc?.some((a) =>
-                    a.code?.toLowerCase().includes(query) ||
-                    a.subcategoryCode?.toLowerCase().includes(query) ||
-                    a.subcategoryName?.toLowerCase().includes(query) ||
-                    a.categoryName?.toLowerCase() === query
-                );
-
-            return matchesCategory && matchesQuery;
-        });
+        return filterDrugsByQuery(inCategory, query, { includeMechanism: true });
     }, [drugs, selectedCategory, debouncedFilter]);
 
     // En móvil, cuando no hay búsqueda de texto activa:
@@ -344,7 +326,6 @@ const ContenidoFarmacos = () => {
                                 key={drug.id || drug._id || drug.name}
                                 className={styles.drugListItem}
                                 onClick={() => {
-                                    setSelectedFamily(null);
                                     openDrugDetail(drug);
                                 }}
                                 role="button"
@@ -352,7 +333,6 @@ const ContenidoFarmacos = () => {
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter' || e.key === ' ') {
                                         if (e.key === ' ') e.preventDefault();
-                                        setSelectedFamily(null);
                                         openDrugDetail(drug);
                                     }
                                 }}

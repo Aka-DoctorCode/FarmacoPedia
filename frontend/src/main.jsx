@@ -15,13 +15,7 @@ const getBasename = () => {
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <HelmetProvider>
-        <BrowserRouter 
-            basename={getBasename()}
-            future={{
-                v7_startTransition: true,
-                v7_relativeSplatPath: true,
-            }}
-        >
+        <BrowserRouter basename={getBasename()}>
             <StateContext>
                 <Routes>
                     <Route path='/*' element={<App />} />

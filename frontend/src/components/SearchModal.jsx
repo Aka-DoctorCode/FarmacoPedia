@@ -1,6 +1,7 @@
 import { useContext, useState, useEffect, useRef } from 'react';
 import { counterContext } from '../context/counterContext.js';
 import { drugService } from '../services/drugService.js';
+import { filterDrugsByQuery, searchAtcCategories } from '../utils/drugSearch.js';
 import styles from './SearchModal.module.css';
 
 const SearchModal = () => {
@@ -8,12 +9,13 @@ const SearchModal = () => {
         searchModalOpen,
         setSearchModalOpen,
         openDrugDetail,
-        setSelectedFamily,
+        navigateToFamilies,
         t
     } = useContext(counterContext);
 
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
+    const [categoryResults, setCategoryResults] = useState([]);
     const [allDrugs, setAllDrugs] = useState([]);
     const [reportedQuery, setReportedQuery] = useState('');
     const [isReporting, setIsReporting] = useState(false);
@@ -46,6 +48,7 @@ const SearchModal = () => {
             document.body.style.overflow = '';
             setQuery('');
             setResults([]);
+            setCategoryResults([]);
             setReportedQuery('');
         }
         return () => {
@@ -77,21 +80,17 @@ const SearchModal = () => {
         const timer = setTimeout(async () => {
             const trimmed = query.trim().toLowerCase();
             if (!trimmed) {
-                if (isMounted) setResults(allDrugs.slice(0, 10));
+                if (isMounted) {
+                    setCategoryResults([]);
+                    setResults(allDrugs.slice(0, 10));
+                }
                 return;
             }
 
+            if (isMounted) setCategoryResults(searchAtcCategories(trimmed));
+
             if (allDrugs && allDrugs.length > 0) {
-                const filtered = allDrugs.filter((drug) => {
-                    const nameMatch = drug.name?.toLowerCase().includes(trimmed);
-                    const atcMatch = (drug.atc || []).some((a) =>
-                        a.code?.toLowerCase().includes(trimmed) ||
-                        a.subcategoryCode?.toLowerCase().includes(trimmed) ||
-                        a.subcategoryName?.toLowerCase().includes(trimmed) ||
-                        a.categoryName?.toLowerCase().includes(trimmed)
-                    );
-                    return nameMatch || atcMatch;
-                });
+                const filtered = filterDrugsByQuery(allDrugs, trimmed);
                 if (isMounted) setResults(filtered.slice(0, 25));
                 return;
             }
@@ -129,7 +128,7 @@ const SearchModal = () => {
                         type="text"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Buscar por fármaco, indicación o código ATC (ej. N02, B01)..."
+                        placeholder="Buscar fármaco, familia o código ATC (ej. macrólidos, N02, B01)..."
                     />
                     <button
                         type="button"
@@ -145,6 +144,33 @@ const SearchModal = () => {
                 </div>
 
                 <div className={styles.resultsList}>
+                    {categoryResults.length > 0 && (
+                        <>
+                            <span className={styles.sectionLabel}>Familias y categorías ATC</span>
+                            {categoryResults.map((node) => (
+                                <button
+                                    key={node.code}
+                                    type="button"
+                                    className={styles.resultCard}
+                                    onClick={() => {
+                                        setSearchModalOpen(false);
+                                        navigateToFamilies(node.code);
+                                    }}
+                                >
+                                    <div className={styles.resultTitleRow}>
+                                        <div className={styles.resultNameAndAtc}>
+                                            <span className={styles.resultName}>{node.name}</span>
+                                            <span className={styles.atcResultBadge}>{node.code}</span>
+                                        </div>
+                                        <div className={styles.resultCategories}>
+                                            <span className={styles.resultBadge}>Nivel {node.level} ATC</span>
+                                        </div>
+                                    </div>
+                                </button>
+                            ))}
+                            {results.length > 0 && <span className={styles.sectionLabel}>Fármacos</span>}
+                        </>
+                    )}
                     {results.length > 0 ? (
                         results.map((drug) => (
                             <button
@@ -152,7 +178,6 @@ const SearchModal = () => {
                                 type="button"
                                 className={styles.resultCard}
                                 onClick={() => {
-                                    setSelectedFamily(null);
                                     setSearchModalOpen(false);
                                     openDrugDetail(drug);
                                 }}
@@ -181,7 +206,7 @@ const SearchModal = () => {
                                 )}
                             </button>
                         ))
-                    ) : (
+                    ) : categoryResults.length > 0 ? null : (
                         <div className={styles.emptyState}>
                             <p>{t.emptyDrugsMessage}</p>
                             {query.trim().length >= 2 && (

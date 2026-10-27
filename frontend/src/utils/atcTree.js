@@ -427,8 +427,11 @@ export function buildPathFromCode(targetCode) {
 /**
  * Búsqueda predictiva global en el árbol ATC y fármacos registrados.
  */
-export function searchAtcTree(query, allDrugs = []) {
-    const q = (query || '').toLowerCase().trim();
+const normalizeForSearch = (value) =>
+    String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+
+export function searchAtcTree(query, allDrugs = [], { drugsPrefiltered = false } = {}) {
+    const q = normalizeForSearch(query);
     if (!q) return [];
 
     const results = [];
@@ -436,11 +439,11 @@ export function searchAtcTree(query, allDrugs = []) {
     // 1. Buscar en fármacos registrados
     allDrugs.forEach((drug) => {
         const drugCode = getDrugAtcCode(drug) || '';
-        const nameMatch = drug.name?.toLowerCase().includes(q);
-        const codeMatch = drugCode.toLowerCase().includes(q);
-        const mechanismMatch = drug.actionMechanism?.toLowerCase().includes(q);
+        const nameMatch = normalizeForSearch(drug.name).includes(q);
+        const codeMatch = normalizeForSearch(drugCode).includes(q);
+        const mechanismMatch = normalizeForSearch(drug.actionMechanism).includes(q);
 
-        if (nameMatch || codeMatch || mechanismMatch) {
+        if (drugsPrefiltered || nameMatch || codeMatch || mechanismMatch) {
             const path = buildPathFromCode(drugCode);
             results.push({
                 type: 'drug',
@@ -456,7 +459,7 @@ export function searchAtcTree(query, allDrugs = []) {
 
     // 2. Buscar en Nivel 4
     Object.values(ATC_LEVEL_4).forEach((item) => {
-        if (item.code.toLowerCase().includes(q) || item.name.toLowerCase().includes(q)) {
+        if (normalizeForSearch(item.code).includes(q) || normalizeForSearch(item.name).includes(q)) {
             results.push({
                 type: 'node',
                 title: item.name,
@@ -469,7 +472,7 @@ export function searchAtcTree(query, allDrugs = []) {
 
     // 3. Buscar en Nivel 3
     Object.values(ATC_LEVEL_3).forEach((item) => {
-        if (item.code.toLowerCase().includes(q) || item.name.toLowerCase().includes(q)) {
+        if (normalizeForSearch(item.code).includes(q) || normalizeForSearch(item.name).includes(q)) {
             results.push({
                 type: 'node',
                 title: item.name,
@@ -482,7 +485,7 @@ export function searchAtcTree(query, allDrugs = []) {
 
     // 4. Buscar en Nivel 2
     Object.values(ATC_LEVEL_2).forEach((item) => {
-        if (item.code.toLowerCase().includes(q) || item.name.toLowerCase().includes(q)) {
+        if (normalizeForSearch(item.code).includes(q) || normalizeForSearch(item.name).includes(q)) {
             results.push({
                 type: 'node',
                 title: item.name,
@@ -495,7 +498,7 @@ export function searchAtcTree(query, allDrugs = []) {
 
     // 5. Buscar en Nivel 1
     Object.values(ATC_LEVEL_1).forEach((item) => {
-        if (item.code.toLowerCase().includes(q) || item.name.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q)) {
+        if (normalizeForSearch(item.code).includes(q) || normalizeForSearch(item.name).includes(q) || normalizeForSearch(item.desc).includes(q)) {
             results.push({
                 type: 'node',
                 title: item.name,
@@ -506,5 +509,8 @@ export function searchAtcTree(query, allDrugs = []) {
         }
     });
 
-    return results.slice(0, 30);
+    // Categorías ATC primero (más específicas antes), luego fármacos
+    const nodes = results.filter((r) => r.type === 'node').sort((a, b) => b.level - a.level);
+    const drugs = results.filter((r) => r.type === 'drug');
+    return [...nodes, ...drugs].slice(0, 40);
 }

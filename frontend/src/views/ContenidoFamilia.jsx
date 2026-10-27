@@ -10,26 +10,27 @@ import {
     searchAtcTree
 } from '../utils/atcTree.js';
 import { formatCategory } from '../utils/formatCategory.js';
+import { filterDrugsByQuery } from '../utils/drugSearch.js';
 import styles from './ContenidoFamilia.module.css';
 
 const ContenidoFamilia = () => {
     const {
         openDrugDetail,
+        navigateToFamilies,
         selectedFamily,
-        setSelectedFamily,
         t
     } = useContext(counterContext);
 
     const [allDrugs, setAllDrugs] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    // currentPath: Array of { code: string, name: string, level: number }
-    // [] = Level 1 (Anatomical Root)
-    // [{ code: 'J', name: 'Antiinfecciosos...', level: 1 }] = Level 2 (Therapeutic Main Group)
-    // [..., { code: 'J01', name: 'Antibacterianos...', level: 2 }] = Level 3 (Pharmacological Group)
-    // [..., { code: 'J01D', name: 'Otros Betalactámicos...', level: 3 }] = Level 4 (Chemical Subgroup / Generation)
-    // [..., { code: 'J01DD', name: 'Cefalosporinas 3.ª gen', level: 4 }] = Level 5 (Active Substances / Drugs)
-    const [currentPath, setCurrentPath] = useState([]);
+    // currentPath se deriva de la URL (/atc/:code): Array de { code, name, level }
+    // [] = Nivel 1 (raíz anatómica); cada elemento adicional profundiza un nivel (hasta el Nivel 4).
+    // Nivel 5 = fármacos individuales (/farmaco/:name).
+    const currentPath = useMemo(
+        () => (selectedFamily ? buildPathFromCode(selectedFamily) : []),
+        [selectedFamily]
+    );
 
     // Filter toggle: show only branches that contain registered drugs
     const [filterOnlyWithDrugs, setFilterOnlyWithDrugs] = useState(false);
@@ -66,15 +67,6 @@ const ContenidoFamilia = () => {
             isMounted = false;
         };
     }, []);
-
-    // Handle deep navigation if selectedFamily is passed from context
-    useEffect(() => {
-        if (!selectedFamily) return;
-        const path = buildPathFromCode(selectedFamily);
-        if (path.length > 0) {
-            setCurrentPath(path);
-        }
-    }, [selectedFamily]);
 
     // Current navigation level: 0 = Root (displays Level 1), 1 = Level 2, 2 = Level 3, 3 = Level 4, 4 = Leaf (Level 5)
     const currentLevel = currentPath.length;
@@ -125,48 +117,38 @@ const ContenidoFamilia = () => {
     // Search results when typing (using debounced query)
     const searchResults = useMemo(() => {
         if (!debouncedSearchQuery) return [];
-        return searchAtcTree(debouncedSearchQuery, allDrugs);
+        return searchAtcTree(
+            debouncedSearchQuery,
+            filterDrugsByQuery(allDrugs, debouncedSearchQuery, { includeMechanism: true }),
+            { drugsPrefiltered: true }
+        );
     }, [debouncedSearchQuery, allDrugs]);
 
-    // Navigation actions
+    // Navigation actions (cada nivel es una ruta propia: /atc/:code)
     const handleDrillDown = (node) => {
-        setCurrentPath((prev) => [
-            ...prev,
-            {
-                code: node.code,
-                name: node.name,
-                level: node.level
-            }
-        ]);
+        navigateToFamilies(node.code);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleNavigateToBreadcrumb = (index) => {
-        if (index === -1) {
-            setCurrentPath([]);
-        } else {
-            setCurrentPath((prev) => prev.slice(0, index + 1));
-        }
+        navigateToFamilies(index === -1 ? null : currentPath[index].code);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleBackOneLevel = () => {
-        setCurrentPath((prev) => prev.slice(0, -1));
+        navigateToFamilies(currentPath.length > 1 ? currentPath[currentPath.length - 2].code : null);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleSelectDrug = (drug) => {
-        if (currentNode) {
-            setSelectedFamily(currentNode.code);
-        }
         openDrugDetail(drug);
     };
 
     const handleSelectSearchResult = (result) => {
         if (result.type === 'drug' && result.drug) {
             openDrugDetail(result.drug);
-        } else if (result.path && result.path.length > 0) {
-            setCurrentPath(result.path);
+        } else if (result.code) {
+            navigateToFamilies(result.code);
             setSearchQuery('');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }

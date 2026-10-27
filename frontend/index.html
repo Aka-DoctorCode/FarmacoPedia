@@ -21,6 +21,15 @@
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:title" content="ClickSalud FarmacoPedia | Diccionario de Fármacos" />
     <meta property="twitter:description" content="Consulta información detallada sobre fármacos y familias farmacológicas." />
+    <script>
+      // Restaura la ruta original tras la redirección de 404.html (GitHub Pages SPA fallback)
+      (function (l) {
+        if (l.search[1] === '/') {
+          var decoded = l.search.slice(1).split('&').map(function (s) { return s.replace(/~and~/g, '&'); }).join('?');
+          window.history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash);
+        }
+      }(window.location));
+    </script>
   </head>
   <body>
     <div id="root"></div>

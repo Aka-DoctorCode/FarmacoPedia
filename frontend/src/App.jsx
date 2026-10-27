@@ -1,5 +1,6 @@
 import { useContext, useEffect, lazy, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useLocation } from 'react-router-dom';
 import { counterContext } from './context/counterContext.js';
 import Navbar from './components/Navbar.jsx';
 import BottomNav from './components/BottomNav.jsx';
@@ -20,10 +21,11 @@ const ViewFallback = () => (
 
 const App = () => {
     const { activeView, selectedDrugName, t } = useContext(counterContext);
+    const { pathname } = useLocation();
 
     useEffect(() => {
         window.scrollTo(0, 0);
-    }, [activeView, selectedDrugName]);
+    }, [pathname]);
 
     return (
         <>
