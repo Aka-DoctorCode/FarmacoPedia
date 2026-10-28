@@ -22,8 +22,23 @@ const tokenize = (query) => normalizeText(query).split(/\s+/).filter(Boolean);
 const indexCache = new WeakMap();
 
 /**
+ * Sinónimos, nombres comerciales universales y variantes ortográficas comunes
+ * para enriquecer la búsqueda de fármacos independientemente de cómo los busque el usuario.
+ */
+export const DRUG_SYNONYMS = {
+    paracetamol: ['acetaminofen', 'acetaminofeno', 'acetamifen', 'tylenol', 'panadol', 'tempra'],
+    'acetaminofén (paracetamol)': ['paracetamol', 'acetamifen', 'acetaminofeno', 'tylenol', 'panadol', 'tempra'],
+    'paracetamol intravenoso': ['perfalgan', 'acetaminofen iv', 'acetaminofen'],
+    'ácido acetilsalicílico': ['aspirina', 'asa', 'aspirin'],
+    dipirona: ['metamizol', 'nolotil', 'novalgina'],
+    metamizol: ['dipirona', 'nolotil', 'novalgina'],
+    ibuprofeno: ['advil', 'motrin'],
+    salbutamol: ['albuterol', 'ventolin']
+};
+
+/**
  * Construye (y cachea por objeto fármaco) un texto indexable con:
- * nombre, códigos ATC, nombres de categoría de la API y nombres oficiales
+ * nombre, sinónimos clínicos, códigos ATC, nombres de categoría de la API y nombres oficiales
  * de los niveles 1-4 de la clasificación ATC de la OMS.
  */
 const getDrugIndex = (drug) => {
@@ -31,6 +46,18 @@ const getDrugIndex = (drug) => {
     if (cached) return cached;
 
     const parts = [drug.name];
+    const cleanName = normalizeText(drug.name);
+    
+    // Añadir sinónimos directos o basados en el nombre
+    if (DRUG_SYNONYMS[cleanName]) {
+        parts.push(...DRUG_SYNONYMS[cleanName]);
+    }
+    Object.entries(DRUG_SYNONYMS).forEach(([key, syns]) => {
+        if (cleanName.includes(key)) {
+            parts.push(...syns);
+        }
+    });
+
     const code = getDrugAtcCode(drug);
     const codes = new Set(code ? [code] : []);
 
