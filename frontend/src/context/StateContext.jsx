@@ -66,7 +66,13 @@ const StateContext = ({ children }) => {
     const { activeView, selectedDrugName, atcCode } = useMemo(() => {
         const drugMatch = matchPath('/farmaco/:name', location.pathname);
         if (drugMatch) {
-            return { activeView: 'drugDetail', selectedDrugName: drugMatch.params.name, atcCode: null };
+            let parsedName = drugMatch.params.name;
+            try {
+                parsedName = decodeURIComponent(parsedName);
+            } catch {
+                // conservar si no es decodificable
+            }
+            return { activeView: 'drugDetail', selectedDrugName: parsedName, atcCode: null };
         }
         const atcMatch = matchPath('/atc/:code', location.pathname);
         if (atcMatch) {

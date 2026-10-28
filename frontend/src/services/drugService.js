@@ -136,7 +136,14 @@ class DrugService {
 
     async getDrugByName(drugName) {
         try {
-            const response = await axios.get(`${this.apiBaseUrl}/drugs/${encodeURIComponent(drugName.toLowerCase())}`, { timeout: this.requestTimeout });
+            let cleanName = String(drugName ?? '').trim();
+            // Si viene pre-codificado por la URL (ej. acetaminof%C3%A9n%20(paracetamol)), decodificar primero
+            try {
+                cleanName = decodeURIComponent(cleanName);
+            } catch {
+                // Si el nombre no es una secuencia URI válida, conservar el original
+            }
+            const response = await axios.get(`${this.apiBaseUrl}/drugs/${encodeURIComponent(cleanName.toLowerCase())}`, { timeout: this.requestTimeout });
             if (response.data && response.data.success && response.data.data) {
                 return { success: true, data: response.data.data };
             }
