@@ -1,0 +1,15 @@
+{
+  "name": "farmacopedia-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ClickSalud FarmacoPedia Workspace & Tools",
+  "scripts": {
+    "editor": "node tools/editor/server.js",
+    "audit:db": "node tools/audit-db.js",
+    "audit:folder": "node tools/audit-folder.js \"auditoria final\"",
+    "audit:record": "node tools/check-record.js",
+    "frontend:dev": "pnpm --dir frontend dev",
+    "frontend:build": "pnpm --dir frontend build",
+    "backend:start": "pnpm --dir backend start"
+  }
+}
