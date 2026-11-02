@@ -1,9 +1,10 @@
 import { useContext } from 'react';
+import { Link } from 'react-router-dom';
 import { counterContext } from '../context/counterContext.js';
 import styles from './Footer.module.css';
 
 const Footer = () => {
-    const { t } = useContext(counterContext);
+    const { t, openDisclaimerModal } = useContext(counterContext);
 
     return (
         <footer className={styles.footerContainer}>
@@ -14,10 +15,21 @@ const Footer = () => {
                             <span className={styles.brandName}>{t.appName}</span>
                             <span className={styles.dividerDot} aria-hidden="true">•</span>
                             <span className={styles.copyrightText}>
-                                © {new Date().getFullYear()} <span className={styles.authorHighlight}>Aka-DoctorCode</span>
+                                © {new Date().getFullYear()} <span className={styles.authorHighlight}>Dr. Francisco Molina (Aka-DoctorCode)</span>
                             </span>
                         </div>
                         <p className={styles.noticeText}>{t.footerNotice}</p>
+                        <nav className={styles.legalLinksRow} aria-label="Enlaces Legales e Institucionales">
+                            <Link to="/about" className={styles.legalLink}>{t.navAbout || 'Sobre Nosotros'}</Link>
+                            <span className={styles.dividerDot} aria-hidden="true">•</span>
+                            <Link to="/privacy" className={styles.legalLink}>{t.navPrivacy || 'Privacidad y Cookies'}</Link>
+                            <span className={styles.dividerDot} aria-hidden="true">•</span>
+                            <Link to="/terms" className={styles.legalLink}>{t.navTerms || 'Términos de Uso'}</Link>
+                            <span className={styles.dividerDot} aria-hidden="true">•</span>
+                            <button type="button" onClick={openDisclaimerModal} className={styles.legalLink}>
+                                {t.navDisclaimer || 'Descargo Médico'}
+                            </button>
+                        </nav>
                     </div>
 
                     <div className={styles.linksRow}>

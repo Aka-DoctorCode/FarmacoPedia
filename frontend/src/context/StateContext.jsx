@@ -64,6 +64,15 @@ const StateContext = ({ children }) => {
     const location = useLocation();
 
     const { activeView, selectedDrugName, atcCode } = useMemo(() => {
+        if (matchPath('/about', location.pathname)) {
+            return { activeView: 'about', selectedDrugName: null, atcCode: null };
+        }
+        if (matchPath('/privacy', location.pathname)) {
+            return { activeView: 'privacy', selectedDrugName: null, atcCode: null };
+        }
+        if (matchPath('/terms', location.pathname)) {
+            return { activeView: 'terms', selectedDrugName: null, atcCode: null };
+        }
         const drugMatch = matchPath('/farmaco/:name', location.pathname);
         if (drugMatch) {
             let parsedName = drugMatch.params.name;
@@ -133,6 +142,22 @@ const StateContext = ({ children }) => {
         navigate(familyCategory ? `/atc/${encodeURIComponent(familyCategory)}` : '/atc');
     }, [navigate]);
 
+    const navigateToAbout = useCallback(() => {
+        navigate('/about');
+    }, [navigate]);
+
+    const navigateToPrivacy = useCallback(() => {
+        navigate('/privacy');
+    }, [navigate]);
+
+    const navigateToTerms = useCallback(() => {
+        navigate('/terms');
+    }, [navigate]);
+
+    const openDisclaimerModal = useCallback(() => {
+        setDescargoVisible(true);
+    }, []);
+
     // Legacy State Compatibility for Existing Handlers
     const listaFarmacos = activeView === 'drugs';
     const listaFamilia = activeView === 'families';
@@ -161,6 +186,10 @@ const StateContext = ({ children }) => {
         closeDrugDetail,
         navigateToDrugs,
         navigateToFamilies,
+        navigateToAbout,
+        navigateToPrivacy,
+        navigateToTerms,
+        openDisclaimerModal,
         searchModalOpen,
         setSearchModalOpen,
         searchQuery,
@@ -190,6 +219,10 @@ const StateContext = ({ children }) => {
         closeDrugDetail,
         navigateToDrugs,
         navigateToFamilies,
+        navigateToAbout,
+        navigateToPrivacy,
+        navigateToTerms,
+        openDisclaimerModal,
         searchModalOpen,
         setSearchModalOpen,
         searchQuery,

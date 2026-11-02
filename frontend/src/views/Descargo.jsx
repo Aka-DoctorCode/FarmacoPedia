@@ -45,6 +45,12 @@ export const Descargo = () => {
                         <div className={styles.termSectionTitle}>{t.disclaimerEvolutionTitle}</div>
                         <p>{t.disclaimerEvolutionText}</p>
                     </div>
+                    {t.disclaimerCookiesTitle && (
+                        <div>
+                            <div className={styles.termSectionTitle}>{t.disclaimerCookiesTitle}</div>
+                            <p>{t.disclaimerCookiesText}</p>
+                        </div>
+                    )}
                 </div>
 
                 <label className={styles.agreementRow}>

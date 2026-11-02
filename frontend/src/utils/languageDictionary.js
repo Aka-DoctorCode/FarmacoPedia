@@ -140,19 +140,24 @@ export const translations = {
         calcReset: 'Reiniciar valores',
         clearCalculator: 'Reiniciar valores',
         
-        disclaimerTitle: 'Descargo de Responsabilidad Médica',
+        disclaimerTitle: 'Descargo de Responsabilidad Médica y Privacidad',
         disclaimerEmergency: 'ADVERTENCIA DE EMERGENCIA',
         disclaimerEmergencyText: 'Esta aplicación NO es un sistema de respuesta ante emergencias. En situaciones críticas, comuníquese de inmediato con los servicios médicos de urgencia.',
-        disclaimerProfessionalTitle: '1. Uso Exclusivo Informativo:',
-        disclaimerProfessionalText: 'ClickSalud FarmacoPedia es una herramienta formativa e informativa para profesionales de la salud. Su uso no sustituye el juicio clínico ni la relación médico-paciente.',
+        disclaimerProfessionalTitle: '1. Uso Informativo y Juicio Clínico:',
+        disclaimerProfessionalText: 'ClickSalud FarmacoPedia es una herramienta formativa e informativa para profesionales y estudiantes de la salud. Su uso no sustituye el juicio clínico ni la relación médico-paciente.',
         disclaimerEvolutionTitle: '2. Verificación Farmacológica:',
-        disclaimerEvolutionText: 'El prescriptor debe cotejar dosis, posología y contraindicaciones con las fichas técnicas oficiales del fabricante y guías actualizadas antes de administrar cualquier fármaco.',
-        disclaimerConfirmCheckbox: 'Confirmo que soy profesional de la salud y asumo la responsabilidad del uso de esta información.',
+        disclaimerEvolutionText: 'El usuario debe cotejar dosis, posología y contraindicaciones con las fichas técnicas oficiales del fabricante y guías actualizadas antes de prescribir o administrar cualquier fármaco.',
+        disclaimerCookiesTitle: '3. Almacenamiento Local y Cookies:',
+        disclaimerCookiesText: 'Utilizamos almacenamiento local para recordar sus preferencias (tema) y cookies de terceros (Google AdSense) para financiar la plataforma a través de publicidad relevante. Puede consultar nuestra Política de Privacidad en cualquier momento.',
+        disclaimerConfirmCheckbox: 'He leído y acepto el descargo de responsabilidad médica, los términos de uso y el uso de cookies.',
         disclaimerAcceptButton: 'Aceptar y Continuar',
         
         // Footer
-        footerNotice: 'ClickSalud FarmacoPedia — Base de datos farmacológica de acceso libre para fines educativos.',
-        footerAllRights: 'Todos los derechos reservados.'
+        footerNotice: 'Aviso Clínico: La información de ClickSalud FarmacoPedia es de carácter estrictamente informativo y educativo. No sustituye la consulta médica ni el juicio clínico profesional.',
+        footerAllRights: 'Todos los derechos reservados.',
+        navAbout: 'Sobre Nosotros',
+        navPrivacy: 'Privacidad y Cookies',
+        navTerms: 'Términos de Uso'
     },
     en: {
         appName: 'ClickSalud FarmacoPedia',
@@ -295,18 +300,23 @@ export const translations = {
         calcReset: 'Reset inputs',
         clearCalculator: 'Reset inputs',
         
-        disclaimerTitle: 'Medical Disclaimer',
+        disclaimerTitle: 'Medical Disclaimer & Privacy',
         disclaimerEmergency: 'EMERGENCY NOTICE',
         disclaimerEmergencyText: 'This application is NOT an emergency response system. In critical situations, contact local emergency medical services immediately.',
         disclaimerProfessionalTitle: '1. Informational Purpose Only:',
-        disclaimerProfessionalText: 'ClickSalud FarmacoPedia is an educational and reference tool for healthcare professionals. It does not replace clinical judgment or the doctor-patient relationship.',
+        disclaimerProfessionalText: 'ClickSalud FarmacoPedia is an educational and reference tool for healthcare professionals and students. It does not replace clinical judgment or the doctor-patient relationship.',
         disclaimerEvolutionTitle: '2. Pharmacological Verification:',
-        disclaimerEvolutionText: 'Prescribers must verify dosages, posology, and contraindications against official manufacturer datasheets before administering any drug.',
-        disclaimerConfirmCheckbox: 'I confirm that I am a healthcare professional and assume responsibility for using this information.',
+        disclaimerEvolutionText: 'Prescribers and users must verify dosages, posology, and contraindications against official manufacturer datasheets before administering any drug.',
+        disclaimerCookiesTitle: '3. Local Storage & Cookies:',
+        disclaimerCookiesText: 'We use local storage for appearance preferences and third-party cookies (Google AdSense) to support the platform with relevant advertising. You may review our Privacy Policy at any time.',
+        disclaimerConfirmCheckbox: 'I have read and agree to the medical disclaimer, terms of use, and cookie policy.',
         disclaimerAcceptButton: 'Accept and Continue',
         
         // Footer
-        footerNotice: 'ClickSalud FarmacoPedia — Open access clinical pharmacological knowledge base for educational use.',
-        footerAllRights: 'All rights reserved.'
+        footerNotice: 'Clinical Notice: Information on ClickSalud FarmacoPedia is strictly for educational and informational purposes. It does not replace professional medical judgment.',
+        footerAllRights: 'All rights reserved.',
+        navAbout: 'About Us',
+        navPrivacy: 'Privacy & Cookies',
+        navTerms: 'Terms of Use'
     }
 };

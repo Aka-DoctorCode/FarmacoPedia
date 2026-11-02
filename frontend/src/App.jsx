@@ -7,10 +7,14 @@ import BottomNav from './components/BottomNav.jsx';
 import SearchModal from './components/SearchModal.jsx';
 import Descargo from './views/Descargo.jsx';
 import Footer from './components/Footer.jsx';
+import AdBanner from './components/AdBanner.jsx';
 
 const ContenidoFarmacos = lazy(() => import('./views/ContenidoFarmacos.jsx'));
 const ContenidoFamilia = lazy(() => import('./views/ContenidoFamilia.jsx'));
 const DetalleFarmaco = lazy(() => import('./views/DetalleFarmaco.jsx'));
+const AboutUs = lazy(() => import('./views/AboutUs.jsx'));
+const PrivacyPolicy = lazy(() => import('./views/PrivacyPolicy.jsx'));
+const TermsOfUse = lazy(() => import('./views/TermsOfUse.jsx'));
 
 const ViewFallback = () => (
     <div className="viewLoadingFallback" role="status" aria-live="polite">
@@ -37,6 +41,7 @@ const App = () => {
             </Helmet>
 
             <Navbar />
+            <AdBanner />
             <SearchModal />
             <Descargo />
 
@@ -45,6 +50,9 @@ const App = () => {
                     {activeView === 'drugs' && <ContenidoFarmacos />}
                     {activeView === 'families' && <ContenidoFamilia />}
                     {activeView === 'drugDetail' && <DetalleFarmaco key={selectedDrugName} />}
+                    {activeView === 'about' && <AboutUs />}
+                    {activeView === 'privacy' && <PrivacyPolicy />}
+                    {activeView === 'terms' && <TermsOfUse />}
                 </Suspense>
             </main>
 

@@ -161,3 +161,35 @@
         text-align: left;
     }
 }
+
+.legalLinksRow {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 0.25rem;
+}
+
+@media (min-width: 768px) {
+    .legalLinksRow {
+        justify-content: flex-start;
+    }
+}
+
+.legalLink {
+    font-size: 0.76rem;
+    color: var(--colorPrimary, #38bdf8);
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.2s ease;
+}
+
+.legalLink:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}

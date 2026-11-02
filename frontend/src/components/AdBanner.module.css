@@ -1,0 +1,86 @@
+.adWrapper {
+    width: 100%;
+    background-color: var(--color-surface, #0f172a);
+    border-bottom: 1px solid var(--color-border, #1e293b);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 12px;
+    box-sizing: border-box;
+    position: sticky;
+    top: 60px; /* Right beneath the navbar */
+    z-index: 30;
+    backdrop-filter: blur(8px);
+}
+
+.adContainer {
+    width: 100%;
+    max-width: 970px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.adBadge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--color-text-secondary, #94a3b8);
+    text-transform: uppercase;
+    margin-bottom: 3px;
+    align-self: flex-start;
+}
+
+.adContent {
+    width: 100%;
+    min-height: 50px;
+    max-height: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+    background: rgba(30, 41, 59, 0.4);
+    border: 1px dashed rgba(148, 163, 184, 0.2);
+}
+
+.adPlaceholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 8px;
+    text-align: center;
+    pointer-events: none;
+}
+
+.placeholderBrand {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-primary, #38bdf8);
+}
+
+.placeholderText {
+    font-size: 0.7rem;
+    color: var(--color-text-secondary, #94a3b8);
+}
+
+@media (max-width: 768px) {
+    .adWrapper {
+        top: 54px;
+        padding: 4px 8px;
+    }
+
+    .adContent {
+        min-height: 44px;
+        max-height: 70px;
+    }
+
+    .placeholderText {
+        font-size: 0.65rem;
+    }
+}
+

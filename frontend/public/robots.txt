@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://farmacopedia.clicksalud.org/sitemap.xml
+
