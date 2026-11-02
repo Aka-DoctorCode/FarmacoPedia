@@ -33,3 +33,5 @@ dist-ssr
 /frontend/dist-ssr
 .agents/
 /tools/editor/.env
+/tools
+/auditoria final
