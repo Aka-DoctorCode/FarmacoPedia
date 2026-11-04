@@ -21,7 +21,7 @@ const PrivacyPolicy = () => {
             <section className={styles.section}>
                 <h2>1. Responsable del Sitio</h2>
                 <p>
-                    El responsable de este portal es el <strong>Dr. Francisco Molina (ClickSalud / Aka-DoctorCode)</strong>, con correo de contacto directo para consultas técnicas y de privacidad: <a href="mailto:franciscomolina92@gmail.com" className={styles.inlineLink}>franciscomolina92@gmail.com</a>.
+                    El responsable de este portal es el <strong>Dr. Francisco Molina (ClickSalud / Aka-DoctorCode)</strong>, con correo de contacto directo para consultas técnicas y de privacidad: <a href="mailto:contacto@clicksalud.com" className={styles.inlineLink}>contacto@clicksalud.com</a>.
                 </p>
             </section>
 
@@ -55,7 +55,7 @@ const PrivacyPolicy = () => {
             <section className={styles.section}>
                 <h2>4. Modificaciones y Contacto</h2>
                 <p>
-                    Nos reservamos el derecho de actualizar esta política para reflejar novedades legales o adaptaciones técnicas. Ante cualquier duda relativa al tratamiento de la privacidad, puede comunicarse vía correo electrónico a <a href="mailto:franciscomolina92@gmail.com" className={styles.inlineLink}>franciscomolina92@gmail.com</a>.
+                    Nos reservamos el derecho de actualizar esta política para reflejar novedades legales o adaptaciones técnicas. Ante cualquier duda relativa al tratamiento de la privacidad, puede comunicarse vía correo electrónico a <a href="mailto:contacto@clicksalud.com" className={styles.inlineLink}>contacto@clicksalud.com</a>.
                 </p>
             </section>
         </article>

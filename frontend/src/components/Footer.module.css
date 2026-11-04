@@ -84,15 +84,15 @@
 }
 
 .noticeText {
-    font-size: 0.76rem;
-    color: var(--textMuted);
+    font-size: 0.78rem;
+    color: var(--textSecondary);
     max-width: 650px;
-    line-height: 1.35;
+    line-height: 1.45;
     margin: 0;
 }
 
 :global([data-theme='light']) .noticeText {
-    color: #64748b;
+    color: #475569;
 }
 
 .linksRow {

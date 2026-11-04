@@ -10,6 +10,7 @@ const SearchModal = () => {
         setSearchModalOpen,
         openDrugDetail,
         navigateToFamilies,
+        isLoggedIn,
         t
     } = useContext(counterContext);
 
@@ -213,7 +214,7 @@ const SearchModal = () => {
                                         ))}
                                     </div>
                                 )}
-                                {drug.actionMechanism && (
+                                {isLoggedIn && drug.actionMechanism && (
                                     <span className={styles.resultSnippet}>{drug.actionMechanism}</span>
                                 )}
                             </div>

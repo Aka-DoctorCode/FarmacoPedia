@@ -913,12 +913,12 @@
 }
 
 .guidanceItemTitle {
-    font-size: 0.72rem;
-    color: var(--textMuted);
+    font-size: 0.74rem;
+    color: var(--textAccent);
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-top: 0.15rem;
+    letter-spacing: 0.05em;
+    margin-top: 0.2rem;
 }
 
 /* Organ Adjustments Grid: Mobile Base is Single Column */

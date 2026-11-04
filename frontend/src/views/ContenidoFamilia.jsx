@@ -18,6 +18,7 @@ const ContenidoFamilia = () => {
         openDrugDetail,
         navigateToFamilies,
         selectedFamily,
+        isLoggedIn,
         t
     } = useContext(counterContext);
 
@@ -262,7 +263,7 @@ const ContenidoFamilia = () => {
                                             <span className={styles.searchResultCodePill}>{item.code}</span>
                                         </div>
                                         <h3 className={styles.searchResultTitleName}>{item.title}</h3>
-                                        {item.matchSubtitle && (
+                                        {isLoggedIn && item.matchSubtitle && (
                                             <p className={styles.searchResultSubtitle}>{item.matchSubtitle}</p>
                                         )}
                                         {item.path && item.path.length > 0 && (
@@ -451,16 +452,22 @@ const ContenidoFamilia = () => {
                                                     </div>
                                                 </div>
 
-                                                {/* Columna 2: Mecanismo de Acción */}
+                                                {/* Columna 2: Mecanismo de Acción (Protegido: requiere inicio de sesión) */}
                                                 <div className={styles.itemClinicalCol}>
-                                                    {drug.actionMechanism ? (
-                                                        <p className={styles.itemMechanism}>
-                                                            {drug.actionMechanism}
-                                                        </p>
+                                                    {isLoggedIn ? (
+                                                        drug.actionMechanism ? (
+                                                            <p className={styles.itemMechanism}>
+                                                                {drug.actionMechanism}
+                                                            </p>
+                                                        ) : (
+                                                            <p className={styles.itemMechanismEmpty}>
+                                                                Monografía clínica disponible en el catálogo de FarmacoPedia.
+                                                            </p>
+                                                        )
                                                     ) : (
-                                                        <p className={styles.itemMechanismEmpty}>
-                                                            Monografía clínica disponible en el catálogo de FarmacoPedia.
-                                                        </p>
+                                                        <span className={styles.itemMechanismLocked}>
+                                                            🔒 Inicia sesión para ver mecanismo y posología
+                                                        </span>
                                                     )}
                                                 </div>
 

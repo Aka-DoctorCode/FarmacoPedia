@@ -34,6 +34,62 @@ const StateContext = ({ children }) => {
 
     const t = translations[language] || translations.es;
 
+    // Authentication Management
+    const [user, setUser] = useState(() => {
+        try {
+            const sessionStored = sessionStorage.getItem('clicksalud_auth_user');
+            if (sessionStored) return JSON.parse(sessionStored);
+            const stored = localStorage.getItem('clicksalud_auth_user');
+            return stored ? JSON.parse(stored) : null;
+        } catch {
+            return null;
+        }
+    });
+    const [authModalOpen, setAuthModalOpen] = useState(false);
+    const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
+
+    const login = useCallback((userData, rememberMe = true) => {
+        try {
+            if (rememberMe) {
+                localStorage.setItem('clicksalud_auth_user', JSON.stringify(userData));
+                sessionStorage.removeItem('clicksalud_auth_user');
+            } else {
+                sessionStorage.setItem('clicksalud_auth_user', JSON.stringify(userData));
+                localStorage.removeItem('clicksalud_auth_user');
+            }
+        } catch (e) {
+            console.warn('Error saving user in storage:', e);
+        }
+        setUser(userData);
+        setAuthModalOpen(false);
+    }, []);
+
+    const updateUser = useCallback((updatedUserData) => {
+        try {
+            if (localStorage.getItem('clicksalud_auth_user')) {
+                localStorage.setItem('clicksalud_auth_user', JSON.stringify(updatedUserData));
+            } else if (sessionStorage.getItem('clicksalud_auth_user')) {
+                sessionStorage.setItem('clicksalud_auth_user', JSON.stringify(updatedUserData));
+            }
+        } catch (e) {
+            console.warn('Error updating stored user:', e);
+        }
+        setUser(updatedUserData);
+    }, []);
+
+    const logout = useCallback(() => {
+        try {
+            localStorage.removeItem('clicksalud_auth_user');
+            sessionStorage.removeItem('clicksalud_auth_user');
+        } catch (e) {
+            console.warn('Error removing user from storage:', e);
+        }
+        setUser(null);
+        setProfileDrawerOpen(false);
+    }, []);
+
+    const isLoggedIn = Boolean(user);
+
     // Disclaimer Acceptance
     const [descargoVisible, setDescargoVisible] = useState(() => {
         const stored = localStorage.getItem('clicksalud_farmacopedia_disclaimer_accepted') || localStorage.getItem('farmacopedia_disclaimer_accepted');
@@ -114,7 +170,7 @@ const StateContext = ({ children }) => {
         return () => {
             isMounted = false;
         };
-    }, [selectedDrugName]);
+    }, [selectedDrugName, isLoggedIn]);
 
     const isDrugLoading = Boolean(selectedDrugName) && loadedDrug.name !== selectedDrugName;
     const selectedDrugData = !isDrugLoading && selectedDrugName ? loadedDrug.data : null;
@@ -194,6 +250,16 @@ const StateContext = ({ children }) => {
         setSearchModalOpen,
         searchQuery,
         setSearchQuery,
+        // Authentication
+        user,
+        isLoggedIn,
+        authModalOpen,
+        setAuthModalOpen,
+        profileDrawerOpen,
+        setProfileDrawerOpen,
+        updateUser,
+        login,
+        logout,
         // Legacy compatibility
         listaFarmacos,
         listaFarmacosMostrar,
@@ -227,6 +293,15 @@ const StateContext = ({ children }) => {
         setSearchModalOpen,
         searchQuery,
         setSearchQuery,
+        user,
+        isLoggedIn,
+        authModalOpen,
+        setAuthModalOpen,
+        profileDrawerOpen,
+        setProfileDrawerOpen,
+        updateUser,
+        login,
+        logout,
         listaFarmacos,
         listaFarmacosMostrar,
         listaFarmacosOcultar,

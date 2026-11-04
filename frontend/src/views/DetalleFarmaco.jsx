@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { counterContext } from '../context/counterContext.js';
 import { getDrugAtcCode, parseAtcPath } from '../utils/atcTree.js';
 import styles from './DetalleFarmaco.module.css';
+import LoginGate from '../components/LoginGate.jsx';
 
 const PediatricCalculatorModal = lazy(() => import('../components/PediatricCalculatorModal.jsx'));
 
@@ -26,6 +27,8 @@ const DetalleFarmaco = () => {
         selectedDrugData,
         isDrugLoading,
         closeDrugDetail,
+        isLoggedIn,
+        setAuthModalOpen,
         t
     } = useContext(counterContext);
 
@@ -109,6 +112,10 @@ const DetalleFarmaco = () => {
 
     const scrollToSection = (sectionId) => {
         const cleanTab = sectionId.replace(/^sec-/, '');
+        if (!isLoggedIn && cleanTab !== 'overview') {
+            setAuthModalOpen(true);
+            return;
+        }
         setActiveTab(cleanTab);
         const element = document.getElementById(sectionId);
         if (element) {
@@ -116,6 +123,14 @@ const DetalleFarmaco = () => {
             const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
             window.scrollTo({ top: y, behavior: 'smooth' });
         }
+    };
+
+    const handleCalculatorClick = () => {
+        if (!isLoggedIn) {
+            setAuthModalOpen(true);
+            return;
+        }
+        setIsCalculatorOpen(true);
     };
 
     // Scroll spy for desktop view: update activeTab when scrolling past sections
@@ -184,7 +199,7 @@ const DetalleFarmaco = () => {
                 <title>{`${drug.name.toUpperCase()} - Ficha Técnica | ${t.appName}`}</title>
                 <meta
                     name="description"
-                    content={`Ficha farmacológica completa de ${drug.name}: dosis, mecanismo, contraindicaciones y ajustes.`}
+                    content={`Ficha del fármaco ${drug.name}. Clasificación anatómica y código ATC en ClickSalud FarmacoPedia.`}
                 />
             </Helmet>
 
@@ -195,26 +210,28 @@ const DetalleFarmaco = () => {
                     </svg>
                     <span>{t.backToCatalog}</span>
                 </button>
-                <button
-                    type="button"
-                    className={styles.topBarCalcButton}
-                    onClick={() => setIsCalculatorOpen(true)}
-                    title={t.openPediatricCalculator || 'Calculadora Pediátrica'}
-                >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect width="16" height="20" x="4" y="2" rx="2" />
-                        <line x1="8" x2="16" y1="6" y2="6" />
-                        <line x1="16" x2="16" y1="14" y2="18" />
-                        <path d="M16 10h.01" />
-                        <path d="M12 10h.01" />
-                        <path d="M8 10h.01" />
-                        <path d="M12 14h.01" />
-                        <path d="M8 14h.01" />
-                        <path d="M12 18h.01" />
-                        <path d="M8 18h.01" />
-                    </svg>
-                    <span>{t.openPediatricCalculator || 'Calculadora Pediátrica'}</span>
-                </button>
+                {isLoggedIn && (
+                    <button
+                        type="button"
+                        className={styles.topBarCalcButton}
+                        onClick={handleCalculatorClick}
+                        title={t.openPediatricCalculator || 'Calculadora Pediátrica'}
+                    >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect width="16" height="20" x="4" y="2" rx="2" />
+                            <line x1="8" x2="16" y1="6" y2="6" />
+                            <line x1="16" x2="16" y1="14" y2="18" />
+                            <path d="M16 10h.01" />
+                            <path d="M12 10h.01" />
+                            <path d="M8 10h.01" />
+                            <path d="M12 14h.01" />
+                            <path d="M8 14h.01" />
+                            <path d="M12 18h.01" />
+                            <path d="M8 18h.01" />
+                        </svg>
+                        <span>{t.openPediatricCalculator || 'Calculadora Pediátrica'}</span>
+                    </button>
+                )}
             </div>
 
             {/* Header Card */}
@@ -245,9 +262,14 @@ const DetalleFarmaco = () => {
                 </div>
             </div>
 
-            {/* Mobile Navigation Tabs */}
-            {/* Mobile Section Dropdown Navigation */}
-            <div className={styles.mobileSectionDropdownWrapper}>
+            {/* Restricción: Sin sesión sólo se visualiza Nombre, ATC y Categorías. El resto exige login */}
+            {!isLoggedIn ? (
+                <LoginGate drugName={drug.name} />
+            ) : (
+                <>
+                    {/* Mobile Navigation Tabs */}
+                    {/* Mobile Section Dropdown Navigation */}
+                    <div className={styles.mobileSectionDropdownWrapper}>
                 <button
                     type="button"
                     className={`${styles.mobileSectionDropdownButton} ${isSectionDropdownOpen ? styles.mobileSectionDropdownButtonActive : ''}`}
@@ -384,7 +406,7 @@ const DetalleFarmaco = () => {
                             <button
                                 type="button"
                                 className={styles.sidebarCalcButton}
-                                onClick={() => setIsCalculatorOpen(true)}
+                                onClick={handleCalculatorClick}
                             >
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                     <rect width="16" height="20" x="4" y="2" rx="2" />
@@ -459,8 +481,8 @@ const DetalleFarmaco = () => {
                     )}
                     </div>
 
-                    {/* Section 2: Presentations & Dosage */}
-                    <div id="sec-dosage" className={`${styles.sectionBlock} ${activeTab === 'dosage' ? styles.tabBlockActive : styles.tabBlockHidden}`}>
+                    {/* Section 2: Presentations & Dosage (data-nosnippet protege dosis de ser extraídas por Google AI Overviews) */}
+                    <div id="sec-dosage" data-nosnippet className={`${styles.sectionBlock} ${activeTab === 'dosage' ? styles.tabBlockActive : styles.tabBlockHidden}`}>
                         <div className={styles.sectionCard}>
                         <div className={styles.sectionHeader}>
                             <span className={styles.sectionIcon}>
@@ -575,7 +597,7 @@ const DetalleFarmaco = () => {
                             <button
                                 type="button"
                                 className={styles.calculatorTriggerBtn}
-                                onClick={() => setIsCalculatorOpen(true)}
+                                onClick={handleCalculatorClick}
                                 title={t.openPediatricCalculator || 'Calculadora Pediátrica'}
                             >
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -710,8 +732,8 @@ const DetalleFarmaco = () => {
                                 </div>
                             </div>
 
-                            {/* Fila Renal */}
-                            <div className={styles.riskTableRow}>
+                            {/* Fila Renal (data-nosnippet para forzar visita médica para ver ajustes) */}
+                            <div className={styles.riskTableRow} data-nosnippet>
                                 <div className={styles.riskRowHeaderCol}>
                                     <span className={styles.riskRowIcon}>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -752,8 +774,8 @@ const DetalleFarmaco = () => {
                                 </div>
                             </div>
 
-                            {/* Fila Hepática */}
-                            <div className={styles.riskTableRow}>
+                            {/* Fila Hepática (data-nosnippet) */}
+                            <div className={styles.riskTableRow} data-nosnippet>
                                 <div className={styles.riskRowHeaderCol}>
                                     <span className={styles.riskRowIcon}>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -893,6 +915,8 @@ const DetalleFarmaco = () => {
                     </div>
                 </div>
             </div>
+                </>
+            )}
 
             {isCalculatorOpen && (
                 <Suspense fallback={null}>

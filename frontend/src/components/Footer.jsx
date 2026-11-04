@@ -48,7 +48,7 @@ const Footer = () => {
                         </a>
                         <a
                             className={styles.socialLink}
-                            href="mailto:franciscomolina92@gmail.com"
+                            href="mailto:contacto@clicksalud.com"
                             title="Email"
                             aria-label="Email"
                         >

@@ -16,7 +16,7 @@ export const PediatricCalculatorModal = ({
     drugName = '',
     drug = null
 }) => {
-    const { t } = useContext(counterContext);
+    const { t, isLoggedIn } = useContext(counterContext);
 
     // Form inputs state
     const [weight, setWeight] = useState('');
@@ -143,7 +143,7 @@ export const PediatricCalculatorModal = ({
         };
     }, [weight, doseValue, doseMode, concMg, concMl, frequency]);
 
-    if (!isOpen) return null;
+    if (!isOpen || !isLoggedIn) return null;
 
     return (
         <div

@@ -1,46 +1,46 @@
 @import './normalize.css';
 
 :root {
-    /* Color Palette - Dark Theme (Default) */
+    /* Color Palette - Dark Theme (Default - Optimized for High Contrast & Clinical Readability) */
     --bgBase: #090d16;
     --bgGradient: radial-gradient(circle at 50% 0%, #172554 0%, #090d16 70%);
-    --bgCard: rgba(15, 23, 42, 0.72);
-    --bgCardHover: rgba(30, 41, 59, 0.88);
-    --bgGlass: rgba(15, 23, 42, 0.55);
-    --bgInput: rgba(2, 6, 23, 0.7);
-    --bgModal: rgba(11, 17, 33, 0.95);
-    --bgOverlay: rgba(2, 6, 23, 0.8);
+    --bgCard: rgba(17, 27, 49, 0.88);
+    --bgCardHover: rgba(30, 45, 74, 0.95);
+    --bgGlass: rgba(17, 27, 49, 0.72);
+    --bgInput: rgba(10, 16, 30, 0.88);
+    --bgModal: rgba(13, 20, 38, 0.98);
+    --bgOverlay: rgba(2, 6, 23, 0.85);
     
-    /* Text Colors */
-    --textPrimary: #f8fafc;
-    --textSecondary: #94a3b8;
-    --textMuted: #64748b;
+    /* Text Colors - High Contrast Hierarchy */
+    --textPrimary: #ffffff;
+    --textSecondary: #e2e8f0;
+    --textMuted: #94a3b8;
     --textAccent: #38bdf8;
 
-    /* Accent & Brand Colors */
-    --colorPrimary: #0ea5e9;
+    /* Accent & Brand Colors - Vibrant on Dark Backgrounds */
+    --colorPrimary: #38bdf8;
     --colorPrimaryDark: #0284c7;
-    --colorPrimaryGlow: rgba(14, 165, 233, 0.25);
-    --colorPrimaryBg: rgba(14, 165, 233, 0.12);
-    --colorTeal: #14b8a6;
-    --colorSuccess: #10b981;
-    --colorSuccessBg: rgba(16, 185, 129, 0.12);
-    --colorWarning: #f59e0b;
-    --colorWarningBg: rgba(245, 158, 11, 0.12);
-    --colorDanger: #f43f5e;
-    --colorDangerBg: rgba(244, 63, 94, 0.12);
-    --colorInfo: #818cf8;
-    --colorInfoBg: rgba(129, 140, 248, 0.12);
+    --colorPrimaryGlow: rgba(56, 189, 248, 0.3);
+    --colorPrimaryBg: rgba(56, 189, 248, 0.16);
+    --colorTeal: #2dd4bf;
+    --colorSuccess: #34d399;
+    --colorSuccessBg: rgba(52, 211, 153, 0.16);
+    --colorWarning: #fbbf24;
+    --colorWarningBg: rgba(251, 191, 36, 0.16);
+    --colorDanger: #fb7185;
+    --colorDangerBg: rgba(251, 113, 133, 0.16);
+    --colorInfo: #7dd3fc;
+    --colorInfoBg: rgba(56, 189, 248, 0.16);
 
     /* Borders & Outlines */
-    --borderGlass: rgba(255, 255, 255, 0.08);
-    --borderGlassHover: rgba(56, 189, 248, 0.4);
-    --borderGlassFocus: rgba(14, 165, 233, 0.6);
+    --borderGlass: rgba(255, 255, 255, 0.14);
+    --borderGlassHover: rgba(56, 189, 248, 0.55);
+    --borderGlassFocus: rgba(56, 189, 248, 0.85);
 
     /* Shadows & Effects */
-    --shadowGlass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    --shadowCard: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
-    --shadowGlow: 0 0 20px rgba(14, 165, 233, 0.35);
+    --shadowGlass: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+    --shadowCard: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.35);
+    --shadowGlow: 0 0 20px rgba(56, 189, 248, 0.4);
     --backdropBlur: blur(16px);
     --backdropBlurHeavy: blur(24px);
 

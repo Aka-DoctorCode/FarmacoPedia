@@ -1,0 +1,169 @@
+.bannerContainer {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background: linear-gradient(90deg, #0f172a 0%, #1e293b 100%);
+    border-bottom: 1px solid #38bdf8;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    padding: 8px 16px;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+.bannerContent {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.iconWrapper {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background-color: #0284c7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.appIcon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.textGroup {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.bannerTitle {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #f8fafc;
+}
+
+.bannerSubtitle {
+    font-size: 0.76rem;
+    color: #94a3b8;
+}
+
+.actionGroup {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.installBtn {
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+    transition: transform 0.1s;
+}
+
+.installBtn:hover {
+    transform: translateY(-1px);
+}
+
+.closeBtn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+}
+
+.closeBtn:hover {
+    color: #f8fafc;
+}
+
+/* Modal iOS Safari */
+.iosModalOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.iosModalCard {
+    background-color: #1e293b;
+    color: #f8fafc;
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    border: 1px solid #334155;
+}
+
+.iosTitle {
+    margin: 0 0 8px;
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.iosDesc {
+    margin: 0 0 16px;
+    font-size: 0.85rem;
+    color: #cbd5e1;
+}
+
+.iosSteps {
+    margin: 0 0 20px;
+    padding-left: 20px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #e2e8f0;
+}
+
+.iosIcon {
+    display: inline-block;
+    padding: 2px 6px;
+    background-color: #334155;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.iosCloseBtn {
+    width: 100%;
+    background-color: #0284c7;
+    color: #ffffff;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    .bannerSubtitle {
+        display: none;
+    }
+}

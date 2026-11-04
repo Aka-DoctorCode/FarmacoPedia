@@ -13,6 +13,17 @@ const getBasename = () => {
     return '/';
 };
 
+// Registro de Service Worker para capacidades PWA y soporte Offline
+if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        const base = getBasename();
+        const swPath = `${base === '/' ? '' : base}/sw.js`;
+        navigator.serviceWorker.register(swPath).catch((err) => {
+            console.warn('[PWA] Error registrando Service Worker:', err);
+        });
+    });
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
     <HelmetProvider>
         <BrowserRouter basename={getBasename()}>

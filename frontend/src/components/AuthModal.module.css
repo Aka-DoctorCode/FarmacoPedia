@@ -1,0 +1,311 @@
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: var(--bgOverlay);
+    backdrop-filter: var(--backdropBlur);
+    -webkit-backdrop-filter: var(--backdropBlur);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: fadeIn var(--transitionFast) ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modalCard {
+    background: var(--bgModal);
+    color: var(--textPrimary);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusXl);
+    width: 100%;
+    max-width: 540px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadowGlass);
+    overflow: hidden;
+    animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes scaleUp {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.modalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--borderGlass);
+    background: var(--bgGlass);
+}
+
+.headerTitleGroup {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.iconCircle {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radiusMd);
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+    flex-shrink: 0;
+}
+
+.title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--textPrimary);
+    letter-spacing: -0.01em;
+}
+
+.subtitle {
+    margin: 2px 0 0;
+    font-size: 0.8rem;
+    color: var(--textSecondary);
+}
+
+.closeBtn {
+    background: transparent;
+    border: none;
+    color: var(--textSecondary);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: var(--radiusSm);
+    transition: background-color 0.15s, color 0.15s;
+    line-height: 1;
+}
+
+.closeBtn:hover {
+    background: var(--borderGlass);
+    color: var(--textPrimary);
+}
+
+.tabsNav {
+    display: flex;
+    background: var(--bgGlass);
+    border-bottom: 1px solid var(--borderGlass);
+}
+
+.tabBtn {
+    flex: 1;
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--textSecondary);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.tabBtn:hover {
+    color: var(--textPrimary);
+}
+
+.tabBtnActive {
+    color: var(--textAccent);
+    border-bottom-color: var(--textAccent);
+    background: var(--colorPrimaryBg);
+}
+
+.modalBody {
+    padding: 20px 24px 24px;
+    overflow-y: auto;
+}
+
+.errorMessage {
+    background-color: var(--colorDangerBg);
+    border: 1px solid var(--colorDanger);
+    color: var(--colorDanger);
+    padding: 10px 14px;
+    border-radius: var(--radiusMd);
+    font-size: 0.82rem;
+    margin-bottom: 16px;
+}
+
+.infoMessage {
+    background-color: var(--colorPrimaryBg);
+    border: 1px solid var(--colorPrimary);
+    color: var(--textAccent);
+    padding: 10px 14px;
+    border-radius: var(--radiusMd);
+    font-size: 0.82rem;
+    margin-bottom: 16px;
+}
+
+.loginHint {
+    margin: 0 0 16px;
+    font-size: 0.86rem;
+    line-height: 1.5;
+    color: var(--textSecondary);
+}
+
+.sectionTitle {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--textAccent);
+    margin: 8px 0 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.checkboxRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: var(--textSecondary);
+    cursor: pointer;
+    user-select: none;
+    margin-top: 2px;
+}
+
+.checkboxRow input[type="checkbox"] {
+    accent-color: #0284c7;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.switchViewLink {
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--textSecondary);
+    margin-top: 14px;
+}
+
+.switchViewBtn {
+    background: transparent;
+    border: none;
+    color: var(--textAccent);
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0 4px;
+    text-decoration: underline;
+}
+
+.switchViewBtn:hover {
+    color: var(--colorPrimary);
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.twoCols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--textSecondary);
+}
+
+.input,
+.select {
+    padding: 10px 12px;
+    border-radius: var(--radiusMd);
+    background: var(--bgInput);
+    border: 1px solid var(--borderGlass);
+    color: var(--textPrimary);
+    font-size: 0.86rem;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.select option {
+    background-color: var(--bgBase);
+    color: var(--textPrimary);
+}
+
+.input:focus,
+.select:focus {
+    border-color: var(--borderGlassFocus);
+    box-shadow: 0 0 0 3px var(--colorPrimaryGlow);
+}
+
+.submitBtn {
+    margin-top: 8px;
+    width: 100%;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    border: none;
+    color: #ffffff;
+    border-radius: var(--radiusMd);
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+    transition: transform 0.1s, opacity 0.15s;
+}
+
+.submitBtn:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.submitBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.legalFooter {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--borderGlass);
+    font-size: 0.74rem;
+    line-height: 1.4;
+    color: var(--textMuted);
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .twoCols {
+        grid-template-columns: 1fr;
+    }
+    .modalCard {
+        max-width: 100%;
+    }
+}

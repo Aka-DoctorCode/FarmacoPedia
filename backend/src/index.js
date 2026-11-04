@@ -4,6 +4,8 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 require("dotenv").config();
 
 const app = express();
@@ -11,8 +13,18 @@ const app = express();
 // --------------------------------------------------------------
 // Middlewares
 // --------------------------------------------------------------
-app.use(express.json({ limit: "2mb" }));
+app.use(express.json({ limit: "15mb" }));
 app.use(cors());
+
+// Strip /api prefix if forwarded without path rewrite to support /api/ routes seamlessly
+app.use((req, res, next) => {
+    if (req.url.startsWith("/api/")) {
+        req.url = req.url.replace(/^\/api/, "");
+    } else if (req.url === "/api") {
+        req.url = "/";
+    }
+    next();
+});
 
 // Admin protection for write routes (header: x-admin-key)
 const crypto = require("crypto");
@@ -228,6 +240,61 @@ pendingDrugSchema.index({ status: 1, searchCount: -1 });
 
 const PendingDrug = mongoose.model("PendingDrug", pendingDrugSchema);
 
+// Doctor & Health Professional Model
+const doctorUserSchema = new mongoose.Schema(
+    {
+        firstName: { type: String, trim: true, default: "" },
+        lastName: { type: String, trim: true, default: "" },
+        name: { type: String, required: true, trim: true },
+        email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+        passwordHash: { type: String, default: null },
+        salt: { type: String, default: null },
+        country: { type: String, required: true, trim: true }, // País donde ejerce
+        identifiers: {
+            type: Map,
+            of: String,
+            default: {}
+        },
+        licenseNumber: { type: String, trim: true, default: "" }, // Resumen o fallback
+        specialty: {
+            type: String,
+            trim: true,
+            enum: [
+                "Médico general",
+                "Médico especialista",
+                "Estudiante de medicina",
+                "Enfermera",
+                "Farmacista",
+                "Otros"
+            ],
+            default: "Médico general"
+        },
+        role: { type: String, default: "Médico" },
+        institution: { type: String, trim: true, default: "" },
+        authProvider: { type: String, default: "email" },
+        avatar: { type: String, default: null }
+    },
+    { timestamps: true }
+);
+
+doctorUserSchema.index({ email: 1 });
+doctorUserSchema.index({ country: 1 });
+
+const DoctorUser = mongoose.model("DoctorUser", doctorUserSchema);
+
+// Password helpers (PBKDF2)
+function hashPassword(password, existingSalt = null) {
+    const salt = existingSalt || crypto.randomBytes(16).toString("hex");
+    const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, "sha512").toString("hex");
+    return { hash, salt };
+}
+
+function verifyPassword(password, hash, salt) {
+    if (!hash || !salt || !password) return false;
+    const computed = crypto.pbkdf2Sync(password, salt, 1000, 64, "sha512").toString("hex");
+    return computed === hash;
+}
+
 // --------------------------------------------------------------
 // Helpers
 // --------------------------------------------------------------
@@ -274,6 +341,7 @@ const getEnrichedAtcDrugs = async (identifier) => {
         filter,
         "name atc actionMechanism indications"
     )
+        .collation({ locale: "es", strength: 1 })
         .sort({ name: 1 })
         .lean();
 
@@ -357,18 +425,113 @@ app.get("/health", (req, res) => {
     res.status(200).json({ success: true, status: "healthy", timestamp: Date.now() });
 });
 
-// POST: Add drug & automatically mark as completed in PendingDrug queue if it existed
+// POST: Bulk upsert drugs (up to thousands of entries in batches)
+app.post("/drugs/bulk", requireAdmin, asyncHandler(async (req, res) => {
+    const items = req.body;
+    if (!Array.isArray(items) || !items.length) {
+        return res.status(400).json({ success: false, error: "Array of drug objects is required in body." });
+    }
+
+    const results = {
+        total: items.length,
+        inserted: 0,
+        modified: 0,
+        errors: []
+    };
+
+    // Validar y ejecutar en lotes de 100 usando bulkWrite para máximo rendimiento
+    const BATCH_SIZE = 100;
+    const completedNames = [];
+
+    for (let i = 0; i < items.length; i += BATCH_SIZE) {
+        const chunk = items.slice(i, i + BATCH_SIZE);
+        const ops = [];
+
+        for (const raw of chunk) {
+            const name = (raw && raw.name ? String(raw.name) : "").trim();
+            if (!name) {
+                results.errors.push({ name: "(desconocido)", error: "Entrada sin propiedad 'name'" });
+                continue;
+            }
+
+            // Sanitizar campos internos de mongo que pudieran venir en el json
+            const doc = { ...raw };
+            delete doc._id;
+            delete doc.__v;
+            delete doc.createdAt;
+            delete doc.updatedAt;
+
+            ops.push({
+                replaceOne: {
+                    filter: { name: buildAccentInsensitiveRegex(name, true) },
+                    replacement: doc,
+                    upsert: true
+                }
+            });
+            completedNames.push(name);
+        }
+
+        if (ops.length > 0) {
+            try {
+                const bulkRes = await Drug.bulkWrite(ops, { ordered: false });
+                results.inserted += (bulkRes.upsertedCount || 0);
+                results.modified += (bulkRes.modifiedCount || 0) + (bulkRes.matchedCount ? (bulkRes.matchedCount - (bulkRes.modifiedCount || 0)) : 0);
+            } catch (err) {
+                if (err.name === "MongoBulkWriteError" && err.writeErrors) {
+                    for (const we of err.writeErrors) {
+                        const failedOp = ops[we.index];
+                        const failedName = failedOp?.replaceOne?.replacement?.name || `Índice ${we.index}`;
+                        results.errors.push({ name: failedName, error: we.errmsg || err.message });
+                    }
+                    if (err.result) {
+                        results.inserted += (err.result.upsertedCount || 0);
+                        results.modified += (err.result.modifiedCount || 0);
+                    }
+                } else {
+                    results.errors.push({ name: `Lote ${i}-${i + chunk.length}`, error: err.message });
+                }
+            }
+        }
+    }
+
+    // Actualizar en lote los fármacos pendientes a completed
+    if (completedNames.length > 0) {
+        const regexList = completedNames.slice(0, 1000).map(n => buildAccentInsensitiveRegex(n, true));
+        await PendingDrug.updateMany(
+            { name: { $in: regexList } },
+            { $set: { status: "completed" } }
+        ).catch(() => {});
+    }
+
+    res.status(200).json({ success: true, results });
+}));
+
+// POST: Add or replace drug (upsert) & automatically mark as completed in PendingDrug queue
 app.post("/drugs", requireAdmin, asyncHandler(async (req, res) => {
-    const newDrug = new Drug(req.body);
-    await newDrug.save();
+    const rawName = (req.body.name || "").trim();
+    if (!rawName) {
+        return res.status(400).json({ success: false, error: "The drug name is required." });
+    }
+
+    // Upsert (crea si no existe, o reemplaza/actualiza si ya existe por nombre insensible a tildes)
+    const existing = await Drug.findOne({ name: buildAccentInsensitiveRegex(rawName, true) });
+
+    let savedDrug;
+    if (existing) {
+        // Reemplazar campos con los del payload
+        existing.overwrite(req.body);
+        savedDrug = await existing.save();
+    } else {
+        savedDrug = await new Drug(req.body).save();
+    }
 
     // Si estaba en la lista de pendientes (con o sin tilde), marcarlo como completado
     await PendingDrug.updateMany(
-        { name: buildAccentInsensitiveRegex(newDrug.name, true) },
+        { name: buildAccentInsensitiveRegex(savedDrug.name, true) },
         { $set: { status: "completed" } }
     );
 
-    res.status(201).json({ success: true, data: newDrug });
+    res.status(existing ? 200 : 201).json({ success: true, data: savedDrug, replaced: Boolean(existing) });
 }));
 
 // GET: All drug names (supports ?q= or ?search= by name, category, or ATC, accent-insensitive)
@@ -391,6 +554,7 @@ app.get("/drugs", asyncHandler(async (req, res) => {
     }
 
     const drugList = await Drug.find(filter, "name atc actionMechanism")
+        .collation({ locale: "es", strength: 1 })
         .sort({ name: 1 })
         .lean();
 
@@ -474,6 +638,7 @@ app.get("/drugs/atc/subcategories/:code", asyncHandler(async (req, res) => {
         { "atc.subcategoryCode": rawCode },
         "name atc actionMechanism"
     )
+        .collation({ locale: "es", strength: 1 })
         .sort({ name: 1 })
         .lean();
 
@@ -644,6 +809,160 @@ app.patch("/pending-drugs/:name/complete", requireAdmin, asyncHandler(async (req
     res.status(200).json({ success: true, data: updated });
 }));
 
+// ==============================================================
+// AUTH & PROFESSIONAL MEDICAL REGISTRATION
+// ==============================================================
+app.post("/auth/register", asyncHandler(async (req, res) => {
+    const {
+        firstName,
+        lastName,
+        name,
+        email,
+        password,
+        country,
+        identifiers,
+        licenseNumber,
+        specialty,
+        role,
+        institution,
+        authProvider,
+        avatar
+    } = req.body;
+
+    if (!email || !country) {
+        return res.status(400).json({
+            success: false,
+            error: "Correo y país son obligatorios."
+        });
+    }
+
+    const cleanEmail = String(email).trim().toLowerCase();
+    const cleanFirstName = firstName ? String(firstName).trim() : "";
+    const cleanLastName = lastName ? String(lastName).trim() : "";
+    const resolvedName = name?.trim() || [cleanFirstName, cleanLastName].filter(Boolean).join(" ") || cleanEmail.split("@")[0];
+
+    // Formatear identificadores o licencia
+    let resolvedLicenseNumber = licenseNumber ? String(licenseNumber).trim() : "";
+    let cleanIdentifiers = {};
+    if (identifiers && typeof identifiers === "object") {
+        cleanIdentifiers = identifiers instanceof Map ? Object.fromEntries(identifiers) : identifiers;
+        if (!resolvedLicenseNumber) {
+            resolvedLicenseNumber = Object.entries(cleanIdentifiers)
+                .filter(([_, v]) => Boolean(v && String(v).trim()))
+                .map(([k, v]) => `${k.toUpperCase()}: ${v}`)
+                .join(" / ");
+        }
+    }
+
+    let passwordHash = null;
+    let salt = null;
+    if (password && String(password).trim()) {
+        if (String(password).trim().length < 6) {
+            return res.status(400).json({ success: false, error: "La contraseña debe tener al menos 6 caracteres." });
+        }
+        const hashed = hashPassword(String(password).trim());
+        passwordHash = hashed.hash;
+        salt = hashed.salt;
+    }
+
+    let user = await DoctorUser.findOne({ email: cleanEmail });
+
+    if (!user && (!passwordHash || !salt)) {
+        return res.status(400).json({
+            success: false,
+            error: "Debes proporcionar una contraseña de al menos 6 caracteres para registrarte."
+        });
+    }
+
+    if (user) {
+        if (cleanFirstName) user.firstName = cleanFirstName;
+        if (cleanLastName) user.lastName = cleanLastName;
+        user.name = resolvedName;
+        user.country = String(country).trim();
+        if (Object.keys(cleanIdentifiers).length > 0) user.identifiers = cleanIdentifiers;
+        if (resolvedLicenseNumber) user.licenseNumber = resolvedLicenseNumber;
+        if (specialty) user.specialty = specialty;
+        if (role) user.role = role;
+        if (institution) user.institution = String(institution).trim();
+        if (avatar) user.avatar = avatar;
+        user.authProvider = "email";
+        if (passwordHash && salt) {
+            user.passwordHash = passwordHash;
+            user.salt = salt;
+        }
+        await user.save();
+    } else {
+        user = await DoctorUser.create({
+            firstName: cleanFirstName,
+            lastName: cleanLastName,
+            name: resolvedName,
+            email: cleanEmail,
+            passwordHash,
+            salt,
+            country: String(country).trim(),
+            identifiers: cleanIdentifiers,
+            licenseNumber: resolvedLicenseNumber,
+            specialty: specialty || "Médico general",
+            role: role || "Médico",
+            institution: institution ? String(institution).trim() : "",
+            authProvider: "email",
+            avatar: avatar || null
+        });
+    }
+
+    const userObj = user.toObject();
+    delete userObj.passwordHash;
+    delete userObj.salt;
+
+    return res.status(200).json({
+        success: true,
+        message: "Profesional de la salud registrado con éxito.",
+        data: userObj
+    });
+}));
+
+app.post("/auth/login", asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        return res.status(400).json({ success: false, error: "El correo y la contraseña son requeridos." });
+    }
+
+    const cleanEmail = String(email).trim().toLowerCase();
+    const user = await DoctorUser.findOne({ email: cleanEmail });
+
+    if (!user) {
+        return res.status(404).json({
+            success: false,
+            needsRegistration: true,
+            error: "No existe cuenta con este correo. Por favor regístrate."
+        });
+    }
+
+    if (!user.passwordHash || !user.salt) {
+        return res.status(400).json({
+            success: false,
+            error: "La cuenta requiere configurar una contraseña."
+        });
+    }
+
+    const isValid = verifyPassword(String(password), user.passwordHash, user.salt);
+    if (!isValid) {
+        return res.status(401).json({
+            success: false,
+            error: "Contraseña incorrecta."
+        });
+    }
+
+    const userObj = user.toObject();
+    delete userObj.passwordHash;
+    delete userObj.salt;
+
+    return res.status(200).json({
+        success: true,
+        data: userObj
+    });
+}));
+
 // --------------------------------------------------------------
 // Error Handler
 // --------------------------------------------------------------
@@ -667,6 +986,10 @@ app.use((err, req, res, next) => {
 // --------------------------------------------------------------
 const PORT = process.env.PORT || 10000;
 
-app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== "test") {
+    app.listen(PORT, "0.0.0.0", () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+}
+
+module.exports = app;

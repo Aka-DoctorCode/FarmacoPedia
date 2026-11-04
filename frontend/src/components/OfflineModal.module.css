@@ -1,0 +1,273 @@
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: var(--bgOverlay);
+    backdrop-filter: var(--backdropBlur);
+    -webkit-backdrop-filter: var(--backdropBlur);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: fadeIn var(--transitionFast) ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modalCard {
+    background: var(--bgModal);
+    color: var(--textPrimary);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusXl);
+    width: 100%;
+    max-width: 480px;
+    box-shadow: var(--shadowGlass);
+    overflow: hidden;
+    animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px) scale(0.96);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--borderGlass);
+    background: var(--bgGlass);
+}
+
+.titleGroup {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.iconCircle {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radiusMd);
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+.modalTitle {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--textPrimary);
+    letter-spacing: -0.01em;
+}
+
+.modalSubtitle {
+    margin: 2px 0 0;
+    font-size: 0.82rem;
+    color: var(--textSecondary);
+}
+
+.closeBtn {
+    background: transparent;
+    border: none;
+    color: var(--textSecondary);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: var(--radiusSm);
+    transition: background-color 0.15s, color 0.15s;
+    line-height: 1;
+}
+
+.closeBtn:hover {
+    background: var(--borderGlass);
+    color: var(--textPrimary);
+}
+
+.statusBanner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    background: var(--bgGlass);
+    border-bottom: 1px solid var(--borderGlass);
+    font-size: 0.82rem;
+}
+
+.statusIndicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.statusDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.dotOnline {
+    background-color: var(--colorSuccess);
+    box-shadow: 0 0 8px var(--colorSuccess);
+}
+
+.dotOffline {
+    background-color: var(--colorWarning);
+    box-shadow: 0 0 8px var(--colorWarning);
+}
+
+.statusText {
+    color: var(--textSecondary);
+    font-weight: 600;
+}
+
+.storageBadge {
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.badgeSuccess {
+    color: var(--colorSuccess);
+}
+
+.badgeWarning {
+    color: var(--colorWarning);
+}
+
+.modalBody {
+    padding: 20px 24px;
+}
+
+.description {
+    margin: 0 0 16px;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--textSecondary);
+}
+
+.databaseStats {
+    background: var(--bgInput);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusMd);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+}
+
+.statRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 0.85rem;
+}
+
+.statLabel {
+    color: var(--textSecondary);
+    font-weight: 500;
+}
+
+.statValue {
+    color: var(--textPrimary);
+    font-weight: 700;
+}
+
+.progressContainer {
+    margin-top: 14px;
+}
+
+.progressBarWrapper {
+    width: 100%;
+    height: 8px;
+    background: var(--bgInput);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusPill);
+    overflow: hidden;
+}
+
+.progressBarFill {
+    height: 100%;
+    background: linear-gradient(90deg, #0ea5e9, #10b981);
+    transition: width 0.3s ease;
+}
+
+.progressMeta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    font-size: 0.78rem;
+    color: var(--textSecondary);
+}
+
+.progressPercent {
+    font-weight: 700;
+    color: var(--colorPrimary);
+}
+
+.modalFooter {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--borderGlass);
+    background: var(--bgGlass);
+}
+
+.clearBtn {
+    background: transparent;
+    border: 1px solid var(--borderGlass);
+    color: var(--textSecondary);
+    padding: 9px 16px;
+    border-radius: var(--radiusMd);
+    font-size: 0.84rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.15s;
+}
+
+.clearBtn:hover {
+    background-color: var(--colorDangerBg);
+    border-color: var(--colorDanger);
+    color: var(--colorDanger);
+}
+
+.downloadBtn {
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--radiusMd);
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+    transition: transform 0.1s, opacity 0.15s;
+}
+
+.downloadBtn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(2, 132, 199, 0.45);
+}
+
+.downloadBtn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}

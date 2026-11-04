@@ -9,5 +9,5 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/FarmacoPedia/',
+  base: process.env.VERCEL ? '/' : (process.env.VITE_BASE_PATH || '/FarmacoPedia/'),
 })

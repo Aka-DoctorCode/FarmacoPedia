@@ -8,6 +8,9 @@ import SearchModal from './components/SearchModal.jsx';
 import Descargo from './views/Descargo.jsx';
 import Footer from './components/Footer.jsx';
 import AdBanner from './components/AdBanner.jsx';
+import PwaInstallPrompt from './components/PwaInstallPrompt.jsx';
+import AuthModal from './components/AuthModal.jsx';
+import ProfileDrawer from './components/ProfileDrawer.jsx';
 
 const ContenidoFarmacos = lazy(() => import('./views/ContenidoFarmacos.jsx'));
 const ContenidoFamilia = lazy(() => import('./views/ContenidoFamilia.jsx'));
@@ -40,9 +43,12 @@ const App = () => {
                 <meta property="og:type" content="website" />
             </Helmet>
 
+            <PwaInstallPrompt />
             <Navbar />
             <AdBanner />
             <SearchModal />
+            <AuthModal />
+            <ProfileDrawer />
             <Descargo />
 
             <main className="mainContent">

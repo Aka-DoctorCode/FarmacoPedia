@@ -5,43 +5,52 @@ import { drugService } from '../services/drugService.js';
 import { filterDrugsByQuery } from '../utils/drugSearch.js';
 import styles from './ContenidoFarmacos.module.css';
 
-const BATCH_SIZE = 24;
-const MOBILE_RANDOM_LIMIT = 5;
-
-// Helper to check if window is mobile viewport (< 1024px)
-const getIsMobile = () => (typeof window !== 'undefined' ? window.innerWidth < 1024 : false);
+const INITIAL_BATCH = 40;
+const BATCH_SIZE = 30;
 
 const ContenidoFarmacos = () => {
     const {
         openDrugDetail,
+        isLoggedIn,
         t
     } = useContext(counterContext);
 
-    const [isMobile, setIsMobile] = useState(getIsMobile);
     const [drugs, setDrugs] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [filterInput, setFilterInput] = useState('');
     const [debouncedFilter, setDebouncedFilter] = useState('');
     const [isLoading, setIsLoading] = useState(true);
-    const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
-    const sentinelRef = useRef(null);
-    const contentRef = useRef(null);
 
-    // Track resize for mobile vs desktop layout behavior
+    // Infinite Scroll / Lazy Loading progresivo
+    const [displayLimit, setDisplayLimit] = useState(INITIAL_BATCH);
+    const [showScrollTop, setShowScrollTop] = useState(false);
+    const sentinelRef = useRef(null);
+
+    // Track scroll for "Volver arriba" button
     useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(getIsMobile());
+        let ticking = false;
+        const handleScroll = () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    setShowScrollTop(window.scrollY > 450);
+                    ticking = false;
+                });
+                ticking = true;
+            }
         };
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
     }, []);
 
     // Debounce search query to avoid thrashing CPU & memory allocations on keystrokes
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedFilter(filterInput.trim().toLowerCase());
-        }, 250);
+        }, 200);
         return () => clearTimeout(timer);
     }, [filterInput]);
 
@@ -49,19 +58,26 @@ const ContenidoFarmacos = () => {
         let isMounted = true;
         const loadData = async () => {
             setIsLoading(true);
-            const [drugsRes, familiesRes] = await Promise.all([
-                drugService.getAllDrugs(),
-                drugService.getAllFamilies()
-            ]);
+            try {
+                const [drugsRes, familiesRes] = await Promise.all([
+                    drugService.getAllDrugs(),
+                    drugService.getAllFamilies()
+                ]);
 
-            if (isMounted) {
-                if (drugsRes.success) {
-                    setDrugs(drugsRes.data);
+                if (isMounted) {
+                    if (drugsRes.success && Array.isArray(drugsRes.data)) {
+                        setDrugs(drugsRes.data);
+                    }
+                    if (familiesRes.success && Array.isArray(familiesRes.data)) {
+                        setCategories(familiesRes.data);
+                    }
                 }
-                if (familiesRes.success) {
-                    setCategories(familiesRes.data);
+            } catch (err) {
+                console.error('[ContenidoFarmacos] Error al cargar fármacos:', err);
+            } finally {
+                if (isMounted) {
+                    setIsLoading(false);
                 }
-                setIsLoading(false);
             }
         };
         loadData();
@@ -150,62 +166,41 @@ const ContenidoFarmacos = () => {
         return filterDrugsByQuery(inCategory, query, { includeMechanism: true });
     }, [drugs, selectedCategory, debouncedFilter]);
 
-    // En móvil, cuando no hay búsqueda de texto activa:
-    // Si la categoría es 'all', toma 5 fármacos aleatorios de toda la base de datos.
-    // Si el usuario decide voluntariamente filtrar por una categoría, muestra los fármacos de esa categoría (o hasta 5 aleatorios si hay muchos).
-    const randomMobileDrugs = useMemo(() => {
-        if (!isMobile || debouncedFilter) return null;
-        if (filteredDrugs.length <= MOBILE_RANDOM_LIMIT) return filteredDrugs;
-        
-        // Muestreo Fisher-Yates aleatorio de toda la base de datos (o de la categoría seleccionada si el usuario eligió una)
-        const pool = [...filteredDrugs];
-        for (let i = pool.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [pool[i], pool[j]] = [pool[j], pool[i]];
-        }
-        return pool.slice(0, MOBILE_RANDOM_LIMIT);
-    }, [isMobile, debouncedFilter, filteredDrugs]);
-
-    // Reset pagination window whenever filters change
+    // Resetear límite de visualización al cambiar filtros o búsqueda
     useEffect(() => {
-        setVisibleCount(BATCH_SIZE);
+        setDisplayLimit(INITIAL_BATCH);
     }, [selectedCategory, debouncedFilter]);
 
-    // Slice only visible items to dramatically prune DOM tree and fiber memory
+    // Fármacos visibles actualmente según lazy loading
     const visibleDrugs = useMemo(() => {
-        if (isMobile && randomMobileDrugs) {
-            return randomMobileDrugs;
-        }
-        return filteredDrugs.slice(0, visibleCount);
-    }, [isMobile, randomMobileDrugs, filteredDrugs, visibleCount]);
+        return filteredDrugs.slice(0, displayLimit);
+    }, [filteredDrugs, displayLimit]);
 
-    // IntersectionObserver for progressive infinite scroll (disabled in mobile random 5 mode to keep footer easily accessible)
+    const hasMore = displayLimit < filteredDrugs.length;
+
+    // IntersectionObserver para cargar el siguiente bloque de fármacos de forma fluida
     useEffect(() => {
-        if (isMobile && randomMobileDrugs) return;
-        if (visibleCount >= filteredDrugs.length) return;
-
-        const currentSentinel = sentinelRef.current;
-        if (!currentSentinel) return;
+        if (!hasMore) return;
+        const sentinelEl = sentinelRef.current;
+        if (!sentinelEl) return;
 
         const observer = new IntersectionObserver(
             (entries) => {
                 if (entries[0].isIntersecting) {
-                    setVisibleCount((prev) => Math.min(prev + BATCH_SIZE, filteredDrugs.length));
+                    setDisplayLimit((prev) => Math.min(prev + BATCH_SIZE, filteredDrugs.length));
                 }
             },
             {
-                root: isMobile ? null : contentRef.current,
-                rootMargin: '250px'
+                rootMargin: '500px 0px 500px 0px',
+                threshold: 0
             }
         );
 
-        observer.observe(currentSentinel);
-        return () => observer.disconnect();
-    }, [isMobile, randomMobileDrugs, visibleCount, filteredDrugs.length]);
-
-    const handleLoadMore = () => {
-        setVisibleCount((prev) => Math.min(prev + BATCH_SIZE, filteredDrugs.length));
-    };
+        observer.observe(sentinelEl);
+        return () => {
+            observer.disconnect();
+        };
+    }, [hasMore, filteredDrugs.length]);
 
     return (
         <section className={styles.container}>
@@ -218,7 +213,7 @@ const ContenidoFarmacos = () => {
                 <div className={styles.heroTitleRow}>
                     <h1 className={styles.title}>{t.allDrugsTitle}</h1>
                     <span className={styles.countBadge}>
-                        {drugs.length} {t.totalDrugsCount}
+                        {filteredDrugs.length} {t.totalDrugsCount}
                     </span>
                 </div>
                 <p className={styles.subtitle}>{t.allDrugsSubtitle}</p>
@@ -254,7 +249,7 @@ const ContenidoFarmacos = () => {
                         <option value="all">{t.allCategories} ({drugs.length})</option>
                         {categoryList.map((cat) => (
                             <option key={cat.id} value={cat.filterKey}>
-                                {cat.label} ({categoryCounts.get(cat.filterKey) || 0})
+                                {cat.label} ({categoryCounts.get(cat.filterKey.toLowerCase()) || 0})
                             </option>
                         ))}
                     </select>
@@ -310,101 +305,130 @@ const ContenidoFarmacos = () => {
                     </div>
                 </aside>
 
-                <div ref={contentRef} className={styles.catalogMainContent}>
-
-            {/* Loading & Content */}
-            {isLoading ? (
-                <div className={styles.loadingBox}>
-                    <div className={styles.spinner} />
-                    <p>Cargando vademécum clínico...</p>
-                </div>
-            ) : visibleDrugs.length > 0 ? (
-                <>
-                    <div className={styles.drugList}>
-                        {visibleDrugs.map((drug) => (
-                            <div
-                                key={drug.id || drug._id || drug.name}
-                                className={styles.drugListItem}
-                                onClick={() => {
-                                    openDrugDetail(drug);
-                                }}
-                                role="button"
-                                tabIndex={0}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' || e.key === ' ') {
-                                        if (e.key === ' ') e.preventDefault();
-                                        openDrugDetail(drug);
-                                    }
-                                }}
-                            >
-                                {/* Columna 1: Identificación y Clasificación */}
-                                <div className={styles.itemIdentityCol}>
-                                    <div className={styles.itemTitleRow}>
-                                        <h3 className={styles.drugName}>{drug.name}</h3>
-                                        {drug.atc && drug.atc.length > 0 && (
-                                            <span className={styles.drugAtcBadge}>
-                                                {drug.atc[0].code}
-                                            </span>
-                                        )}
-                                    </div>
-                                    {drug.atc && drug.atc.length > 0 && (
-                                        <div className={styles.itemCategoriesRow}>
-                                            {drug.atc.map((item, idx) => {
-                                                const catName = item.subcategoryName || item.categoryName;
-                                                return (
-                                                    <span key={idx} className={styles.categoryPill} title={catName}>
-                                                        {catName}
+                <div className={styles.catalogMainContent}>
+                    {/* Loading & Infinite Scroll Content */}
+                    {isLoading ? (
+                        <div className={styles.loadingBox}>
+                            <div className={styles.spinner} />
+                            <p>Cargando vademécum clínico...</p>
+                        </div>
+                    ) : filteredDrugs.length > 0 ? (
+                        <>
+                            <div className={styles.drugList}>
+                                {visibleDrugs.map((drug) => (
+                                    <div
+                                        key={drug.id || drug._id || drug.name}
+                                        className={styles.drugListItem}
+                                        onClick={() => {
+                                            openDrugDetail(drug);
+                                        }}
+                                        role="button"
+                                        tabIndex={0}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' || e.key === ' ') {
+                                                if (e.key === ' ') e.preventDefault();
+                                                openDrugDetail(drug);
+                                            }
+                                        }}
+                                    >
+                                        {/* Columna 1: Identificación y Clasificación */}
+                                        <div className={styles.itemIdentityCol}>
+                                            <div className={styles.itemTitleRow}>
+                                                <h3 className={styles.drugName}>{drug.name}</h3>
+                                                {drug.atc && drug.atc.length > 0 && (
+                                                    <span className={styles.drugAtcBadge}>
+                                                        {drug.atc[0].code}
                                                     </span>
-                                                );
-                                            })}
+                                                )}
+                                            </div>
+                                            {drug.atc && drug.atc.length > 0 && (
+                                                <div className={styles.itemCategoriesRow}>
+                                                    {drug.atc.map((item, idx) => {
+                                                        const catName = item.subcategoryName || item.categoryName;
+                                                        return (
+                                                            <span key={idx} className={styles.categoryPill} title={catName}>
+                                                                {catName}
+                                                            </span>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
-                                </div>
 
-                                {/* Columna 2: Mecanismo de Acción / Contexto Clínico */}
-                                <div className={styles.itemClinicalCol}>
-                                    {drug.actionMechanism ? (
-                                        <p className={styles.itemMechanism}>{drug.actionMechanism}</p>
-                                    ) : (
-                                        <p className={styles.itemMechanismEmpty}>Monografía clínica disponible en el catálogo de FarmacoPedia.</p>
-                                    )}
-                                </div>
+                                        {/* Columna 2: Mecanismo de Acción (Protegido: requiere inicio de sesión) */}
+                                        <div className={styles.itemClinicalCol}>
+                                            {isLoggedIn ? (
+                                                drug.actionMechanism ? (
+                                                    <p className={styles.itemMechanism}>{drug.actionMechanism}</p>
+                                                ) : (
+                                                    <p className={styles.itemMechanismEmpty}>Monografía clínica disponible en el catálogo de FarmacoPedia.</p>
+                                                )
+                                            ) : (
+                                                <span className={styles.itemMechanismLocked}>
+                                                    🔒 Inicia sesión para ver mecanismo y posología
+                                                </span>
+                                            )}
+                                        </div>
 
-                                {/* Columna 3: Acción de Entrada / Navegación */}
-                                <div className={styles.itemActionCol}>
-                                    <span className={styles.desktopActionBtn}>
-                                        {t.viewDetails}
-                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                            <path d="M5 12h14" />
-                                            <path d="m12 5 7 7-7 7" />
-                                        </svg>
-                                    </span>
-                                    <span className={styles.mobileChevron} aria-hidden="true">›</span>
-                                </div>
+                                        {/* Columna 3: Acción de Entrada / Navegación */}
+                                        <div className={styles.itemActionCol}>
+                                            <span className={styles.desktopActionBtn}>
+                                                {t.viewDetails}
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                                    <path d="M5 12h14" />
+                                                    <path d="m12 5 7 7-7 7" />
+                                                </svg>
+                                            </span>
+                                            <span className={styles.mobileChevron} aria-hidden="true">›</span>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
 
-                    {/* Progressive loading sentinel and manual fallback (hidden when in mobile random 5 view to keep footer reachable) */}
-                    {!randomMobileDrugs && visibleCount < filteredDrugs.length && (
-                        <div ref={sentinelRef} className={styles.scrollSentinel}>
-                            <button
-                                type="button"
-                                className={styles.loadMoreBtn}
-                                onClick={handleLoadMore}
-                            >
-                                Cargar más fármacos ({visibleCount} de {filteredDrugs.length})
-                            </button>
+                            {/* Centinela de scroll para carga infinita automática */}
+                            {hasMore && (
+                                <div ref={sentinelRef} className={styles.scrollSentinel}>
+                                    <button
+                                        type="button"
+                                        className={styles.loadMoreBtn}
+                                        onClick={() => setDisplayLimit((prev) => Math.min(prev + BATCH_SIZE, filteredDrugs.length))}
+                                    >
+                                        <span>Cargar más fármacos ({visibleDrugs.length} de {filteredDrugs.length})</span>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                            <polyline points="6 9 12 15 18 9" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            )}
+
+                            {!hasMore && filteredDrugs.length > INITIAL_BATCH && (
+                                <div className={styles.scrollSentinel} style={{ opacity: 0.7 }}>
+                                    <span>Has llegado al final del catálogo ({filteredDrugs.length} fármacos listados).</span>
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        <div className={styles.emptyBox}>
+                            <p>{t.emptyDrugsMessage}</p>
                         </div>
                     )}
-                </>
-            ) : (
-                <div className={styles.emptyBox}>
-                    <p>{t.emptyDrugsMessage}</p>
-                </div>
-            )}
                 </div>
             </div>
+
+            {/* Botón flotante 'Volver arriba' */}
+            {showScrollTop && (
+                <button
+                    type="button"
+                    className={styles.scrollToTopBtn}
+                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                    title="Volver al inicio del catálogo"
+                    aria-label="Volver arriba"
+                >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="m18 15-6-6-6 6" />
+                    </svg>
+                </button>
+            )}
         </section>
     );
 };

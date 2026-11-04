@@ -1,0 +1,27 @@
+{
+  "name": "ClickSalud FarmacoPedia",
+  "short_name": "FarmacoPedia",
+  "description": "Vademécum farmacológico estructurado para profesionales y estudiantes de la salud por el Dr. Francisco Molina.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f172a",
+  "theme_color": "#0ea5e9",
+  "lang": "es",
+  "categories": ["medical", "health", "education"],
+  "icons": [
+    {
+      "src": "MenuCapsulaOn.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "MenuCapsulaOn.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
