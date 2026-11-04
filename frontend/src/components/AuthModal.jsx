@@ -199,27 +199,17 @@ const AuthModal = () => {
 
         if (!validateAccreditationFields()) return;
 
-        // Crear resumen de licencias
-        const licenseSummary = Object.entries(identifiers)
-            .filter(([_, v]) => Boolean(v && String(v).trim()))
-            .map(([k, v]) => `${k.toUpperCase()}: ${String(v).trim()}`)
-            .join(' / ');
-
         setIsLoading(true);
 
         const doctorData = {
             firstName: firstName.trim(),
             lastName: lastName.trim(),
-            name: `${firstName.trim()} ${lastName.trim()}`,
             email: cleanEmail,
             password: password,
             country: country,
             identifiers: identifiers,
-            licenseNumber: licenseSummary,
             specialty: specialty,
-            role: specialty === 'Estudiante de medicina' ? 'Estudiante' : specialty === 'Enfermera' ? 'Enfermera' : specialty === 'Farmacista' ? 'Farmacéutico' : 'Médico',
-            institution: institution.trim(),
-            authProvider: 'email'
+            institution: institution.trim()
         };
 
         const result = await drugService.registerDoctor(doctorData);

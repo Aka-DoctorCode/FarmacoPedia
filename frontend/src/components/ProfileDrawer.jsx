@@ -163,23 +163,15 @@ const ProfileDrawer = () => {
             return;
         }
 
-        const licenseSummary = Object.entries(identifiers)
-            .filter(([_, v]) => Boolean(v && String(v).trim()))
-            .map(([k, v]) => `${k.toUpperCase()}: ${String(v).trim()}`)
-            .join(' / ');
-
         setIsSaving(true);
 
         const updatedData = {
             firstName: firstName.trim(),
             lastName: lastName.trim(),
-            name: `${firstName.trim()} ${lastName.trim()}`,
             email: user.email,
             country: country,
             identifiers: identifiers,
-            licenseNumber: licenseSummary,
             specialty: specialty,
-            role: specialty === 'Estudiante de medicina' ? 'Estudiante' : specialty === 'Enfermera' ? 'Enfermera' : specialty === 'Farmacista' ? 'Farmacéutico' : 'Médico',
             institution: institution.trim()
         };
 

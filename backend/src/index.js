@@ -243,9 +243,8 @@ const PendingDrug = mongoose.model("PendingDrug", pendingDrugSchema);
 // Doctor & Health Professional Model
 const doctorUserSchema = new mongoose.Schema(
     {
-        firstName: { type: String, trim: true, default: "" },
-        lastName: { type: String, trim: true, default: "" },
-        name: { type: String, required: true, trim: true },
+        firstName: { type: String, required: true, trim: true },
+        lastName: { type: String, required: true, trim: true },
         email: { type: String, required: true, unique: true, lowercase: true, trim: true },
         passwordHash: { type: String, default: null },
         salt: { type: String, default: null },
@@ -255,7 +254,6 @@ const doctorUserSchema = new mongoose.Schema(
             of: String,
             default: {}
         },
-        licenseNumber: { type: String, trim: true, default: "" }, // Resumen o fallback
         specialty: {
             type: String,
             trim: true,
@@ -269,13 +267,37 @@ const doctorUserSchema = new mongoose.Schema(
             ],
             default: "Médico general"
         },
-        role: { type: String, default: "Médico" },
-        institution: { type: String, trim: true, default: "" },
-        authProvider: { type: String, default: "email" },
-        avatar: { type: String, default: null }
+        role: {
+            type: String,
+            trim: true,
+            enum: ["doctor", "admin"],
+            default: "doctor"
+        },
+        institution: { type: String, trim: true, default: "" }
     },
-    { timestamps: true }
+    {
+        timestamps: true,
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true }
+    }
 );
+
+// Virtual: nombre completo dinámico (evita redundancia en BD)
+doctorUserSchema.virtual("name").get(function () {
+    return [this.firstName, this.lastName].filter(Boolean).join(" ");
+});
+
+// Virtual: resumen de licencias dinámico (evita redundancia en BD)
+doctorUserSchema.virtual("licenseNumber").get(function () {
+    if (!this.identifiers) return "";
+    const entries = this.identifiers instanceof Map
+        ? Array.from(this.identifiers.entries())
+        : Object.entries(this.identifiers);
+    return entries
+        .filter(([_, v]) => Boolean(v && String(v).trim()))
+        .map(([k, v]) => `${k.toUpperCase()}: ${String(v).trim()}`)
+        .join(" / ");
+});
 
 doctorUserSchema.index({ email: 1 });
 doctorUserSchema.index({ country: 1 });
@@ -816,17 +838,12 @@ app.post("/auth/register", asyncHandler(async (req, res) => {
     const {
         firstName,
         lastName,
-        name,
         email,
         password,
         country,
         identifiers,
-        licenseNumber,
         specialty,
-        role,
-        institution,
-        authProvider,
-        avatar
+        institution
     } = req.body;
 
     if (!email || !country) {
@@ -839,19 +856,17 @@ app.post("/auth/register", asyncHandler(async (req, res) => {
     const cleanEmail = String(email).trim().toLowerCase();
     const cleanFirstName = firstName ? String(firstName).trim() : "";
     const cleanLastName = lastName ? String(lastName).trim() : "";
-    const resolvedName = name?.trim() || [cleanFirstName, cleanLastName].filter(Boolean).join(" ") || cleanEmail.split("@")[0];
 
-    // Formatear identificadores o licencia
-    let resolvedLicenseNumber = licenseNumber ? String(licenseNumber).trim() : "";
+    if (!cleanFirstName || !cleanLastName) {
+        return res.status(400).json({
+            success: false,
+            error: "Nombre y apellido son obligatorios."
+        });
+    }
+
     let cleanIdentifiers = {};
     if (identifiers && typeof identifiers === "object") {
         cleanIdentifiers = identifiers instanceof Map ? Object.fromEntries(identifiers) : identifiers;
-        if (!resolvedLicenseNumber) {
-            resolvedLicenseNumber = Object.entries(cleanIdentifiers)
-                .filter(([_, v]) => Boolean(v && String(v).trim()))
-                .map(([k, v]) => `${k.toUpperCase()}: ${v}`)
-                .join(" / ");
-        }
     }
 
     let passwordHash = null;
@@ -875,17 +890,12 @@ app.post("/auth/register", asyncHandler(async (req, res) => {
     }
 
     if (user) {
-        if (cleanFirstName) user.firstName = cleanFirstName;
-        if (cleanLastName) user.lastName = cleanLastName;
-        user.name = resolvedName;
+        user.firstName = cleanFirstName;
+        user.lastName = cleanLastName;
         user.country = String(country).trim();
         if (Object.keys(cleanIdentifiers).length > 0) user.identifiers = cleanIdentifiers;
-        if (resolvedLicenseNumber) user.licenseNumber = resolvedLicenseNumber;
         if (specialty) user.specialty = specialty;
-        if (role) user.role = role;
-        if (institution) user.institution = String(institution).trim();
-        if (avatar) user.avatar = avatar;
-        user.authProvider = "email";
+        if (institution !== undefined) user.institution = String(institution).trim();
         if (passwordHash && salt) {
             user.passwordHash = passwordHash;
             user.salt = salt;
@@ -895,22 +905,18 @@ app.post("/auth/register", asyncHandler(async (req, res) => {
         user = await DoctorUser.create({
             firstName: cleanFirstName,
             lastName: cleanLastName,
-            name: resolvedName,
             email: cleanEmail,
             passwordHash,
             salt,
             country: String(country).trim(),
             identifiers: cleanIdentifiers,
-            licenseNumber: resolvedLicenseNumber,
             specialty: specialty || "Médico general",
-            role: role || "Médico",
-            institution: institution ? String(institution).trim() : "",
-            authProvider: "email",
-            avatar: avatar || null
+            role: "doctor",
+            institution: institution ? String(institution).trim() : ""
         });
     }
 
-    const userObj = user.toObject();
+    const userObj = user.toObject({ virtuals: true });
     delete userObj.passwordHash;
     delete userObj.salt;
 
@@ -953,7 +959,7 @@ app.post("/auth/login", asyncHandler(async (req, res) => {
         });
     }
 
-    const userObj = user.toObject();
+    const userObj = user.toObject({ virtuals: true });
     delete userObj.passwordHash;
     delete userObj.salt;
 

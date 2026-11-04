@@ -161,14 +161,10 @@ const Navbar = () => {
                                     onClick={() => setUserMenuOpen((prev) => !prev)}
                                     aria-expanded={userMenuOpen}
                                     aria-haspopup="true"
-                                    title={`Cuenta de ${user.name}`}
+                                    title={`Cuenta de ${user.firstName || user.name || 'Médico'}`}
                                 >
-                                    {user.avatar ? (
-                                        <img src={user.avatar} alt={user.name} className={styles.userAvatarImg} />
-                                    ) : (
-                                        <span className={styles.userAvatarInitial}>{(user.name || 'U').charAt(0).toUpperCase()}</span>
-                                    )}
-                                    <span className={styles.userNamePill}>{user.name.split(' ')[0]}</span>
+                                    <span className={styles.userAvatarInitial}>{(user.firstName || user.name || 'M').charAt(0).toUpperCase()}</span>
+                                    <span className={styles.userNamePill}>{user.firstName || (user.name ? user.name.split(' ')[0] : 'Médico')}</span>
                                     <svg
                                         width="12"
                                         height="12"
