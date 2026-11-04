@@ -120,6 +120,9 @@ const StateContext = ({ children }) => {
     const location = useLocation();
 
     const { activeView, selectedDrugName, atcCode } = useMemo(() => {
+        if (matchPath('/admin', location.pathname) || matchPath('/admin/editor', location.pathname)) {
+            return { activeView: 'adminEditor', selectedDrugName: null, atcCode: null };
+        }
         if (matchPath('/about', location.pathname)) {
             return { activeView: 'about', selectedDrugName: null, atcCode: null };
         }
@@ -210,6 +213,10 @@ const StateContext = ({ children }) => {
         navigate('/terms');
     }, [navigate]);
 
+    const navigateToAdmin = useCallback(() => {
+        navigate('/admin');
+    }, [navigate]);
+
     const openDisclaimerModal = useCallback(() => {
         setDescargoVisible(true);
     }, []);
@@ -245,6 +252,7 @@ const StateContext = ({ children }) => {
         navigateToAbout,
         navigateToPrivacy,
         navigateToTerms,
+        navigateToAdmin,
         openDisclaimerModal,
         searchModalOpen,
         setSearchModalOpen,
@@ -288,6 +296,7 @@ const StateContext = ({ children }) => {
         navigateToAbout,
         navigateToPrivacy,
         navigateToTerms,
+        navigateToAdmin,
         openDisclaimerModal,
         searchModalOpen,
         setSearchModalOpen,

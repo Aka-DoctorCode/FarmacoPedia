@@ -1,0 +1,533 @@
+.adminContainer {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 64px);
+    width: 100%;
+    background: var(--bgPrimary);
+    color: var(--textPrimary);
+    overflow: hidden;
+}
+
+.unauthorizedCard {
+    max-width: 480px;
+    margin: 80px auto;
+    padding: 32px 24px;
+    background: var(--bgSurface);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusLg);
+    text-align: center;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.unauthorizedIcon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+}
+
+.unauthorizedTitle {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.unauthorizedText {
+    font-size: 0.9rem;
+    color: var(--textSecondary);
+    line-height: 1.5;
+}
+
+.backHomeBtn {
+    padding: 10px 20px;
+    background: #0284c7;
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radiusMd);
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.backHomeBtn:hover {
+    opacity: 0.9;
+}
+
+/* Header bar */
+.topBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: var(--bgSurface);
+    border-bottom: 1px solid var(--borderGlass);
+    gap: 16px;
+    flex-shrink: 0;
+}
+
+.topBarLeft {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.backBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--bgInput);
+    border: 1px solid var(--borderGlass);
+    color: var(--textSecondary);
+    border-radius: var(--radiusMd);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.backBtn:hover {
+    background: var(--bgSurfaceHover);
+    color: var(--textPrimary);
+}
+
+.topBarTitle {
+    font-size: 1.05rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.adminBadge {
+    padding: 2px 8px;
+    background: rgba(14, 165, 233, 0.18);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: var(--radiusPill);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.topBarRight {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.togglePreviewBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--bgInput);
+    border: 1px solid var(--borderGlass);
+    color: var(--textSecondary);
+    border-radius: var(--radiusMd);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.togglePreviewBtnActive {
+    background: rgba(14, 165, 233, 0.15);
+    border-color: #0284c7;
+    color: #0284c7;
+}
+
+.discardBtn {
+    padding: 6px 14px;
+    background: transparent;
+    border: 1px solid var(--borderGlass);
+    color: var(--textSecondary);
+    border-radius: var(--radiusMd);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.discardBtn:hover:not(:disabled) {
+    background: var(--bgSurfaceHover);
+    color: var(--textPrimary);
+}
+
+.deleteBtn {
+    padding: 6px 14px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    border-radius: var(--radiusMd);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.deleteBtn:hover:not(:disabled) {
+    background: #ef4444;
+    color: #ffffff;
+}
+
+.saveBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 18px;
+    background: #0284c7;
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radiusMd);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
+    transition: all 0.15s;
+}
+
+.saveBtn:hover:not(:disabled) {
+    background: #0369a1;
+    transform: translateY(-1px);
+}
+
+.saveBtn:disabled,
+.discardBtn:disabled,
+.deleteBtn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Workspace Layout */
+.workspace {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Side navigation panel */
+.sideNav {
+    width: 290px;
+    min-width: 260px;
+    background: var(--bgSurface);
+    border-right: 1px solid var(--borderGlass);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.tabsRow {
+    display: flex;
+    border-bottom: 1px solid var(--borderGlass);
+}
+
+.tabBtn {
+    flex: 1;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--textSecondary);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.tabBtnActive {
+    color: #0284c7;
+    border-bottom-color: #0284c7;
+    background: var(--bgInput);
+}
+
+.searchBox {
+    padding: 10px;
+    border-bottom: 1px solid var(--borderGlass);
+    display: flex;
+    gap: 8px;
+}
+
+.searchInput {
+    flex: 1;
+    padding: 8px 12px;
+    background: var(--bgInput);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusMd);
+    color: var(--textPrimary);
+    font-size: 0.82rem;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: #0284c7;
+}
+
+.newBtn {
+    padding: 8px 12px;
+    background: rgba(14, 165, 233, 0.15);
+    border: 1px solid rgba(14, 165, 233, 0.35);
+    color: #0284c7;
+    border-radius: var(--radiusMd);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+}
+
+.newBtn:hover {
+    background: #0284c7;
+    color: #ffffff;
+}
+
+.listItems {
+    flex: 1;
+    overflow-y: auto;
+    list-style: none;
+    padding: 6px;
+    margin: 0;
+}
+
+.listItem {
+    padding: 9px 12px;
+    border-radius: var(--radiusSm);
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    transition: background 0.12s;
+    margin-bottom: 2px;
+}
+
+.listItem:hover {
+    background: var(--bgSurfaceHover);
+}
+
+.listItemSelected {
+    background: rgba(14, 165, 233, 0.15) !important;
+    border-left: 3px solid #0284c7;
+    font-weight: 600;
+    color: #0284c7;
+}
+
+.statusTag {
+    font-size: 0.68rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.statusTagCompleted {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+/* Editor Panel */
+.editorPanel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: var(--bgPrimary);
+    border-right: 1px solid var(--borderGlass);
+}
+
+.editorHeader {
+    padding: 8px 16px;
+    background: var(--bgSurface);
+    border-bottom: 1px solid var(--borderGlass);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--textSecondary);
+}
+
+.editorHeaderTitle {
+    font-weight: 700;
+    color: var(--textPrimary);
+}
+
+.editorTextarea {
+    flex: 1;
+    width: 100%;
+    padding: 16px;
+    background: var(--bgPrimary);
+    color: var(--textPrimary);
+    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    border: none;
+    resize: none;
+    outline: none;
+    tab-size: 2;
+    white-space: pre;
+    overflow: auto;
+}
+
+.editorStatusBar {
+    padding: 6px 16px;
+    background: var(--bgSurface);
+    border-top: 1px solid var(--borderGlass);
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.statusGood {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.statusBad {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+/* Live Preview Panel */
+.previewPanel {
+    width: 440px;
+    min-width: 380px;
+    max-width: 50%;
+    background: var(--bgSurface);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.previewHeader {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--borderGlass);
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.previewBody {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.previewEmpty {
+    color: var(--textMuted);
+    font-style: italic;
+    font-size: 0.85rem;
+    text-align: center;
+    margin-top: 40px;
+}
+
+/* Card components inside preview */
+.previewDrugHeader {
+    border-bottom: 1px solid var(--borderGlass);
+    padding-bottom: 12px;
+}
+
+.previewDrugName {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--textPrimary);
+    margin: 0 0 4px;
+}
+
+.previewAtcBadge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: rgba(14, 165, 233, 0.15);
+    color: #0284c7;
+    border-radius: var(--radiusPill);
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.previewSection {
+    background: var(--bgInput);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusMd);
+    padding: 12px 14px;
+}
+
+.previewSectionTitle {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--textSecondary);
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+}
+
+.previewSectionContent {
+    font-size: 0.84rem;
+    line-height: 1.5;
+    color: var(--textPrimary);
+}
+
+.previewTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.previewTag {
+    font-size: 0.74rem;
+    padding: 3px 8px;
+    background: var(--bgSurfaceHover);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusSm);
+}
+
+.previewRisksGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.riskItem {
+    padding: 8px 10px;
+    background: var(--bgSurface);
+    border-radius: var(--radiusSm);
+    border: 1px solid var(--borderGlass);
+    font-size: 0.78rem;
+}
+
+.riskLabel {
+    color: var(--textSecondary);
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.riskValue {
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+@media (max-width: 1024px) {
+    .previewPanel {
+        display: none;
+    }
+}

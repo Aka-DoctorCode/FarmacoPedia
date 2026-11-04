@@ -1,4 +1,5 @@
 import { useContext, useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { counterContext } from '../context/counterContext.js';
 import { drugService } from '../services/drugService.js';
 import OfflineModal from './OfflineModal.jsx';
@@ -19,6 +20,7 @@ const Navbar = () => {
         setProfileDrawerOpen,
         logout
     } = useContext(counterContext);
+    const navigate = useNavigate();
 
     const [offlineModalOpen, setOfflineModalOpen] = useState(false);
     const [hasOfflineData, setHasOfflineData] = useState(false);
@@ -197,6 +199,24 @@ const Navbar = () => {
                                             </svg>
                                             <span>Perfil</span>
                                         </button>
+
+                                        {user?.role === 'admin' && (
+                                            <button
+                                                type="button"
+                                                className={styles.dropdownMenuItem}
+                                                onClick={() => {
+                                                    setUserMenuOpen(false);
+                                                    navigate('/admin');
+                                                }}
+                                                role="menuitem"
+                                            >
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M12 20h9" />
+                                                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                                                </svg>
+                                                <span>Editor Clínico (JSON)</span>
+                                            </button>
+                                        )}
                                         <div className={styles.dropdownMenuDivider} />
                                         <button
                                             type="button"

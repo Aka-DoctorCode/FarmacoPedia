@@ -18,6 +18,7 @@ const DetalleFarmaco = lazy(() => import('./views/DetalleFarmaco.jsx'));
 const AboutUs = lazy(() => import('./views/AboutUs.jsx'));
 const PrivacyPolicy = lazy(() => import('./views/PrivacyPolicy.jsx'));
 const TermsOfUse = lazy(() => import('./views/TermsOfUse.jsx'));
+const AdminEditor = lazy(() => import('./views/AdminEditor.jsx'));
 
 const ViewFallback = () => (
     <div className="viewLoadingFallback" role="status" aria-live="polite">
@@ -45,13 +46,13 @@ const App = () => {
 
             <PwaInstallPrompt />
             <Navbar />
-            <AdBanner />
+            {activeView !== 'adminEditor' && <AdBanner />}
             <SearchModal />
             <AuthModal />
             <ProfileDrawer />
             <Descargo />
 
-            <main className="mainContent">
+            <main className={activeView === 'adminEditor' ? 'mainContentAdmin' : 'mainContent'}>
                 <Suspense fallback={<ViewFallback />}>
                     {activeView === 'drugs' && <ContenidoFarmacos />}
                     {activeView === 'families' && <ContenidoFamilia />}
@@ -59,11 +60,12 @@ const App = () => {
                     {activeView === 'about' && <AboutUs />}
                     {activeView === 'privacy' && <PrivacyPolicy />}
                     {activeView === 'terms' && <TermsOfUse />}
+                    {activeView === 'adminEditor' && <AdminEditor />}
                 </Suspense>
             </main>
 
-            <Footer />
-            <BottomNav />
+            {activeView !== 'adminEditor' && <Footer />}
+            {activeView !== 'adminEditor' && <BottomNav />}
         </>
     );
 };

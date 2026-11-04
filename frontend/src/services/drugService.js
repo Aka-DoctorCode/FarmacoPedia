@@ -480,6 +480,97 @@ class DrugService {
             };
         }
     }
+
+    /**
+     * Helpers de Administración Clínica
+     */
+    getAdminHeaders() {
+        let token = '';
+        if (typeof window !== 'undefined') {
+            try {
+                const stored = localStorage.getItem('clicksalud_auth_user') || sessionStorage.getItem('clicksalud_auth_user');
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    token = parsed.adminToken || '';
+                }
+            } catch {
+                /* ignore */
+            }
+        }
+        return token ? { Authorization: `Bearer ${token}` } : {};
+    }
+
+    async verifyAdminSession(email = null) {
+        try {
+            const headers = this.getAdminHeaders();
+            const res = await axios.post(`${this.apiBaseUrl}/auth/verify-admin`, { email }, { headers, timeout: 10000 });
+            return res.data;
+        } catch (e) {
+            return { success: false, error: e.response?.data?.error || e.message };
+        }
+    }
+
+    async getAdminPendingDrugs(all = true) {
+        try {
+            const headers = this.getAdminHeaders();
+            const res = await axios.get(`${this.apiBaseUrl}/pending-drugs?all=${all}`, { headers, timeout: 15000 });
+            return { success: true, data: res.data?.data || [] };
+        } catch (e) {
+            return { success: false, error: e.response?.data?.error || e.message, data: [] };
+        }
+    }
+
+    async savePublishedDrug(name, drugData, isNew = false) {
+        try {
+            const headers = this.getAdminHeaders();
+            let res;
+            if (isNew) {
+                res = await axios.post(`${this.apiBaseUrl}/drugs`, drugData, { headers, timeout: 15000 });
+            } else {
+                res = await axios.patch(`${this.apiBaseUrl}/drugs/${encodeURIComponent(name)}`, drugData, { headers, timeout: 15000 });
+            }
+            this.clearCache();
+            return { success: true, data: res.data?.data || res.data };
+        } catch (e) {
+            return { success: false, error: e.response?.data?.error || e.message };
+        }
+    }
+
+    async deletePublishedDrug(name) {
+        try {
+            const headers = this.getAdminHeaders();
+            const res = await axios.delete(`${this.apiBaseUrl}/drugs/${encodeURIComponent(name)}`, { headers, timeout: 15000 });
+            this.clearCache();
+            return { success: true, data: res.data };
+        } catch (e) {
+            return { success: false, error: e.response?.data?.error || e.message };
+        }
+    }
+
+    async savePendingDrug(name, pendingData, isNew = false) {
+        try {
+            const headers = this.getAdminHeaders();
+            let res;
+            if (isNew) {
+                res = await axios.post(`${this.apiBaseUrl}/pending-drugs`, pendingData, { headers, timeout: 15000 });
+            } else {
+                res = await axios.patch(`${this.apiBaseUrl}/pending-drugs/${encodeURIComponent(name)}`, pendingData, { headers, timeout: 15000 });
+            }
+            return { success: true, data: res.data?.data || res.data };
+        } catch (e) {
+            return { success: false, error: e.response?.data?.error || e.message };
+        }
+    }
+
+    async deletePendingDrug(name) {
+        try {
+            const headers = this.getAdminHeaders();
+            const res = await axios.delete(`${this.apiBaseUrl}/pending-drugs/${encodeURIComponent(name)}`, { headers, timeout: 15000 });
+            return { success: true, data: res.data };
+        } catch (e) {
+            return { success: false, error: e.response?.data?.error || e.message };
+        }
+    }
 }
 
 export const drugService = new DrugService();

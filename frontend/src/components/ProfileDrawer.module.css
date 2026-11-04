@@ -249,6 +249,72 @@
     color: var(--textPrimary);
 }
 
+.adminBannerCard {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(99, 102, 241, 0.12) 100%);
+    border: 1px solid rgba(14, 165, 233, 0.35);
+    border-radius: var(--radiusMd);
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.adminBannerHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.adminBadgeRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.adminBadge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    background: rgba(14, 165, 233, 0.2);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    border-radius: var(--radiusPill);
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.adminHint {
+    font-size: 0.8rem;
+    color: var(--textSecondary);
+    line-height: 1.4;
+}
+
+.adminEditorBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 16px;
+    background: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radiusMd);
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+}
+
+.adminEditorBtn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(14, 165, 233, 0.45);
+    opacity: 0.95;
+}
+
 @media (max-width: 600px) {
     .drawerContent {
         max-width: 100%;
