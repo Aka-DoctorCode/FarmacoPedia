@@ -28,6 +28,10 @@ app.use((req, res, next) => {
 
 const crypto = require("crypto");
 
+const asyncHandler = (fn) => (req, res, next) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+};
+
 // --------------------------------------------------------------
 // Database connection
 // --------------------------------------------------------------
@@ -367,11 +371,67 @@ const requireAdmin = async (req, res, next) => {
 };
 
 // --------------------------------------------------------------
+// Servir directamente la aplicación web de tools/editor
+// --------------------------------------------------------------
+const toolsEditorPath = path.resolve(__dirname, "../../tools/editor");
+app.use("/editor", express.static(toolsEditorPath));
+
+app.get(["/session", "/editor/session"], asyncHandler(async (req, res) => {
+    const authHeader = req.get("authorization") || req.get("x-admin-token") || "";
+    const rawToken = authHeader.replace(/^Bearer\s+/i, "").trim();
+    if (!rawToken) {
+        return res.status(401).json({ ok: false });
+    }
+    const adminUser = await verifyAdminToken(rawToken);
+    if (adminUser) {
+        return res.status(200).json({ ok: true, user: adminUser.email });
+    }
+    const expected = process.env.ADMIN_API_KEY;
+    if (expected && rawToken === expected) {
+        return res.status(200).json({ ok: true });
+    }
+    return res.status(401).json({ ok: false });
+}));
+
+app.post(["/auth", "/editor/auth"], asyncHandler(async (req, res) => {
+    const { password } = req.body || {};
+    const adminKey = process.env.ADMIN_API_KEY;
+    const adminPass = process.env.ADMIN_PASSWORD;
+
+    let authenticated = false;
+    let adminUser = null;
+
+    if (password && ((adminPass && password === adminPass) || (adminKey && password === adminKey))) {
+        authenticated = true;
+    } else if (password) {
+        // Verificar si la clave ingresada coincide con algún DoctorUser con rol admin
+        const adminUsers = await DoctorUser.find({ role: "admin" });
+        for (const u of adminUsers) {
+            if (u.passwordHash && u.salt && verifyPassword(password, u.passwordHash, u.salt)) {
+                authenticated = true;
+                adminUser = u;
+                break;
+            }
+        }
+    }
+
+    if (authenticated) {
+        const token = adminUser ? createAdminToken(adminUser._id, adminUser.email) : (adminKey || createAdminToken("admin_system", "admin@clicksalud.com"));
+        return res.status(200).json({ ok: true, token });
+    }
+    return res.status(401).json({ ok: false });
+}));
+
+app.get(["/config", "/editor/config"], (req, res) => {
+    res.json({
+        apiBase: "/api",
+        prod: Boolean(process.env.VERCEL || process.env.NODE_ENV === "production")
+    });
+});
+
+// --------------------------------------------------------------
 // Helpers
 // --------------------------------------------------------------
-const asyncHandler = (fn) => (req, res, next) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
-};
 
 /**
  * Construye una expresión regular insensible a mayúsculas/minúsculas y tildes/diéresis.

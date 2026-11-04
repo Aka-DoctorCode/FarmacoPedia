@@ -21,6 +21,13 @@
   },
   "rewrites": [
     {
+      "source": "/editor(.*)",
+      "destination": {
+        "service": "backend",
+        "path": "/editor$1"
+      }
+    },
+    {
       "source": "/api/(.*)",
       "destination": {
         "service": "backend",
