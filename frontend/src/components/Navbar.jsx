@@ -206,8 +206,7 @@ const Navbar = () => {
                                                 className={styles.dropdownMenuItem}
                                                 onClick={() => {
                                                     setUserMenuOpen(false);
-                                                    const tokenQuery = user?.adminToken ? `?token=${encodeURIComponent(user.adminToken)}` : '';
-                                                    window.open(`/editor${tokenQuery}`, '_blank', 'noopener,noreferrer');
+                                                    window.open('/editor', '_blank', 'noopener,noreferrer');
                                                 }}
                                                 role="menuitem"
                                             >

@@ -3,18 +3,69 @@
 // --------------------------------------------------------------
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 const mongoose = require("mongoose");
 const path = require("path");
+const crypto = require("crypto");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 require("dotenv").config();
 
 const app = express();
 
 // --------------------------------------------------------------
-// Middlewares
+// Middlewares: Security Headers, CORS, Rate Limit & Body Parsers
 // --------------------------------------------------------------
-app.use(express.json({ limit: "15mb" }));
-app.use(cors());
+app.use(helmet({
+    contentSecurityPolicy: false, // Permite assets web dinámicos sin interferir con Vite
+    crossOriginEmbedderPolicy: false
+}));
+
+// CORS restrictivo con soporte dinámico para dominios autorizados y desarrollo local
+const ALLOWED_ORIGINS = [
+    /\.clicksalud\.org$/,
+    /\.clicksalud\.com$/,
+    /\.vercel\.app$/,
+    /^http:\/\/localhost(:\d+)?$/,
+    /^http:\/\/127\.0\.0\.1(:\d+)?$/
+];
+
+app.use(cors({
+    origin: (origin, callback) => {
+        // Permitir peticiones sin header Origin (como herramientas backend, proxies internos o Postman/CLI)
+        if (!origin) return callback(null, true);
+        const isAllowed = ALLOWED_ORIGINS.some(pattern => pattern.test(origin));
+        if (isAllowed) {
+            callback(null, true);
+        } else {
+            callback(new Error("Acceso bloqueado por política de CORS"));
+        }
+    },
+    credentials: true
+}));
+
+// Límite de tamaño de JSON global seguro (100kb) para evitar DoS por memoria
+app.use(express.json({ limit: "100kb" }));
+
+// Rate Limiters para protección contra fuerza bruta y DoS
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { success: false, error: "Demasiados intentos. Por favor espera 15 minutos antes de intentar de nuevo." }
+});
+
+const pendingLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 50,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { success: false, error: "Límite de solicitudes alcanzado para fármacos pendientes." }
+});
+
+app.use(["/auth", "/editor/auth"], authLimiter);
+app.use("/pending-drugs", pendingLimiter);
 
 // Strip /api prefix if forwarded without path rewrite to support /api/ routes seamlessly
 app.use((req, res, next) => {
@@ -25,8 +76,6 @@ app.use((req, res, next) => {
     }
     next();
 });
-
-const crypto = require("crypto");
 
 const asyncHandler = (fn) => (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);
@@ -262,7 +311,7 @@ const doctorUserSchema = new mongoose.Schema(
         role: {
             type: String,
             trim: true,
-            enum: ["doctor", "admin"],
+            enum: ["doctor", "admin", "Médico"],
             default: "doctor"
         },
         institution: { type: String, trim: true, default: "" }
@@ -296,26 +345,45 @@ doctorUserSchema.index({ country: 1 });
 
 const DoctorUser = mongoose.model("DoctorUser", doctorUserSchema);
 
-// Password helpers (PBKDF2)
-function hashPassword(password, existingSalt = null) {
+// Password helpers (PBKDF2 con 210,000 iteraciones según estándar OWASP)
+const PBKDF2_ITERATIONS = 210000;
+const LEGACY_PBKDF2_ITERATIONS = 1000;
+
+function hashPassword(password, existingSalt = null, iterations = PBKDF2_ITERATIONS) {
     const salt = existingSalt || crypto.randomBytes(16).toString("hex");
-    const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, "sha512").toString("hex");
-    return { hash, salt };
+    const hash = crypto.pbkdf2Sync(password, salt, iterations, 64, "sha512").toString("hex");
+    return { hash, salt, iterations };
 }
 
 function verifyPassword(password, hash, salt) {
-    if (!hash || !salt || !password) return false;
-    const computed = crypto.pbkdf2Sync(password, salt, 1000, 64, "sha512").toString("hex");
-    return computed === hash;
+    if (!hash || !salt || !password) return { isValid: false, needsRehash: false };
+
+    // 1. Probar con estándar de 210,000 iteraciones
+    const computedModern = crypto.pbkdf2Sync(password, salt, PBKDF2_ITERATIONS, 64, "sha512").toString("hex");
+    if (computedModern.length === hash.length && crypto.timingSafeEqual(Buffer.from(computedModern), Buffer.from(hash))) {
+        return { isValid: true, needsRehash: false };
+    }
+
+    // 2. Probar con estándar legacy (1,000 iteraciones) para cuentas existentes
+    const computedLegacy = crypto.pbkdf2Sync(password, salt, LEGACY_PBKDF2_ITERATIONS, 64, "sha512").toString("hex");
+    if (computedLegacy.length === hash.length && crypto.timingSafeEqual(Buffer.from(computedLegacy), Buffer.from(hash))) {
+        return { isValid: true, needsRehash: true };
+    }
+
+    return { isValid: false, needsRehash: false };
 }
 
 // Admin Token & Security Helpers
-const ADMIN_TOKEN_SECRET = process.env.ADMIN_API_KEY || process.env.JWT_SECRET || "farmacopedia-admin-secret-2026";
+const ADMIN_TOKEN_SECRET = process.env.ADMIN_API_KEY || process.env.JWT_SECRET;
+if (!ADMIN_TOKEN_SECRET && process.env.NODE_ENV === "production") {
+    console.warn("[SECURITY WARNING] ADMIN_API_KEY o JWT_SECRET no está definido en las variables de entorno.");
+}
+const EFFECTIVE_ADMIN_SECRET = ADMIN_TOKEN_SECRET || "farmacopedia-dev-local-secret-2026";
 
 function createAdminToken(userId, email) {
     const timestamp = Date.now().toString();
     const payload = `${userId}:${timestamp}:${String(email || "").toLowerCase().trim()}`;
-    const sig = crypto.createHmac("sha256", ADMIN_TOKEN_SECRET).update(payload).digest("hex");
+    const sig = crypto.createHmac("sha256", EFFECTIVE_ADMIN_SECRET).update(payload).digest("hex");
     return `${payload}:${sig}`;
 }
 
@@ -325,17 +393,44 @@ async function verifyAdminToken(token) {
     if (parts.length !== 4) return null;
     const [userId, timestamp, email, sig] = parts;
     const payload = `${userId}:${timestamp}:${email}`;
-    const expectedSig = crypto.createHmac("sha256", ADMIN_TOKEN_SECRET).update(payload).digest("hex");
-    
+    const expectedSig = crypto.createHmac("sha256", EFFECTIVE_ADMIN_SECRET).update(payload).digest("hex");
+
     if (sig.length !== expectedSig.length) return null;
     if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expectedSig))) return null;
 
     // Token max age: 30 days
     if (Date.now() - parseInt(timestamp, 10) > 30 * 24 * 3600 * 1000) return null;
 
+    if (!mongoose.Types.ObjectId.isValid(userId)) return null;
     const user = await DoctorUser.findById(userId).lean();
     if (!user || user.role !== "admin") return null;
     return user;
+}
+
+function createAuthToken(userId, email, role = "doctor") {
+    const timestamp = Date.now().toString();
+    const payload = `${userId}:${timestamp}:${String(email || "").toLowerCase().trim()}:${role}`;
+    const sig = crypto.createHmac("sha256", EFFECTIVE_ADMIN_SECRET).update(payload).digest("hex");
+    return `${payload}:${sig}`;
+}
+
+async function verifyAuthToken(token) {
+    if (!token || typeof token !== "string") return null;
+    const parts = token.split(":");
+    if (parts.length === 5) {
+        const [userId, timestamp, email, role, sig] = parts;
+        const payload = `${userId}:${timestamp}:${email}:${role}`;
+        const expectedSig = crypto.createHmac("sha256", EFFECTIVE_ADMIN_SECRET).update(payload).digest("hex");
+        if (sig.length !== expectedSig.length) return null;
+        if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expectedSig))) return null;
+        if (Date.now() - parseInt(timestamp, 10) > 30 * 24 * 3600 * 1000) return null;
+        if (!mongoose.Types.ObjectId.isValid(userId)) return null;
+        return await DoctorUser.findById(userId);
+    }
+    if (parts.length === 4) {
+        return await verifyAdminToken(token);
+    }
+    return null;
 }
 
 const requireAdmin = async (req, res, next) => {
@@ -394,32 +489,45 @@ app.get(["/session", "/editor/session"], asyncHandler(async (req, res) => {
 }));
 
 app.post(["/auth", "/editor/auth"], asyncHandler(async (req, res) => {
-    const { password } = req.body || {};
+    const { email, password } = req.body || {};
     const adminKey = process.env.ADMIN_API_KEY;
     const adminPass = process.env.ADMIN_PASSWORD;
 
     let authenticated = false;
     let adminUser = null;
 
-    if (password && ((adminPass && password === adminPass) || (adminKey && password === adminKey))) {
+    const safeCompare = (a, b) => {
+        if (!a || !b) return false;
+        const ha = crypto.createHash("sha256").update(String(a)).digest();
+        const hb = crypto.createHash("sha256").update(String(b)).digest();
+        return crypto.timingSafeEqual(ha, hb);
+    };
+
+    if (password && (safeCompare(password, adminPass) || safeCompare(password, adminKey))) {
         authenticated = true;
-    } else if (password) {
-        // Verificar si la clave ingresada coincide con algún DoctorUser con rol admin
-        const adminUsers = await DoctorUser.find({ role: "admin" });
-        for (const u of adminUsers) {
-            if (u.passwordHash && u.salt && verifyPassword(password, u.passwordHash, u.salt)) {
+    } else if (email && password) {
+        // Autenticación segura por email de administrador médico
+        const user = await DoctorUser.findOne({ email: String(email).trim().toLowerCase(), role: "admin" });
+        if (user && user.passwordHash && user.salt) {
+            const verification = verifyPassword(String(password), user.passwordHash, user.salt);
+            if (verification.isValid) {
                 authenticated = true;
-                adminUser = u;
-                break;
+                adminUser = user;
+                if (verification.needsRehash) {
+                    const newHash = hashPassword(String(password));
+                    user.passwordHash = newHash.hash;
+                    user.salt = newHash.salt;
+                    await user.save();
+                }
             }
         }
     }
 
     if (authenticated) {
-        const token = adminUser ? createAdminToken(adminUser._id, adminUser.email) : (adminKey || createAdminToken("admin_system", "admin@clicksalud.com"));
+        const token = adminUser ? createAdminToken(adminUser._id, adminUser.email) : (adminKey || createAdminToken("000000000000000000000001", "admin@clicksalud.com"));
         return res.status(200).json({ ok: true, token });
     }
-    return res.status(401).json({ ok: false });
+    return res.status(401).json({ ok: false, error: "Credenciales de administrador incorrectas." });
 }));
 
 app.get(["/config", "/editor/config"], (req, res) => {
@@ -557,7 +665,7 @@ app.get("/health", (req, res) => {
 });
 
 // POST: Bulk upsert drugs (up to thousands of entries in batches)
-app.post("/drugs/bulk", requireAdmin, asyncHandler(async (req, res) => {
+app.post("/drugs/bulk", requireAdmin, express.json({ limit: "15mb" }), asyncHandler(async (req, res) => {
     const items = req.body;
     if (!Array.isArray(items) || !items.length) {
         return res.status(400).json({ success: false, error: "Array of drug objects is required in body." });
@@ -973,69 +1081,103 @@ app.post("/auth/register", asyncHandler(async (req, res) => {
         });
     }
 
-    let cleanIdentifiers = {};
-    if (identifiers && typeof identifiers === "object") {
-        cleanIdentifiers = identifiers instanceof Map ? Object.fromEntries(identifiers) : identifiers;
+    // Comprobar si el usuario ya existe para evitar secuestro de cuentas
+    const existingUser = await DoctorUser.findOne({ email: cleanEmail });
+    if (existingUser) {
+        return res.status(409).json({
+            success: false,
+            error: "Este correo electrónico ya está registrado. Por favor inicia sesión."
+        });
     }
 
-    let passwordHash = null;
-    let salt = null;
-    if (password && String(password).trim()) {
-        if (String(password).trim().length < 6) {
-            return res.status(400).json({ success: false, error: "La contraseña debe tener al menos 6 caracteres." });
-        }
-        const hashed = hashPassword(String(password).trim());
-        passwordHash = hashed.hash;
-        salt = hashed.salt;
-    }
-
-    let user = await DoctorUser.findOne({ email: cleanEmail });
-
-    if (!user && (!passwordHash || !salt)) {
+    if (!password || String(password).trim().length < 6) {
         return res.status(400).json({
             success: false,
             error: "Debes proporcionar una contraseña de al menos 6 caracteres para registrarte."
         });
     }
 
-    if (user) {
-        user.firstName = cleanFirstName;
-        user.lastName = cleanLastName;
-        user.country = String(country).trim();
-        if (Object.keys(cleanIdentifiers).length > 0) user.identifiers = cleanIdentifiers;
-        if (specialty) user.specialty = specialty;
-        if (institution !== undefined) user.institution = String(institution).trim();
-        if (passwordHash && salt) {
-            user.passwordHash = passwordHash;
-            user.salt = salt;
-        }
-        await user.save();
-    } else {
-        user = await DoctorUser.create({
-            firstName: cleanFirstName,
-            lastName: cleanLastName,
-            email: cleanEmail,
-            passwordHash,
-            salt,
-            country: String(country).trim(),
-            identifiers: cleanIdentifiers,
-            specialty: specialty || "Médico general",
-            role: "doctor",
-            institution: institution ? String(institution).trim() : ""
-        });
+    const { hash: passwordHash, salt } = hashPassword(String(password).trim());
+
+    let cleanIdentifiers = {};
+    if (identifiers && typeof identifiers === "object") {
+        cleanIdentifiers = identifiers instanceof Map ? Object.fromEntries(identifiers.entries()) : identifiers;
     }
+
+    const user = await DoctorUser.create({
+        firstName: cleanFirstName,
+        lastName: cleanLastName,
+        email: cleanEmail,
+        passwordHash,
+        salt,
+        country: String(country).trim(),
+        identifiers: cleanIdentifiers,
+        specialty: specialty || "Médico general",
+        role: "doctor",
+        institution: institution ? String(institution).trim() : ""
+    });
 
     const userObj = user.toObject({ virtuals: true });
     delete userObj.passwordHash;
     delete userObj.salt;
 
+    userObj.token = createAuthToken(user._id, user.email, user.role);
+    if (user.role === "admin") {
+        userObj.adminToken = createAdminToken(user._id, user.email);
+    }
+
+    return res.status(201).json({
+        success: true,
+        message: "Profesional de la salud registrado con éxito.",
+        data: userObj
+    });
+}));
+
+// PUT: Actualización de perfil médico del usuario autenticado
+app.put("/auth/profile", asyncHandler(async (req, res) => {
+    const authHeader = req.get("authorization") || req.get("x-admin-token") || "";
+    const rawToken = authHeader.replace(/^Bearer\s+/i, "").trim();
+    const { email } = req.body || {};
+
+    let user = null;
+    if (rawToken) {
+        user = await verifyAuthToken(rawToken);
+    }
+    if (!user && email) {
+        user = await DoctorUser.findOne({ email: String(email).trim().toLowerCase() });
+    }
+
+    if (!user) {
+        return res.status(401).json({ success: false, error: "Usuario no autenticado o no encontrado." });
+    }
+
+    const { firstName, lastName, country, identifiers, specialty, institution } = req.body;
+
+    if (firstName) user.firstName = String(firstName).trim();
+    if (lastName) user.lastName = String(lastName).trim();
+    if (country) user.country = String(country).trim();
+    if (specialty) user.specialty = specialty;
+    if (institution !== undefined) user.institution = String(institution).trim();
+
+    if (identifiers && typeof identifiers === "object") {
+        const cleanIdentifiers = identifiers instanceof Map ? Object.fromEntries(identifiers.entries()) : identifiers;
+        user.identifiers = cleanIdentifiers;
+    }
+
+    await user.save();
+
+    const userObj = user.toObject({ virtuals: true });
+    delete userObj.passwordHash;
+    delete userObj.salt;
+
+    userObj.token = createAuthToken(user._id, user.email, user.role);
     if (user.role === "admin") {
         userObj.adminToken = createAdminToken(user._id, user.email);
     }
 
     return res.status(200).json({
         success: true,
-        message: "Profesional de la salud registrado con éxito.",
+        message: "Perfil profesional actualizado con éxito.",
         data: userObj
     });
 }));
@@ -1064,18 +1206,27 @@ app.post("/auth/login", asyncHandler(async (req, res) => {
         });
     }
 
-    const isValid = verifyPassword(String(password), user.passwordHash, user.salt);
-    if (!isValid) {
+    const verification = verifyPassword(String(password), user.passwordHash, user.salt);
+    if (!verification.isValid) {
         return res.status(401).json({
             success: false,
             error: "Contraseña incorrecta."
         });
     }
 
+    // Migración transparente a 210,000 iteraciones si la cuenta usaba el estándar anterior
+    if (verification.needsRehash) {
+        const upgraded = hashPassword(String(password));
+        user.passwordHash = upgraded.hash;
+        user.salt = upgraded.salt;
+        await user.save();
+    }
+
     const userObj = user.toObject({ virtuals: true });
     delete userObj.passwordHash;
     delete userObj.salt;
 
+    userObj.token = createAuthToken(user._id, user.email, user.role);
     if (user.role === "admin") {
         userObj.adminToken = createAdminToken(user._id, user.email);
     }
@@ -1086,18 +1237,16 @@ app.post("/auth/login", asyncHandler(async (req, res) => {
     });
 }));
 
+// POST: Verificación segura de sesión de administrador mediante token en cabecera
 app.post("/auth/verify-admin", asyncHandler(async (req, res) => {
     const authHeader = req.get("authorization") || req.get("x-admin-token") || "";
     const rawToken = authHeader.replace(/^Bearer\s+/i, "").trim();
-    const { email } = req.body || {};
 
-    let user = null;
-    if (rawToken) {
-        user = await verifyAdminToken(rawToken);
+    if (!rawToken) {
+        return res.status(401).json({ success: false, error: "Token de administrador requerido." });
     }
-    if (!user && email) {
-        user = await DoctorUser.findOne({ email: String(email).trim().toLowerCase(), role: "admin" });
-    }
+
+    const user = await verifyAdminToken(rawToken);
 
     if (!user || user.role !== "admin") {
         return res.status(403).json({ success: false, error: "No tienes permisos de administrador." });
@@ -1116,6 +1265,95 @@ app.post("/auth/verify-admin", asyncHandler(async (req, res) => {
     });
 }));
 
+// ==============================================================
+// GESTIÓN DE USUARIOS Y ROLES (SOLO ADMINISTRADORES)
+// ==============================================================
+
+// GET: Búsqueda de médicos registrados
+app.get("/admin/users", requireAdmin, asyncHandler(async (req, res) => {
+    const query = String(req.query.q || "").trim();
+    let filter = {};
+
+    if (query) {
+        const regex = buildAccentInsensitiveRegex(query, false);
+        filter = {
+            $or: [
+                { firstName: regex },
+                { lastName: regex },
+                { email: regex }
+            ]
+        };
+    }
+
+    const users = await DoctorUser.find(
+        filter,
+        "firstName lastName email role country specialty institution identifiers"
+    )
+        .sort({ role: 1, lastName: 1, firstName: 1 })
+        .limit(50)
+        .lean({ virtuals: true });
+
+    const formatted = users.map(u => ({
+        _id: u._id,
+        name: [u.firstName, u.lastName].filter(Boolean).join(" "),
+        firstName: u.firstName,
+        lastName: u.lastName,
+        email: u.email,
+        role: u.role || "doctor",
+        country: u.country,
+        specialty: u.specialty,
+        institution: u.institution,
+        licenseNumber: u.licenseNumber || (u.identifiers ? Object.entries(u.identifiers).map(([k, v]) => `${k.toUpperCase()}: ${v}`).join(" / ") : "")
+    }));
+
+    res.status(200).json({ success: true, count: formatted.length, data: formatted });
+}));
+
+// PATCH: Asignar o revocar rol de administrador a un usuario
+app.patch("/admin/users/:id/role", requireAdmin, asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    if (!role || !["doctor", "admin", "Médico"].includes(role)) {
+        return res.status(400).json({ success: false, error: "Rol inválido. Debe ser 'doctor' o 'admin'." });
+    }
+
+    const normalizedRole = role === "admin" ? "admin" : "doctor";
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ success: false, error: "Identificador de usuario inválido." });
+    }
+
+    const targetUser = await DoctorUser.findById(id);
+    if (!targetUser) {
+        return res.status(404).json({ success: false, error: "Usuario no encontrado." });
+    }
+
+    // Evitar revocar el rol al último administrador del sistema
+    if (normalizedRole === "doctor" && targetUser.role === "admin") {
+        const adminCount = await DoctorUser.countDocuments({ role: "admin" });
+        if (adminCount <= 1) {
+            return res.status(400).json({
+                success: false,
+                error: "No se puede revocar el rol al único administrador de la plataforma."
+            });
+        }
+    }
+
+    targetUser.role = normalizedRole;
+    await targetUser.save();
+
+    const userObj = targetUser.toObject({ virtuals: true });
+    delete userObj.passwordHash;
+    delete userObj.salt;
+
+    res.status(200).json({
+        success: true,
+        message: `Rol actualizado a ${role === 'admin' ? 'Administrador' : 'Médico'} con éxito.`,
+        data: userObj
+    });
+}));
+
 // --------------------------------------------------------------
 // Error Handler
 // --------------------------------------------------------------
@@ -1128,7 +1366,9 @@ app.use((err, req, res, next) => {
         message = Object.values(err.errors).map(val => val.message).join(", ");
     } else if (err.code === 11000) {
         statusCode = 400;
-        message = "The drug name must be unique.";
+        message = "El registro ya existe en el sistema y debe ser único.";
+    } else if (statusCode === 500 && process.env.NODE_ENV === "production") {
+        message = "Ocurrió un error interno en el servidor.";
     }
 
     res.status(statusCode).json({ success: false, error: message });

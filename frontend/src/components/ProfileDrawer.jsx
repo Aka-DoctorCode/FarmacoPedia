@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { counterContext } from '../context/counterContext.js';
 import { drugService } from '../services/drugService.js';
@@ -92,6 +92,14 @@ const ProfileDrawer = () => {
     const [successMsg, setSuccessMsg] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
 
+    // Estados para gestión de usuarios administradores (solo admin)
+    const [adminSearchQuery, setAdminSearchQuery] = useState('');
+    const [adminSearchResults, setAdminSearchResults] = useState([]);
+    const [isAdminSearching, setIsAdminSearching] = useState(false);
+    const [adminRoleLoadingId, setAdminRoleLoadingId] = useState(null);
+    const [adminFeedback, setAdminFeedback] = useState('');
+    const searchDebounceRef = useRef(null);
+
     // Sincronizar datos del usuario actual cuando se abre el drawer
     useEffect(() => {
         if (!profileDrawerOpen || !user) return;
@@ -104,13 +112,76 @@ const ProfileDrawer = () => {
         setInstitution(user.institution || '');
 
         let initialIdents = {};
-        if (user.identifiers && typeof user.identifiers === 'object') {
-            initialIdents = { ...user.identifiers };
+        const rawIdents = user.identifiers;
+        if (rawIdents) {
+            if (rawIdents instanceof Map) {
+                initialIdents = Object.fromEntries(rawIdents.entries());
+            } else if (typeof rawIdents === 'object') {
+                initialIdents = { ...rawIdents };
+            }
         }
+
+        // Normalización de claves comunes
+        if (initialIdents.colegiomedico && !initialIdents.colegioMedico) {
+            initialIdents.colegioMedico = initialIdents.colegiomedico;
+        }
+        if (initialIdents.MPPS && !initialIdents.mpps) {
+            initialIdents.mpps = initialIdents.MPPS;
+        }
+
+        // Respaldo desde virtual licenseNumber si no se extrajo directamente
+        if (user.licenseNumber) {
+            const rawLic = String(user.licenseNumber);
+            const mppsMatch = rawLic.match(/MPPS:\s*([^/]+)/i);
+            const cmMatch = rawLic.match(/COLEGIO\s*MEDICO:\s*([^/]+)/i) || rawLic.match(/CMD:\s*([^/]+)/i);
+            if (mppsMatch && !initialIdents.mpps) initialIdents.mpps = mppsMatch[1].trim();
+            if (cmMatch && !initialIdents.colegioMedico) initialIdents.colegioMedico = cmMatch[1].trim();
+        }
+
         setIdentifiers(initialIdents);
         setSuccessMsg('');
         setErrorMsg('');
+        setAdminFeedback('');
     }, [profileDrawerOpen, user]);
+
+    const handleSearchUsers = (val) => {
+        setAdminSearchQuery(val);
+        if (searchDebounceRef.current) {
+            clearTimeout(searchDebounceRef.current);
+        }
+        if (!val.trim()) {
+            setAdminSearchResults([]);
+            setIsAdminSearching(false);
+            return;
+        }
+        setIsAdminSearching(true);
+        searchDebounceRef.current = setTimeout(async () => {
+            const res = await drugService.searchAdminUsers(val.trim());
+            setIsAdminSearching(false);
+            if (res.success) {
+                setAdminSearchResults(res.data || []);
+            } else {
+                setAdminFeedback(res.error || 'Error al buscar usuarios');
+            }
+        }, 350);
+    };
+
+    const handleToggleRole = async (targetUserId, newRole) => {
+        setAdminRoleLoadingId(targetUserId);
+        setAdminFeedback('');
+        const res = await drugService.updateAdminUserRole(targetUserId, newRole);
+        setAdminRoleLoadingId(null);
+        if (res.success) {
+            setAdminSearchResults((prev) =>
+                prev.map((u) => (u._id === targetUserId ? { ...u, role: newRole } : u))
+            );
+            setAdminFeedback(`Rol actualizado con éxito a "${newRole === 'admin' ? 'Administrador' : 'Médico'}".`);
+            setTimeout(() => setAdminFeedback(''), 4000);
+        } else {
+            setAdminFeedback(res.error || 'No se pudo actualizar el rol.');
+            setTimeout(() => setAdminFeedback(''), 5000);
+        }
+    };
 
     // Cerrar con Escape
     useEffect(() => {
@@ -234,30 +305,169 @@ const ProfileDrawer = () => {
                     {errorMsg && <div className={styles.errorMessage}>{errorMsg}</div>}
 
                     {user?.role === 'admin' && (
-                        <div className={styles.adminBannerCard}>
-                            <div className={styles.adminBannerHeader}>
-                                <div className={styles.adminBadgeRow}>
-                                    <span className={styles.adminBadge}>🛡️ Administrador</span>
+                        <>
+                            <div className={styles.adminBannerCard}>
+                                <div className={styles.adminBannerHeader}>
+                                    <div className={styles.adminBadgeRow}>
+                                        <span className={styles.adminBadge}>🛡️ Administrador</span>
+                                    </div>
+                                    <span className={styles.adminHint}>Tienes acceso a las herramientas de edición y control del vademécum.</span>
                                 </div>
-                                <span className={styles.adminHint}>Tienes acceso a las herramientas de edición y control del vademécum.</span>
+                                <button
+                                    type="button"
+                                    className={styles.adminEditorBtn}
+                                    onClick={() => {
+                                        setProfileDrawerOpen(false);
+                                        window.open('/editor', '_blank', 'noopener,noreferrer');
+                                    }}
+                                >
+                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M12 20h9" />
+                                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                                    </svg>
+                                    <span>Abrir Editor de Fármacos (tools/editor)</span>
+                                </button>
                             </div>
-                            <button
-                                type="button"
-                                className={styles.adminEditorBtn}
-                                onClick={() => {
-                                    setProfileDrawerOpen(false);
-                                    const tokenQuery = user?.adminToken ? `?token=${encodeURIComponent(user.adminToken)}` : '';
-                                    window.open(`/editor${tokenQuery}`, '_blank', 'noopener,noreferrer');
-                                }}
-                            >
-                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M12 20h9" />
-                                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                                </svg>
-                                <span>Abrir Editor de Fármacos (tools/editor)</span>
-                            </button>
-                        </div>
+
+                            {/* Gestión de Administradores */}
+                            <div className={styles.adminManagementCard}>
+                                <div className={styles.adminSectionHeader}>
+                                    <span className={styles.adminSectionTitle}>👥 Asignar Administradores</span>
+                                    <span className={styles.adminHint}>
+                                        Busca médicos registrados para otorgar o remover permisos de administración clínica.
+                                    </span>
+                                </div>
+
+                                <div className={styles.adminSearchRow}>
+                                    <input
+                                        type="search"
+                                        className={styles.input}
+                                        placeholder="Buscar por nombre o correo..."
+                                        value={adminSearchQuery}
+                                        onChange={(e) => handleSearchUsers(e.target.value)}
+                                    />
+                                    {isAdminSearching && <span className={styles.adminSearchSpinner}>Buscando...</span>}
+                                </div>
+
+                                {adminFeedback && (
+                                    <div className={styles.adminFeedbackBadge}>
+                                        {adminFeedback}
+                                    </div>
+                                )}
+
+                                {adminSearchResults.length > 0 && (
+                                    <div className={styles.userResultsList}>
+                                        {adminSearchResults.map((u) => {
+                                            const isAdmin = u.role === 'admin';
+                                            const isSelf = u.email === user.email;
+                                            return (
+                                                <div key={u._id} className={styles.userResultCard}>
+                                                    <div className={styles.userResultInfo}>
+                                                        <div className={styles.userResultNameRow}>
+                                                            <span className={styles.userResultName}>{u.name || `${u.firstName} ${u.lastName}`}</span>
+                                                            <span className={isAdmin ? styles.pillAdmin : styles.pillDoctor}>
+                                                                {isAdmin ? '🛡️ Admin' : '🩺 Médico'}
+                                                            </span>
+                                                        </div>
+                                                        <span className={styles.userResultEmail}>{u.email}</span>
+                                                        <span className={styles.userResultMeta}>
+                                                            {u.specialty || 'Médico'} • {u.country || 'N/D'}
+                                                            {u.licenseNumber ? ` • ${u.licenseNumber}` : ''}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className={styles.userResultActions}>
+                                                        {isAdmin ? (
+                                                            <button
+                                                                type="button"
+                                                                className={styles.demoteBtn}
+                                                                disabled={isSelf || adminRoleLoadingId === u._id}
+                                                                onClick={() => handleToggleRole(u._id, 'doctor')}
+                                                                title={isSelf ? "No puedes remover tu propio rol" : "Revocar privilegios de administrador"}
+                                                            >
+                                                                {adminRoleLoadingId === u._id ? '...' : 'Quitar Admin'}
+                                                            </button>
+                                                        ) : (
+                                                            <button
+                                                                type="button"
+                                                                className={styles.promoteBtn}
+                                                                disabled={adminRoleLoadingId === u._id}
+                                                                onClick={() => handleToggleRole(u._id, 'admin')}
+                                                                title="Conceder privilegios de administrador"
+                                                            >
+                                                                {adminRoleLoadingId === u._id ? '...' : 'Hacer Admin'}
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                                {adminSearchQuery.trim().length > 1 && !isAdminSearching && adminSearchResults.length === 0 && (
+                                    <span className={styles.noResultsHint}>No se encontraron usuarios coincidentes.</span>
+                                )}
+                            </div>
+                        </>
                     )}
+
+                    {/* Tarjeta de Acreditación Médica Activa */}
+                    <div className={styles.credentialsCard}>
+                        <div className={styles.credentialsCardHeader}>
+                            <div className={styles.credentialsStatusBadge}>
+                                <span className={styles.badgeDot}>●</span>
+                                <span>Acreditación Profesional Activa</span>
+                            </div>
+                            <span className={styles.countryPill}>{country}</span>
+                        </div>
+
+                        <div className={styles.credentialsList}>
+                            {identifiers.mpps ? (
+                                <div className={styles.credentialItem}>
+                                    <span className={styles.credentialLabel}>Matrícula MPPS</span>
+                                    <span className={styles.credentialValue}>{identifiers.mpps}</span>
+                                </div>
+                            ) : null}
+                            {identifiers.colegioMedico ? (
+                                <div className={styles.credentialItem}>
+                                    <span className={styles.credentialLabel}>Colegio de Médicos</span>
+                                    <span className={styles.credentialValue}>{identifiers.colegioMedico}</span>
+                                </div>
+                            ) : null}
+                            {identifiers.colegiado ? (
+                                <div className={styles.credentialItem}>
+                                    <span className={styles.credentialLabel}>N° Colegiado</span>
+                                    <span className={styles.credentialValue}>{identifiers.colegiado}</span>
+                                </div>
+                            ) : null}
+                            {identifiers.rethus ? (
+                                <div className={styles.credentialItem}>
+                                    <span className={styles.credentialLabel}>ReTHUS</span>
+                                    <span className={styles.credentialValue}>{identifiers.rethus}</span>
+                                </div>
+                            ) : null}
+                            {identifiers.cedulaGeneral ? (
+                                <div className={styles.credentialItem}>
+                                    <span className={styles.credentialLabel}>Cédula Profesional</span>
+                                    <span className={styles.credentialValue}>{identifiers.cedulaGeneral}</span>
+                                </div>
+                            ) : null}
+                            {user.licenseNumber && !identifiers.mpps && !identifiers.colegioMedico && !identifiers.colegiado ? (
+                                <div className={styles.credentialItem}>
+                                    <span className={styles.credentialLabel}>Licencia</span>
+                                    <span className={styles.credentialValue}>{user.licenseNumber}</span>
+                                </div>
+                            ) : null}
+                            <div className={styles.credentialItem}>
+                                <span className={styles.credentialLabel}>Especialidad</span>
+                                <span className={styles.credentialValue}>{specialty || user.specialty}</span>
+                            </div>
+                            <div className={styles.credentialItem}>
+                                <span className={styles.credentialLabel}>Institución</span>
+                                <span className={styles.credentialValue}>{institution || user.institution || 'Ejercicio independiente'}</span>
+                            </div>
+                        </div>
+                    </div>
 
                     <div className={styles.sectionTitle}>Identidad</div>
                     <div className={styles.twoCols}>

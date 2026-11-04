@@ -315,11 +315,282 @@
     opacity: 0.95;
 }
 
+/* ==============================================================
+   Tarjeta de Acreditación Médica Activa
+   ============================================================== */
+.credentialsCard {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(14, 165, 233, 0.08) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: var(--radiusMd);
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.credentialsCardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.credentialsStatusBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #10b981;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.badgeDot {
+    color: #10b981;
+    font-size: 0.75rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.countryPill {
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--textSecondary);
+    background: var(--bgGlass);
+    border: 1px solid var(--borderGlass);
+    padding: 2px 8px;
+    border-radius: var(--radiusPill);
+}
+
+.credentialsList {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 10px 12px;
+    border-radius: var(--radiusSm);
+}
+
+.credentialItem {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.credentialLabel {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--textMuted);
+    letter-spacing: 0.04em;
+}
+
+.credentialValue {
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--textPrimary);
+    word-break: break-word;
+}
+
+/* ==============================================================
+   Gestión de Usuarios y Roles (Admin Only)
+   ============================================================== */
+.adminManagementCard {
+    background: var(--bgGlass);
+    border: 1px solid rgba(14, 165, 233, 0.3);
+    border-radius: var(--radiusMd);
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.adminSectionHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.adminSectionTitle {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--textPrimary);
+}
+
+.adminSearchRow {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.adminSearchSpinner {
+    position: absolute;
+    right: 12px;
+    font-size: 0.75rem;
+    color: #38bdf8;
+    pointer-events: none;
+}
+
+.adminFeedbackBadge {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    border-radius: var(--radiusSm);
+    background: rgba(14, 165, 233, 0.15);
+    border: 1px solid rgba(14, 165, 233, 0.3);
+    color: #38bdf8;
+}
+
+.userResultsList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.userResultCard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--borderGlass);
+    border-radius: var(--radiusSm);
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.userResultCard:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(14, 165, 233, 0.4);
+}
+
+.userResultInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    flex: 1;
+}
+
+.userResultNameRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.userResultName {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--textPrimary);
+}
+
+.pillAdmin {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: var(--radiusPill);
+    background: rgba(14, 165, 233, 0.2);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.pillDoctor {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: var(--radiusPill);
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.userResultEmail {
+    font-size: 0.74rem;
+    color: var(--textSecondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.userResultMeta {
+    font-size: 0.7rem;
+    color: var(--textMuted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.userResultActions {
+    flex-shrink: 0;
+}
+
+.promoteBtn {
+    padding: 6px 12px;
+    background: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radiusSm);
+    font-size: 0.74rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.15s;
+}
+
+.promoteBtn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    opacity: 0.95;
+}
+
+.promoteBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.demoteBtn {
+    padding: 6px 12px;
+    background: transparent;
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: var(--radiusSm);
+    font-size: 0.74rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.demoteBtn:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.15);
+}
+
+.demoteBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.noResultsHint {
+    font-size: 0.76rem;
+    color: var(--textMuted);
+    text-align: center;
+    padding: 8px 0;
+}
+
 @media (max-width: 600px) {
     .drawerContent {
         max-width: 100%;
     }
-    .twoCols {
+    .twoCols,
+    .credentialsList {
         grid-template-columns: 1fr;
     }
 }

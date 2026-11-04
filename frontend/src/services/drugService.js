@@ -436,7 +436,19 @@ class DrugService {
      * Actualización de perfil del médico
      */
     async updateDoctorProfile(doctorData) {
-        return this.registerDoctor(doctorData);
+        try {
+            const headers = this.getAdminHeaders();
+            const res = await axios.put(`${this.apiBaseUrl}/auth/profile`, doctorData, { headers, timeout: 15000 });
+            if (res.data && res.data.success) {
+                return { success: true, data: res.data.data, message: res.data.message };
+            }
+            return { success: false, error: res.data?.error || 'Error al actualizar perfil' };
+        } catch (error) {
+            return {
+                success: false,
+                error: error.response?.data?.error || error.message || 'Error al conectar con el servidor'
+            };
+        }
     }
 
     /**
@@ -491,7 +503,7 @@ class DrugService {
                 const stored = localStorage.getItem('clicksalud_auth_user') || sessionStorage.getItem('clicksalud_auth_user');
                 if (stored) {
                     const parsed = JSON.parse(stored);
-                    token = parsed.adminToken || '';
+                    token = parsed.adminToken || parsed.token || '';
                 }
             } catch {
                 /* ignore */
@@ -569,6 +581,49 @@ class DrugService {
             return { success: true, data: res.data };
         } catch (e) {
             return { success: false, error: e.response?.data?.error || e.message };
+        }
+    }
+
+    /**
+     * Gestión de Administradores y Roles (Admin Only)
+     */
+    async searchAdminUsers(query = '') {
+        try {
+            const headers = this.getAdminHeaders();
+            const res = await axios.get(`${this.apiBaseUrl}/admin/users?q=${encodeURIComponent(query)}`, {
+                headers,
+                timeout: 15000
+            });
+            if (res.data && res.data.success) {
+                return { success: true, data: res.data.data || [] };
+            }
+            return { success: false, error: res.data?.error || 'Error al buscar usuarios', data: [] };
+        } catch (e) {
+            return {
+                success: false,
+                error: e.response?.data?.error || e.message || 'Error al buscar usuarios',
+                data: []
+            };
+        }
+    }
+
+    async updateAdminUserRole(userId, newRole) {
+        try {
+            const headers = this.getAdminHeaders();
+            const res = await axios.patch(
+                `${this.apiBaseUrl}/admin/users/${userId}/role`,
+                { role: newRole },
+                { headers, timeout: 15000 }
+            );
+            if (res.data && res.data.success) {
+                return { success: true, data: res.data.data, message: res.data.message };
+            }
+            return { success: false, error: res.data?.error || 'Error al actualizar el rol de usuario' };
+        } catch (e) {
+            return {
+                success: false,
+                error: e.response?.data?.error || e.message || 'Error al actualizar el rol de usuario'
+            };
         }
     }
 }

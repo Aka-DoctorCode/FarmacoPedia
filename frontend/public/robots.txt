@@ -3,12 +3,21 @@
 # ==========================================
 User-agent: Googlebot
 Allow: /
+Disallow: /admin
+Disallow: /editor
+Disallow: /api/
 
 User-agent: Bingbot
 Allow: /
+Disallow: /admin
+Disallow: /editor
+Disallow: /api/
 
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /editor
+Disallow: /api/
 
 # ==========================================
 # BLOQUEO DE ENTRENAMIENTO DE MODELOS DE GOOGLE

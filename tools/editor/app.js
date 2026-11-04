@@ -9,6 +9,7 @@ async function unlockIfSession() {
   const paramToken = urlParams.get("token");
   if (paramToken) {
     sessionStorage.setItem("tok", paramToken);
+    window.history.replaceState({}, document.title, window.location.pathname);
   } else if (!sessionStorage.getItem("tok")) {
     try {
       const stored = localStorage.getItem("clicksalud_auth_user") || sessionStorage.getItem("clicksalud_auth_user");
