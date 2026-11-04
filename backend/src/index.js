@@ -23,9 +23,8 @@ app.use(helmet({
 
 // CORS restrictivo con soporte dinámico para dominios autorizados y desarrollo local
 const ALLOWED_ORIGINS = [
-    /\.clicksalud\.org$/,
-    /\.clicksalud\.com$/,
-    /\.vercel\.app$/,
+    /^https?:\/\/([a-zA-Z0-9-]+\.)*clicksalud\.(org|com)(:\d+)?$/,
+    /^https?:\/\/([a-zA-Z0-9-]+\.)*vercel\.app(:\d+)?$/,
     /^http:\/\/localhost(:\d+)?$/,
     /^http:\/\/127\.0\.0\.1(:\d+)?$/
 ];
@@ -43,6 +42,16 @@ app.use(cors({
     },
     credentials: true
 }));
+
+// Strip /api prefix if forwarded without path rewrite to support /api/ routes seamlessly
+app.use((req, res, next) => {
+    if (req.url.startsWith("/api/")) {
+        req.url = req.url.replace(/^\/api/, "");
+    } else if (req.url === "/api") {
+        req.url = "/";
+    }
+    next();
+});
 
 // Límite de tamaño de JSON global seguro (100kb) para evitar DoS por memoria
 app.use(express.json({ limit: "100kb" }));
@@ -64,18 +73,17 @@ const pendingLimiter = rateLimit({
     message: { success: false, error: "Límite de solicitudes alcanzado para fármacos pendientes." }
 });
 
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 300,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { success: false, error: "Límite de solicitudes excedido. Por favor intenta más tarde." }
+});
+
 app.use(["/auth", "/editor/auth"], authLimiter);
 app.use("/pending-drugs", pendingLimiter);
-
-// Strip /api prefix if forwarded without path rewrite to support /api/ routes seamlessly
-app.use((req, res, next) => {
-    if (req.url.startsWith("/api/")) {
-        req.url = req.url.replace(/^\/api/, "");
-    } else if (req.url === "/api") {
-        req.url = "/";
-    }
-    next();
-});
+app.use(apiLimiter);
 
 const asyncHandler = (fn) => (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);
@@ -375,10 +383,15 @@ function verifyPassword(password, hash, salt) {
 
 // Admin Token & Security Helpers
 const ADMIN_TOKEN_SECRET = process.env.ADMIN_API_KEY || process.env.JWT_SECRET;
-if (!ADMIN_TOKEN_SECRET && process.env.NODE_ENV === "production") {
-    console.warn("[SECURITY WARNING] ADMIN_API_KEY o JWT_SECRET no está definido en las variables de entorno.");
+let EFFECTIVE_ADMIN_SECRET = ADMIN_TOKEN_SECRET;
+if (!EFFECTIVE_ADMIN_SECRET) {
+    if (process.env.NODE_ENV === "production") {
+        console.warn("[SECURITY NOTICE] ADMIN_API_KEY/JWT_SECRET no configurado en producción; usando clave efímera criptográfica aleatoria.");
+        EFFECTIVE_ADMIN_SECRET = crypto.randomBytes(32).toString("hex");
+    } else {
+        EFFECTIVE_ADMIN_SECRET = "farmacopedia-dev-local-secret-2026";
+    }
 }
-const EFFECTIVE_ADMIN_SECRET = ADMIN_TOKEN_SECRET || "farmacopedia-dev-local-secret-2026";
 
 function createAdminToken(userId, email) {
     const timestamp = Date.now().toString();
@@ -1358,7 +1371,7 @@ app.patch("/admin/users/:id/role", requireAdmin, asyncHandler(async (req, res) =
 // Error Handler
 // --------------------------------------------------------------
 app.use((err, req, res, next) => {
-    let statusCode = 500;
+    let statusCode = err.status || err.statusCode || 500;
     let message = err.message || "Internal Server Error";
 
     if (err.name === "ValidationError") {
@@ -1367,6 +1380,9 @@ app.use((err, req, res, next) => {
     } else if (err.code === 11000) {
         statusCode = 400;
         message = "El registro ya existe en el sistema y debe ser único.";
+    } else if (err.type === "entity.too.large") {
+        statusCode = 413;
+        message = "El tamaño de la petición excede el límite permitido.";
     } else if (statusCode === 500 && process.env.NODE_ENV === "production") {
         message = "Ocurrió un error interno en el servidor.";
     }
