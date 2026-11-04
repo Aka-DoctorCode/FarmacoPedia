@@ -12,25 +12,42 @@ import {
 
 class DrugService {
     constructor() {
-        // En Vercel o despliegues multi-servicio en el mismo dominio, el backend se enruta a través de /api
-        let defaultUrl = '/api';
+        // Determinación de URL del backend según el entorno
+        let defaultUrl = 'https://farmacopedia.onrender.com';
         if (typeof window !== 'undefined') {
-            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-            // Si corre en Vite local aislado en puerto 5173 sin proxy, apunta al puerto local de Express
+            const hostname = window.location.hostname;
+            const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+            const isVercel = hostname.endsWith('vercel.app');
+
             if (isLocal && window.location.port === '5173') {
                 defaultUrl = 'http://localhost:5174';
+            } else if (isVercel) {
+                // En Vercel, el backend se enruta a través de la rewrite interna /api
+                defaultUrl = '/api';
+            } else {
+                // En GitHub Pages (*.github.io) y cualquier despliegue estático sin proxy inverso local,
+                // apuntar directamente al backend en producción de Render.
+                defaultUrl = 'https://farmacopedia.onrender.com';
             }
         }
 
-        this.apiBaseUrl = (typeof import.meta !== 'undefined' && import.meta?.env?.VITE_API_URL) ||
+        const envApiUrl = (typeof import.meta !== 'undefined' && import.meta?.env?.VITE_API_URL) ||
             // eslint-disable-next-line no-undef
-            (typeof process !== 'undefined' && (process.env?.VITE_API_URL || process.env?.BACKEND_URL)) ||
-            defaultUrl;
+            (typeof process !== 'undefined' && (process.env?.VITE_API_URL || process.env?.BACKEND_URL));
+
+        let effectiveUrl = (envApiUrl && String(envApiUrl).trim().length > 0) ? String(envApiUrl).trim() : defaultUrl;
+
+        // Si estamos en GitHub Pages pero la URL resuelta es relativa (/api), forzar la URL pública de producción
+        if (typeof window !== 'undefined' && window.location.hostname.endsWith('github.io') && effectiveUrl.startsWith('/')) {
+            effectiveUrl = 'https://farmacopedia.onrender.com';
+        }
+
+        this.apiBaseUrl = effectiveUrl;
         this.cachedDrugs = null;
         this.cachedFamilies = null;
         this.pendingDrugsPromise = null;
         this.pendingFamiliesPromise = null;
-        this.requestTimeout = 30000; // 30 seconds to allow the backend to respond
+        this.requestTimeout = 60000; // 60 segundos para tolerar arranques en frío de Render
     }
 
     clearCache() {

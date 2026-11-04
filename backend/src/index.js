@@ -13,6 +13,9 @@ require("dotenv").config();
 
 const app = express();
 
+// Habilitar trust proxy para despliegues detrás de reverse proxies (Render, Vercel, etc.)
+app.set("trust proxy", 1);
+
 // --------------------------------------------------------------
 // Middlewares: Security Headers, CORS, Rate Limit & Body Parsers
 // --------------------------------------------------------------
@@ -25,9 +28,21 @@ app.use(helmet({
 const ALLOWED_ORIGINS = [
     /^https?:\/\/([a-zA-Z0-9-]+\.)*clicksalud\.(org|com)(:\d+)?$/,
     /^https?:\/\/([a-zA-Z0-9-]+\.)*vercel\.app(:\d+)?$/,
+    /^https?:\/\/([a-zA-Z0-9-]+\.)*github\.io(:\d+)?$/,
     /^http:\/\/localhost(:\d+)?$/,
     /^http:\/\/127\.0\.0\.1(:\d+)?$/
 ];
+
+if (process.env.CORS_ALLOWED_ORIGINS) {
+    const extras = process.env.CORS_ALLOWED_ORIGINS.split(',').map(s => s.trim()).filter(Boolean);
+    extras.forEach(origin => {
+        try {
+            ALLOWED_ORIGINS.push(new RegExp('^' + origin.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(:\d+)?$'));
+        } catch {
+            // ignore
+        }
+    });
+}
 
 app.use(cors({
     origin: (origin, callback) => {
@@ -37,7 +52,9 @@ app.use(cors({
         if (isAllowed) {
             callback(null, true);
         } else {
-            callback(new Error("Acceso bloqueado por política de CORS"));
+            const corsError = new Error("Acceso bloqueado por política de CORS");
+            corsError.status = 403;
+            callback(corsError);
         }
     },
     credentials: true

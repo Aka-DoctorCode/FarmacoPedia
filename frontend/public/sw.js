@@ -42,8 +42,15 @@ self.addEventListener('fetch', (event) => {
   // Ignorar métodos no GET
   if (request.method !== 'GET') return;
 
-  // Ignorar llamadas directas a backend API de Render (estas las gestiona IndexedDB para offline)
-  if (url.hostname.includes('onrender.com') || url.pathname.includes('/drugs')) {
+  // Ignorar llamadas directas a backend API de Render o endpoints de API (gestionados por IndexedDB o en vivo)
+  if (
+    url.hostname.includes('onrender.com') ||
+    url.pathname.includes('/drugs') ||
+    url.pathname.includes('/auth') ||
+    url.pathname.includes('/pending-drugs') ||
+    url.pathname.includes('/admin') ||
+    url.pathname.startsWith('/api')
+  ) {
     return;
   }
 

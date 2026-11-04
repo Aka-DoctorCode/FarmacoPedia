@@ -59,7 +59,7 @@ jobs:
         run: pnpm run build
         working-directory: frontend
         env:
-          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_API_URL: ${{ vars.VITE_API_URL || 'https://farmacopedia.onrender.com' }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:
