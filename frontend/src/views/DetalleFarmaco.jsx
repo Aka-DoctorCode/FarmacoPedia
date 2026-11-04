@@ -22,15 +22,19 @@ const getRiskSeverity = (text) => {
     return 'info';
 };
 
-const DetalleFarmaco = () => {
+const DetalleFarmaco = ({ drugDataOverride = null, isPreview = false }) => {
     const {
         selectedDrugData,
-        isDrugLoading,
+        isDrugLoading: contextIsDrugLoading,
         closeDrugDetail,
-        isLoggedIn,
+        isLoggedIn: contextIsLoggedIn,
         setAuthModalOpen,
         t
     } = useContext(counterContext);
+
+    const isDrugLoading = drugDataOverride ? false : contextIsDrugLoading;
+    const isLoggedIn = isPreview ? true : contextIsLoggedIn;
+    const selectedDrug = drugDataOverride || selectedDrugData;
 
     const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'dosage' | 'risks' | 'safety' | 'references'
     const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
@@ -92,23 +96,23 @@ const DetalleFarmaco = () => {
     ], [t]);
 
     const effectiveAtc = useMemo(() => {
-        if (!selectedDrugData) return [];
-        if (selectedDrugData.atc && Array.isArray(selectedDrugData.atc) && selectedDrugData.atc.length > 0 && selectedDrugData.atc[0].code) {
-            return selectedDrugData.atc;
+        if (!selectedDrug) return [];
+        if (selectedDrug.atc && Array.isArray(selectedDrug.atc) && selectedDrug.atc.length > 0 && selectedDrug.atc[0].code) {
+            return selectedDrug.atc;
         }
-        const code = getDrugAtcCode(selectedDrugData);
+        const code = getDrugAtcCode(selectedDrug);
         if (code) {
             const parsed = parseAtcPath(code);
             return [{
                 code,
-                categoryCode: parsed.l1.code,
-                categoryName: parsed.l1.name,
+                categoryCode: parsed.l1 ? parsed.l1.code : '',
+                categoryName: parsed.l1 ? parsed.l1.name : '',
                 subcategoryCode: parsed.l2 ? parsed.l2.code : code.substring(0, 3),
                 subcategoryName: parsed.l2 ? parsed.l2.name : 'Subgrupo Terapéutico'
             }];
         }
         return [];
-    }, [selectedDrugData]);
+    }, [selectedDrug]);
 
     const scrollToSection = (sectionId) => {
         const cleanTab = sectionId.replace(/^sec-/, '');
@@ -119,9 +123,7 @@ const DetalleFarmaco = () => {
         setActiveTab(cleanTab);
         const element = document.getElementById(sectionId);
         if (element) {
-            const yOffset = -90;
-            const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-            window.scrollTo({ top: y, behavior: 'smooth' });
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     };
 
@@ -135,6 +137,7 @@ const DetalleFarmaco = () => {
 
     // Scroll spy for desktop view: update activeTab when scrolling past sections
     useEffect(() => {
+        if (isPreview) return;
         const sectionIds = ['sec-overview', 'sec-dosage', 'sec-risks', 'sec-safety', 'sec-references'];
         const handleScroll = () => {
             if (window.innerWidth < 1024) return;
@@ -150,7 +153,7 @@ const DetalleFarmaco = () => {
 
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    }, [isPreview]);
 
     if (isDrugLoading) {
         return (
@@ -163,14 +166,16 @@ const DetalleFarmaco = () => {
         );
     }
 
-    if (!selectedDrugData && !isDrugLoading) {
+    if (!selectedDrug && !isDrugLoading) {
         return (
             <div className={styles.container}>
-                <div className={styles.topBar}>
-                    <button type="button" className={styles.backButton} onClick={closeDrugDetail}>
-                        ← {t.backToCatalog}
-                    </button>
-                </div>
+                {!isPreview && (
+                    <div className={styles.topBar}>
+                        <button type="button" className={styles.backButton} onClick={closeDrugDetail}>
+                            ← {t.backToCatalog}
+                        </button>
+                    </div>
+                )}
                 <div className={styles.sectionCard}>
                     <p className={styles.plainText}>{t.emptyDrugsMessage}</p>
                 </div>
@@ -178,38 +183,71 @@ const DetalleFarmaco = () => {
         );
     }
 
-    const drug = selectedDrugData;
+    const drug = selectedDrug;
 
     // Helper to safely format Map or Object presentations
-    const presentationsEntries = drug.presentations
-        ? Object.entries(drug.presentations)
-        : [];
+    const presentationsEntries = useMemo(() => {
+        if (!drug || !drug.presentations) return [];
+        if (drug.presentations instanceof Map) {
+            return Array.from(drug.presentations.entries());
+        }
+        if (typeof drug.presentations === 'object' && !Array.isArray(drug.presentations)) {
+            return Object.entries(drug.presentations);
+        }
+        return [];
+    }, [drug]);
 
-    const adultGuidanceEntries = drug.dosageGuidance?.adult
-        ? Object.entries(drug.dosageGuidance.adult)
-        : [];
+    const adultGuidanceEntries = useMemo(() => {
+        if (!drug) return [];
+        const guidance = drug.dosageGuidance?.adult || drug.adultGuidance;
+        if (!guidance) return [];
+        if (guidance instanceof Map) return Array.from(guidance.entries());
+        if (typeof guidance === 'object' && !Array.isArray(guidance)) return Object.entries(guidance);
+        return [];
+    }, [drug]);
 
-    const pediatricGuidanceEntries = drug.dosageGuidance?.pediatric
-        ? Object.entries(drug.dosageGuidance.pediatric)
-        : [];
+    const pediatricGuidanceEntries = useMemo(() => {
+        if (!drug) return [];
+        const guidance = drug.dosageGuidance?.pediatric || drug.pediatricGuidance;
+        if (!guidance) return [];
+        if (guidance instanceof Map) return Array.from(guidance.entries());
+        if (typeof guidance === 'object' && !Array.isArray(guidance)) return Object.entries(guidance);
+        return [];
+    }, [drug]);
+
+    const riskData = drug ? (drug.risk || drug.risks || {}) : {};
+    const securityFlags = riskData.securityFlags || drug?.securityFlags || [];
+    const renalObj = typeof riskData.renal === 'object' && riskData.renal !== null ? riskData.renal : null;
+    const renalText = typeof riskData.renal === 'string' ? riskData.renal : null;
+    const hepaticObj = typeof riskData.hepatic === 'object' && riskData.hepatic !== null ? riskData.hepatic : null;
+    const hepaticText = typeof riskData.hepatic === 'string' ? riskData.hepatic : null;
 
     return (
         <section className={styles.container}>
-            <Helmet>
-                <title>{`${drug.name.toUpperCase()} - Ficha Técnica | ${t.appName}`}</title>
-                <meta
-                    name="description"
-                    content={`Ficha del fármaco ${drug.name}. Clasificación anatómica y código ATC en ClickSalud FarmacoPedia.`}
-                />
-            </Helmet>
+            {!isPreview && (
+                <Helmet>
+                    <title>{`${(drug.name || '').toUpperCase()} - Ficha Técnica | ${t.appName}`}</title>
+                    <meta
+                        name="description"
+                        content={`Ficha del fármaco ${drug.name || ''}. Clasificación anatómica y código ATC en ClickSalud FarmacoPedia.`}
+                    />
+                </Helmet>
+            )}
 
             <div className={styles.topBar}>
-                <button type="button" className={styles.backButton} onClick={closeDrugDetail}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="m15 18-6-6 6-6" />
-                    </svg>
-                    <span>{t.backToCatalog}</span>
-                </button>
+                {!isPreview ? (
+                    <button type="button" className={styles.backButton} onClick={closeDrugDetail}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m15 18-6-6 6-6" />
+                        </svg>
+                        <span>{t.backToCatalog}</span>
+                    </button>
+                ) : (
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#0284c7', fontWeight: 700 }}>
+                        <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} />
+                        <span>Ficha Clínica en Vivo (Vista Web Real)</span>
+                    </div>
+                )}
                 {isLoggedIn && (
                     <button
                         type="button"
@@ -535,13 +573,15 @@ const DetalleFarmaco = () => {
                                     </div>
                                 ))}
                             </div>
+                        ) : drug.dosage?.pediatric ? (
+                            <p className={styles.plainText}>{drug.dosage.pediatric}</p>
                         ) : (
                             <p className={styles.plainText}>{t.noData}</p>
                         )}
                     </div>
 
                     {/* Adult Dosage Guidance */}
-                    {adultGuidanceEntries.length > 0 && (
+                    {adultGuidanceEntries.length > 0 ? (
                         <div className={styles.sectionCard}>
                             <div className={styles.sectionHeader}>
                                 <span className={styles.sectionIcon}>
@@ -580,7 +620,20 @@ const DetalleFarmaco = () => {
                                 ))}
                             </div>
                         </div>
-                    )}
+                    ) : drug.dosage?.adults ? (
+                        <div className={styles.sectionCard}>
+                            <div className={styles.sectionHeader}>
+                                <span className={styles.sectionIcon}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                                        <circle cx="12" cy="7" r="4" />
+                                    </svg>
+                                </span>
+                                <h2 className={styles.sectionTitle}>{t.sectionAdultGuidance}</h2>
+                            </div>
+                            <p className={styles.plainText}>{drug.dosage.adults}</p>
+                        </div>
+                    ) : null}
 
                     {/* Pediatric Dosage Guidance & Calculator Trigger */}
                     <div className={styles.sectionCard}>
@@ -643,6 +696,8 @@ const DetalleFarmaco = () => {
                                     </div>
                                 ))}
                             </div>
+                        ) : drug.dosage?.pediatric ? (
+                            <p className={styles.plainText}>{drug.dosage.pediatric}</p>
                         ) : (
                             <p className={styles.plainText}>{t.noData}</p>
                         )}
@@ -651,7 +706,7 @@ const DetalleFarmaco = () => {
 
                     {/* Section 3: Clinical Risks & Organ Adjustments */}
                     <div id="sec-risks" className={`${styles.sectionBlock} ${activeTab === 'risks' ? styles.tabBlockActive : styles.tabBlockHidden}`}>
-                        {drug.risk?.securityFlags && drug.risk.securityFlags.length > 0 && (
+                        {securityFlags.length > 0 && (
                         <div className={styles.alertBox}>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
@@ -661,7 +716,7 @@ const DetalleFarmaco = () => {
                             <div>
                                 <strong>{t.sectionSecurityFlags}:</strong>
                                 <ul className={styles.bulletList} style={{ marginTop: '0.35rem' }}>
-                                    {drug.risk.securityFlags.map((flag, idx) => (
+                                    {securityFlags.map((flag, idx) => (
                                         <li key={idx}>{flag}</li>
                                     ))}
                                 </ul>
@@ -694,7 +749,7 @@ const DetalleFarmaco = () => {
                                     <span className={styles.riskRowTitle}>{t.sectionPregnancy}</span>
                                 </div>
                                 <div className={styles.riskRowContentCol}>
-                                    <p className={styles.riskRowText}>{drug.risk?.pregnancy || t.noData}</p>
+                                    <p className={styles.riskRowText}>{riskData.pregnancy || t.noData}</p>
                                 </div>
                             </div>
 
@@ -710,7 +765,7 @@ const DetalleFarmaco = () => {
                                     <span className={styles.riskRowTitle}>{t.sectionLactation}</span>
                                 </div>
                                 <div className={styles.riskRowContentCol}>
-                                    <p className={styles.riskRowText}>{drug.risk?.lactation || t.noData}</p>
+                                    <p className={styles.riskRowText}>{riskData.lactation || t.noData}</p>
                                 </div>
                             </div>
 
@@ -728,7 +783,7 @@ const DetalleFarmaco = () => {
                                     <span className={styles.riskRowTitle}>{t.sectionGeriatric}</span>
                                 </div>
                                 <div className={styles.riskRowContentCol}>
-                                    <p className={styles.riskRowText}>{drug.risk?.geriatric || t.noData}</p>
+                                    <p className={styles.riskRowText}>{riskData.geriatric || t.noData}</p>
                                 </div>
                             </div>
 
@@ -744,32 +799,34 @@ const DetalleFarmaco = () => {
                                     <span className={styles.riskRowTitle}>{t.sectionRenal}</span>
                                 </div>
                                 <div className={styles.riskRowContentCol}>
-                                    {drug.risk?.renal?.level && (
-                                        <div className={`${styles.riskAlertCallout} ${styles['riskAlert_' + getRiskSeverity(drug.risk.renal.level)]}`}>
+                                    {renalObj?.level && (
+                                        <div className={`${styles.riskAlertCallout} ${styles['riskAlert_' + getRiskSeverity(renalObj.level)]}`}>
                                             <span className={styles.riskAlertCalloutIcon}>
-                                                {getRiskSeverity(drug.risk.renal.level) === 'danger' && (
+                                                {getRiskSeverity(renalObj.level) === 'danger' && (
                                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
                                                 )}
-                                                {getRiskSeverity(drug.risk.renal.level) === 'warning' && (
+                                                {getRiskSeverity(renalObj.level) === 'warning' && (
                                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                                                 )}
-                                                {getRiskSeverity(drug.risk.renal.level) === 'success' && (
+                                                {getRiskSeverity(renalObj.level) === 'success' && (
                                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                                                 )}
-                                                {getRiskSeverity(drug.risk.renal.level) === 'info' && (
+                                                {getRiskSeverity(renalObj.level) === 'info' && (
                                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                                 )}
                                             </span>
                                             <div className={styles.riskAlertCalloutBody}>
                                                 <span className={styles.riskAlertCalloutTag}>Criterio / Nivel:</span>
-                                                <span className={styles.riskAlertCalloutText}>{drug.risk.renal.level}</span>
+                                                <span className={styles.riskAlertCalloutText}>{renalObj.level}</span>
                                             </div>
                                         </div>
                                     )}
-                                    {drug.risk?.renal?.adjustment ? (
-                                        <p className={styles.riskRowText}>{drug.risk.renal.adjustment}</p>
+                                    {renalObj?.adjustment ? (
+                                        <p className={styles.riskRowText}>{renalObj.adjustment}</p>
+                                    ) : renalText ? (
+                                        <p className={styles.riskRowText}>{renalText}</p>
                                     ) : (
-                                        !drug.risk?.renal?.level && <p className={styles.riskRowText}>{t.noData}</p>
+                                        !renalObj?.level && <p className={styles.riskRowText}>{t.noData}</p>
                                     )}
                                 </div>
                             </div>
@@ -787,32 +844,34 @@ const DetalleFarmaco = () => {
                                     <span className={styles.riskRowTitle}>{t.sectionHepatic}</span>
                                 </div>
                                 <div className={styles.riskRowContentCol}>
-                                    {drug.risk?.hepatic?.level && (
-                                        <div className={`${styles.riskAlertCallout} ${styles['riskAlert_' + getRiskSeverity(drug.risk.hepatic.level)]}`}>
+                                    {hepaticObj?.level && (
+                                        <div className={`${styles.riskAlertCallout} ${styles['riskAlert_' + getRiskSeverity(hepaticObj.level)]}`}>
                                             <span className={styles.riskAlertCalloutIcon}>
-                                                {getRiskSeverity(drug.risk.hepatic.level) === 'danger' && (
+                                                {getRiskSeverity(hepaticObj.level) === 'danger' && (
                                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
                                                 )}
-                                                {getRiskSeverity(drug.risk.hepatic.level) === 'warning' && (
+                                                {getRiskSeverity(hepaticObj.level) === 'warning' && (
                                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                                                 )}
-                                                {getRiskSeverity(drug.risk.hepatic.level) === 'success' && (
+                                                {getRiskSeverity(hepaticObj.level) === 'success' && (
                                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                                                 )}
-                                                {getRiskSeverity(drug.risk.hepatic.level) === 'info' && (
+                                                {getRiskSeverity(hepaticObj.level) === 'info' && (
                                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                                                 )}
                                             </span>
                                             <div className={styles.riskAlertCalloutBody}>
                                                 <span className={styles.riskAlertCalloutTag}>Criterio / Nivel:</span>
-                                                <span className={styles.riskAlertCalloutText}>{drug.risk.hepatic.level}</span>
+                                                <span className={styles.riskAlertCalloutText}>{hepaticObj.level}</span>
                                             </div>
                                         </div>
                                     )}
-                                    {drug.risk?.hepatic?.adjustment ? (
-                                        <p className={styles.riskRowText}>{drug.risk.hepatic.adjustment}</p>
+                                    {hepaticObj?.adjustment ? (
+                                        <p className={styles.riskRowText}>{hepaticObj.adjustment}</p>
+                                    ) : hepaticText ? (
+                                        <p className={styles.riskRowText}>{hepaticText}</p>
                                     ) : (
-                                        !drug.risk?.hepatic?.level && <p className={styles.riskRowText}>{t.noData}</p>
+                                        !hepaticObj?.level && <p className={styles.riskRowText}>{t.noData}</p>
                                     )}
                                 </div>
                             </div>
@@ -856,7 +915,15 @@ const DetalleFarmaco = () => {
                         {drug.interactions && drug.interactions.length > 0 ? (
                             <ul className={styles.bulletList}>
                                 {drug.interactions.map((i, idx) => (
-                                    <li key={idx}>{i}</li>
+                                    <li key={idx}>
+                                        {typeof i === 'object' && i !== null ? (
+                                            <span>
+                                                <strong>{i.drug || 'Fármaco'}:</strong> {i.effect || ''} {i.severity ? `[${i.severity}]` : ''}
+                                            </span>
+                                        ) : (
+                                            i
+                                        )}
+                                    </li>
                                 ))}
                             </ul>
                         ) : (

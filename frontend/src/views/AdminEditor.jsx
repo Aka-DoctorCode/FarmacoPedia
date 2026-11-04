@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { counterContext } from '../context/counterContext.js';
 import { drugService } from '../services/drugService.js';
+import DetalleFarmaco from './DetalleFarmaco.jsx';
 import styles from './AdminEditor.module.css';
 
 const STRIP_KEYS = ['_id', '__v', 'createdAt', 'updatedAt'];
@@ -40,28 +41,6 @@ const parseJsonWithPosition = (text) => {
     }
 };
 
-const getRiskSeverity = (text) => {
-    if (!text) return 'info';
-    const lower = String(text).toLowerCase();
-    if (lower.includes('contraindicad') || lower.includes('evitar') || lower.includes('no recomendad') || lower.includes('grave') || lower.includes('severa') || lower.includes('alto')) {
-        return 'danger';
-    }
-    if (lower.includes('precauci') || lower.includes('ajuste') || lower.includes('monitoreo') || lower.includes('reducir') || lower.includes('moderad')) {
-        return 'warning';
-    }
-    if (lower.includes('seguro') || lower.includes('no requiere') || lower.includes('sin ajuste') || lower.includes('normal') || lower.includes('compatible') || lower.includes('bajo')) {
-        return 'success';
-    }
-    return 'info';
-};
-
-const getSeverityClass = (sev) => {
-    const s = String(sev || '').toLowerCase();
-    if (s.includes('grave') || s.includes('alta') || s.includes('contraindicad') || s.includes('sever')) return styles.severityBadgeDanger;
-    if (s.includes('moderad') || s.includes('media')) return styles.severityBadgeWarning;
-    return styles.severityBadgeInfo;
-};
-
 const AdminEditor = () => {
     const { user, updateUser } = useContext(counterContext);
     const navigate = useNavigate();
@@ -90,9 +69,6 @@ const AdminEditor = () => {
     const [isNew, setIsNew] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [notification, setNotification] = useState({ text: '', type: 'neutral' });
-
-    // Emulated monograph view state
-    const [activeMonographTab, setActiveMonographTab] = useState('all'); // 'all' | 'overview' | 'dosage' | 'risks' | 'safety' | 'references'
 
     const textareaRef = useRef(null);
 
@@ -237,9 +213,19 @@ const AdminEditor = () => {
             contraindications: [''],
             interactions: [{ drug: '', severity: 'Moderada', effect: '' }],
             adverseReactions: [''],
-            dosage: {
-                adults: '',
-                pediatric: 'No establecido en población pediátrica'
+            dosageGuidance: {
+                adult: {
+                    Oral: {
+                        guidelines: [''],
+                        maxDose: ['']
+                    }
+                },
+                pediatric: {
+                    Oral: {
+                        guidelines: ['No establecido en menores de 12 años'],
+                        maxDose: ['']
+                    }
+                }
             },
             presentations: {
                 Comprimidos: {
@@ -399,35 +385,6 @@ const AdminEditor = () => {
     }
 
     const previewDrug = isValid ? parsed.value : null;
-
-    // Derived helpers for the emulated monograph
-    const presentationsEntries = (() => {
-        if (!previewDrug || !previewDrug.presentations) return [];
-        if (typeof previewDrug.presentations === 'object' && !Array.isArray(previewDrug.presentations)) {
-            return Object.entries(previewDrug.presentations);
-        }
-        return [];
-    })();
-
-    const adultGuidanceEntries = (() => {
-        if (!previewDrug || !previewDrug.adultGuidance) return [];
-        if (typeof previewDrug.adultGuidance === 'object' && !Array.isArray(previewDrug.adultGuidance)) {
-            return Object.entries(previewDrug.adultGuidance);
-        }
-        return [];
-    })();
-
-    const pediatricGuidanceEntries = (() => {
-        if (!previewDrug || !previewDrug.pediatricGuidance) return [];
-        if (typeof previewDrug.pediatricGuidance === 'object' && !Array.isArray(previewDrug.pediatricGuidance)) {
-            return Object.entries(previewDrug.pediatricGuidance);
-        }
-        return [];
-    })();
-
-    const risksObj = previewDrug ? (previewDrug.risk || previewDrug.risks || {}) : {};
-    const securityFlags = risksObj.securityFlags || previewDrug?.securityFlags || [];
-
     const isFullscreenPreview = isSidebarCollapsed && isEditorCollapsed && showPreview;
 
     return (
@@ -664,12 +621,12 @@ const AdminEditor = () => {
                     </footer>
                 </section>
 
-                {/* 3. Live Emulated Web Preview Panel */}
+                {/* 3. Live Web Preview Panel (Real DetalleFarmaco Production View) */}
                 {showPreview && (
                     <aside className={`${styles.previewPanel} ${isFullscreenPreview ? styles.previewPanelFullscreen : ''}`}>
                         <div className={styles.previewTopBar}>
                             <div className={styles.previewTopBarTitle}>
-                                <span>🌐 Vista Emulada del Sitio Web</span>
+                                <span>🌐 Vista de la Página Real</span>
                                 {isFullscreenPreview && (
                                     <span className={styles.fullscreenNotice}>Pantalla Completa 100%</span>
                                 )}
@@ -691,7 +648,7 @@ const AdminEditor = () => {
                                         type="button"
                                         className={styles.sideCollapseBtn}
                                         onClick={() => handleSetLayoutMode('fullscreen')}
-                                        title="Expandir vista previa a pantalla completa"
+                                        title="Expandir vista previa a pantalla completa (100%)"
                                     >
                                         ⛶ Pantalla Completa
                                     </button>
@@ -704,7 +661,7 @@ const AdminEditor = () => {
                                 <div className={styles.previewEmpty}>
                                     {parsed.error
                                         ? 'Corrige el error de sintaxis en el editor para previsualizar.'
-                                        : 'Selecciona o escribe un JSON válido para ver la ficha clínica completa tal como la ven los médicos.'}
+                                        : 'Selecciona o escribe un JSON válido para ver la ficha clínica tal como se muestra en la web real.'}
                                 </div>
                             ) : tabKind === 'pending' ? (
                                 /* Pending Drug Card */
@@ -721,451 +678,14 @@ const AdminEditor = () => {
                                         </span>
                                     </div>
                                     {previewDrug.note && (
-                                        <p className={styles.emulatedPlainText}>
+                                        <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--textSecondary)' }}>
                                             <strong>Nota interna:</strong> {previewDrug.note}
                                         </p>
                                     )}
                                 </div>
                             ) : (
-                                /* Full Emulated Clinical Monograph (Mirroring DetalleFarmaco.jsx) */
-                                <div className={styles.emulatedMonographContainer}>
-                                    {/* Monograph Header Card */}
-                                    <div className={styles.emulatedHeaderCard}>
-                                        <div className={styles.emulatedDrugNameRow}>
-                                            <h1 className={styles.emulatedDrugName}>{previewDrug.name || 'Sin nombre'}</h1>
-                                            {Array.isArray(previewDrug.atc) && previewDrug.atc.length > 0 && (
-                                                <div className={styles.emulatedAtcGroup}>
-                                                    {previewDrug.atc.map((item, idx) => (
-                                                        <span key={idx} className={styles.emulatedAtcCodeBadge}>
-                                                            ATC {item.code || item}
-                                                        </span>
-                                                    ))}
-                                                    {previewDrug.atc[0]?.subcategoryName && (
-                                                        <span className={styles.emulatedAtcCategoryBadge}>
-                                                            {previewDrug.atc[0].subcategoryName}
-                                                        </span>
-                                                    )}
-                                                    {previewDrug.atc[0]?.categoryName && (
-                                                        <span className={styles.emulatedAtcCategoryBadge}>
-                                                            {previewDrug.atc[0].categoryName}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        {/* Security Alerts Callout */}
-                                        {securityFlags.length > 0 && (
-                                            <div className={styles.emulatedSecurityAlertBox}>
-                                                <span>⚠️</span>
-                                                <div>
-                                                    <strong>Alertas de Seguridad Relevantes:</strong>
-                                                    <ul style={{ margin: '4px 0 0', paddingLeft: '18px' }}>
-                                                        {securityFlags.map((flag, idx) => (
-                                                            <li key={idx}>{flag}</li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Quick Section Tabs */}
-                                    <div className={styles.emulatedIndexNav}>
-                                        <button
-                                            type="button"
-                                            className={`${styles.emulatedIndexTab} ${activeMonographTab === 'all' ? styles.emulatedIndexTabActive : ''}`}
-                                            onClick={() => setActiveMonographTab('all')}
-                                        >
-                                            📄 Todo
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className={`${styles.emulatedIndexTab} ${activeMonographTab === 'overview' ? styles.emulatedIndexTabActive : ''}`}
-                                            onClick={() => setActiveMonographTab('overview')}
-                                        >
-                                            🔍 General
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className={`${styles.emulatedIndexTab} ${activeMonographTab === 'dosage' ? styles.emulatedIndexTabActive : ''}`}
-                                            onClick={() => setActiveMonographTab('dosage')}
-                                        >
-                                            💊 Posología
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className={`${styles.emulatedIndexTab} ${activeMonographTab === 'risks' ? styles.emulatedIndexTabActive : ''}`}
-                                            onClick={() => setActiveMonographTab('risks')}
-                                        >
-                                            ⚠️ Riesgos
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className={`${styles.emulatedIndexTab} ${activeMonographTab === 'safety' ? styles.emulatedIndexTabActive : ''}`}
-                                            onClick={() => setActiveMonographTab('safety')}
-                                        >
-                                            🛡️ Seguridad
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className={`${styles.emulatedIndexTab} ${activeMonographTab === 'references' ? styles.emulatedIndexTabActive : ''}`}
-                                            onClick={() => setActiveMonographTab('references')}
-                                        >
-                                            📚 Referencias
-                                        </button>
-                                    </div>
-
-                                    {/* SECTION 1: Overview & Indications */}
-                                    {(activeMonographTab === 'all' || activeMonographTab === 'overview') && (
-                                        <>
-                                            {previewDrug.actionMechanism && (
-                                                <div className={styles.emulatedSectionCard}>
-                                                    <div className={styles.emulatedSectionHeader}>
-                                                        <span className={styles.emulatedSectionIcon}>📖</span>
-                                                        <h2 className={styles.emulatedSectionTitle}>Mecanismo de Acción</h2>
-                                                    </div>
-                                                    <p className={styles.emulatedPlainText}>{previewDrug.actionMechanism}</p>
-                                                </div>
-                                            )}
-
-                                            {Array.isArray(previewDrug.indications) && previewDrug.indications.length > 0 && (
-                                                <div className={styles.emulatedSectionCard}>
-                                                    <div className={styles.emulatedSectionHeader}>
-                                                        <span className={styles.emulatedSectionIcon}>🎯</span>
-                                                        <h2 className={styles.emulatedSectionTitle}>Indicaciones Terapéuticas</h2>
-                                                    </div>
-                                                    <ul className={styles.emulatedBulletList}>
-                                                        {previewDrug.indications.map((ind, idx) => (
-                                                            <li key={idx}>{typeof ind === 'string' ? ind : ind.description || JSON.stringify(ind)}</li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            )}
-
-                                            {previewDrug.overdose && (
-                                                <div className={styles.emulatedSectionCard}>
-                                                    <div className={styles.emulatedSectionHeader}>
-                                                        <span className={styles.emulatedSectionIcon}>🛑</span>
-                                                        <h2 className={styles.emulatedSectionTitle}>Sobredosis y Toxicidad</h2>
-                                                    </div>
-                                                    <p className={styles.emulatedPlainText}>{previewDrug.overdose}</p>
-                                                </div>
-                                            )}
-                                        </>
-                                    )}
-
-                                    {/* SECTION 2: Dosage & Presentations */}
-                                    {(activeMonographTab === 'all' || activeMonographTab === 'dosage') && (
-                                        <>
-                                            {/* Presentations Table */}
-                                            {presentationsEntries.length > 0 && (
-                                                <div className={styles.emulatedSectionCard}>
-                                                    <div className={styles.emulatedSectionHeader}>
-                                                        <span className={styles.emulatedSectionIcon}>📦</span>
-                                                        <h2 className={styles.emulatedSectionTitle}>Presentaciones Comerciales</h2>
-                                                    </div>
-                                                    <div className={styles.presentationsCompactList}>
-                                                        {presentationsEntries.map(([formName, formValue], idx) => (
-                                                            <div key={idx} className={styles.compactPresentationRow}>
-                                                                <div className={styles.compactPresentationHeader}>
-                                                                    <span className={styles.compactPresentationTitle}>{formName}</span>
-                                                                    <span className={styles.compactDosageCountBadge}>
-                                                                        {formValue.dosage?.length || 0} dosis disponibles
-                                                                    </span>
-                                                                </div>
-                                                                <div className={styles.compactDoseChipsWrapper}>
-                                                                    {Array.isArray(formValue.dosage) && formValue.dosage.map((d, dIdx) => (
-                                                                        <div key={dIdx} className={styles.compactDoseChip}>
-                                                                            <span className={styles.compactDoseAmount}>
-                                                                                {d.amount} {d.unit}
-                                                                            </span>
-                                                                            {d.useIn && (
-                                                                                <span className={styles.useInBadge}>{d.useIn}</span>
-                                                                            )}
-                                                                            {Array.isArray(d.route) && d.route.map((r, rIdx) => (
-                                                                                <span key={rIdx} className={styles.routeBadge}>{r}</span>
-                                                                            ))}
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            {/* Dosage Guidelines (Adult Guidance) */}
-                                            {adultGuidanceEntries.length > 0 && (
-                                                <div className={styles.emulatedSectionCard}>
-                                                    <div className={styles.emulatedSectionHeader}>
-                                                        <span className={styles.emulatedSectionIcon}>👤</span>
-                                                        <h2 className={styles.emulatedSectionTitle}>Guía de Dosificación en Adultos</h2>
-                                                    </div>
-                                                    <div className={styles.guidanceGrid}>
-                                                        {adultGuidanceEntries.map(([routeName, guideData], idx) => (
-                                                            <div key={idx} className={styles.guidanceCard}>
-                                                                <div className={styles.guidanceRouteName}>{routeName}</div>
-                                                                {guideData.guidelines && guideData.guidelines.length > 0 && (
-                                                                    <div>
-                                                                        <span className={styles.guidanceItemTitle}>Pautas:</span>
-                                                                        <ul className={styles.emulatedBulletList}>
-                                                                            {guideData.guidelines.map((g, gIdx) => (
-                                                                                <li key={gIdx}>{g}</li>
-                                                                            ))}
-                                                                        </ul>
-                                                                    </div>
-                                                                )}
-                                                                {guideData.maxDose && guideData.maxDose.length > 0 && (
-                                                                    <div>
-                                                                        <span className={styles.guidanceItemTitle}>Dosis Máxima:</span>
-                                                                        <ul className={styles.emulatedBulletList}>
-                                                                            {guideData.maxDose.map((m, mIdx) => (
-                                                                                <li key={mIdx}>{m}</li>
-                                                                            ))}
-                                                                        </ul>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            {/* Dosage Guidelines (Pediatric Guidance) */}
-                                            {pediatricGuidanceEntries.length > 0 && (
-                                                <div className={styles.emulatedSectionCard}>
-                                                    <div className={styles.emulatedSectionHeader}>
-                                                        <span className={styles.emulatedSectionIcon}>🧒</span>
-                                                        <h2 className={styles.emulatedSectionTitle}>Guía de Dosificación Pediátrica</h2>
-                                                    </div>
-                                                    <div className={styles.guidanceGrid}>
-                                                        {pediatricGuidanceEntries.map(([routeName, guideData], idx) => (
-                                                            <div key={idx} className={styles.guidanceCard}>
-                                                                <div className={styles.guidanceRouteName}>{routeName}</div>
-                                                                {guideData.guidelines && guideData.guidelines.length > 0 && (
-                                                                    <div>
-                                                                        <span className={styles.guidanceItemTitle}>Pautas Pediátricas:</span>
-                                                                        <ul className={styles.emulatedBulletList}>
-                                                                            {guideData.guidelines.map((g, gIdx) => (
-                                                                                <li key={gIdx}>{g}</li>
-                                                                            ))}
-                                                                        </ul>
-                                                                    </div>
-                                                                )}
-                                                                {guideData.maxDose && guideData.maxDose.length > 0 && (
-                                                                    <div>
-                                                                        <span className={styles.guidanceItemTitle}>Dosis Máxima Pediátrica:</span>
-                                                                        <ul className={styles.emulatedBulletList}>
-                                                                            {guideData.maxDose.map((m, mIdx) => (
-                                                                                <li key={mIdx}>{m}</li>
-                                                                            ))}
-                                                                        </ul>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            {/* Legacy Dosage Object if guidance not present */}
-                                            {previewDrug.dosage && (previewDrug.dosage.adults || previewDrug.dosage.pediatric) && (
-                                                <div className={styles.emulatedSectionCard}>
-                                                    <div className={styles.emulatedSectionHeader}>
-                                                        <span className={styles.emulatedSectionIcon}>💊</span>
-                                                        <h2 className={styles.emulatedSectionTitle}>Posología y Administración</h2>
-                                                    </div>
-                                                    {previewDrug.dosage.adults && (
-                                                        <div style={{ marginBottom: '8px' }}>
-                                                            <strong>Dosis en Adultos:</strong>
-                                                            <p className={styles.emulatedPlainText}>{previewDrug.dosage.adults}</p>
-                                                        </div>
-                                                    )}
-                                                    {previewDrug.dosage.pediatric && (
-                                                        <div>
-                                                            <strong>Dosis Pediátrica:</strong>
-                                                            <p className={styles.emulatedPlainText}>{previewDrug.dosage.pediatric}</p>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </>
-                                    )}
-
-                                    {/* SECTION 3: Clinical Risks & Organ Adjustments */}
-                                    {(activeMonographTab === 'all' || activeMonographTab === 'risks') && (
-                                        <div className={styles.emulatedSectionCard}>
-                                            <div className={styles.emulatedSectionHeader}>
-                                                <span className={styles.emulatedSectionIcon}>⚖️</span>
-                                                <h2 className={styles.emulatedSectionTitle}>Riesgos Clínicos y Ajustes Orgánicos</h2>
-                                            </div>
-
-                                            <div className={styles.riskRowsContainer}>
-                                                {/* Embarazo */}
-                                                <div className={styles.riskTableRow}>
-                                                    <div className={styles.riskRowHeaderCol}>
-                                                        <span className={styles.riskRowIcon}>🤰</span>
-                                                        <span className={styles.riskRowTitle}>Embarazo</span>
-                                                    </div>
-                                                    <p className={styles.riskRowText}>{risksObj.pregnancy || 'Sin información reportada'}</p>
-                                                </div>
-
-                                                {/* Lactancia */}
-                                                <div className={styles.riskTableRow}>
-                                                    <div className={styles.riskRowHeaderCol}>
-                                                        <span className={styles.riskRowIcon}>🍼</span>
-                                                        <span className={styles.riskRowTitle}>Lactancia</span>
-                                                    </div>
-                                                    <p className={styles.riskRowText}>{risksObj.lactation || 'Sin información reportada'}</p>
-                                                </div>
-
-                                                {/* Geriatría */}
-                                                <div className={styles.riskTableRow}>
-                                                    <div className={styles.riskRowHeaderCol}>
-                                                        <span className={styles.riskRowIcon}>👴</span>
-                                                        <span className={styles.riskRowTitle}>Geriatría</span>
-                                                    </div>
-                                                    <p className={styles.riskRowText}>{risksObj.geriatric || 'Sin precauciones especiales documentadas'}</p>
-                                                </div>
-
-                                                {/* Ajuste Renal */}
-                                                <div className={styles.riskTableRow}>
-                                                    <div className={styles.riskRowHeaderCol}>
-                                                        <span className={styles.riskRowIcon}>🩺</span>
-                                                        <span className={styles.riskRowTitle}>Insuficiencia Renal</span>
-                                                    </div>
-                                                    {typeof risksObj.renal === 'object' && risksObj.renal !== null ? (
-                                                        <div>
-                                                            {risksObj.renal.level && (
-                                                                <div className={`${styles.riskAlertCallout} ${styles['riskAlert_' + getRiskSeverity(risksObj.renal.level)]}`}>
-                                                                    <span className={styles.riskAlertTag}>Criterio:</span>
-                                                                    <span>{risksObj.renal.level}</span>
-                                                                </div>
-                                                            )}
-                                                            {risksObj.renal.adjustment && (
-                                                                <p className={styles.riskRowText}>{risksObj.renal.adjustment}</p>
-                                                            )}
-                                                        </div>
-                                                    ) : (
-                                                        <p className={styles.riskRowText}>{risksObj.renal || 'Sin ajuste documentado'}</p>
-                                                    )}
-                                                </div>
-
-                                                {/* Ajuste Hepático */}
-                                                <div className={styles.riskTableRow}>
-                                                    <div className={styles.riskRowHeaderCol}>
-                                                        <span className={styles.riskRowIcon}>🧪</span>
-                                                        <span className={styles.riskRowTitle}>Insuficiencia Hepática</span>
-                                                    </div>
-                                                    {typeof risksObj.hepatic === 'object' && risksObj.hepatic !== null ? (
-                                                        <div>
-                                                            {risksObj.hepatic.level && (
-                                                                <div className={`${styles.riskAlertCallout} ${styles['riskAlert_' + getRiskSeverity(risksObj.hepatic.level)]}`}>
-                                                                    <span className={styles.riskAlertTag}>Criterio:</span>
-                                                                    <span>{risksObj.hepatic.level}</span>
-                                                                </div>
-                                                            )}
-                                                            {risksObj.hepatic.adjustment && (
-                                                                <p className={styles.riskRowText}>{risksObj.hepatic.adjustment}</p>
-                                                            )}
-                                                        </div>
-                                                    ) : (
-                                                        <p className={styles.riskRowText}>{risksObj.hepatic || 'Sin ajuste documentado'}</p>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* SECTION 4: Safety, Contraindications & Interactions */}
-                                    {(activeMonographTab === 'all' || activeMonographTab === 'safety') && (
-                                        <>
-                                            {/* Contraindications */}
-                                            {Array.isArray(previewDrug.contraindications) && previewDrug.contraindications.length > 0 && (
-                                                <div className={styles.emulatedSectionCard}>
-                                                    <div className={styles.emulatedSectionHeader}>
-                                                        <span className={styles.emulatedSectionIcon}>🚫</span>
-                                                        <h2 className={styles.emulatedSectionTitle}>Contraindicaciones</h2>
-                                                    </div>
-                                                    <ul className={styles.emulatedBulletList}>
-                                                        {previewDrug.contraindications.map((ci, idx) => (
-                                                            <li key={idx}>{typeof ci === 'string' ? ci : JSON.stringify(ci)}</li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            )}
-
-                                            {/* Interactions */}
-                                            {Array.isArray(previewDrug.interactions) && previewDrug.interactions.length > 0 && (
-                                                <div className={styles.emulatedSectionCard}>
-                                                    <div className={styles.emulatedSectionHeader}>
-                                                        <span className={styles.emulatedSectionIcon}>🔄</span>
-                                                        <h2 className={styles.emulatedSectionTitle}>Interacciones Farmacológicas</h2>
-                                                    </div>
-                                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                                        {previewDrug.interactions.map((inter, idx) => {
-                                                            if (typeof inter === 'object' && inter !== null) {
-                                                                return (
-                                                                    <div key={idx} className={styles.interactionCard}>
-                                                                        <div className={styles.interactionHeader}>
-                                                                            <span className={styles.interactionDrugName}>{inter.drug || 'Fármaco'}</span>
-                                                                            {inter.severity && (
-                                                                                <span className={getSeverityClass(inter.severity)}>
-                                                                                    {inter.severity}
-                                                                                </span>
-                                                                            )}
-                                                                        </div>
-                                                                        {inter.effect && (
-                                                                            <p className={styles.interactionEffect}>{inter.effect}</p>
-                                                                        )}
-                                                                    </div>
-                                                                );
-                                                            }
-                                                            return (
-                                                                <div key={idx} className={styles.interactionCard}>
-                                                                    <p className={styles.interactionEffect}>{inter}</p>
-                                                                </div>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            {/* Adverse Reactions */}
-                                            {Array.isArray(previewDrug.adverseReactions) && previewDrug.adverseReactions.length > 0 && (
-                                                <div className={styles.emulatedSectionCard}>
-                                                    <div className={styles.emulatedSectionHeader}>
-                                                        <span className={styles.emulatedSectionIcon}>⚡</span>
-                                                        <h2 className={styles.emulatedSectionTitle}>Reacciones Adversas (RAMs)</h2>
-                                                    </div>
-                                                    <ul className={styles.emulatedBulletList}>
-                                                        {previewDrug.adverseReactions.map((ram, idx) => (
-                                                            <li key={idx}>{typeof ram === 'string' ? ram : JSON.stringify(ram)}</li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            )}
-                                        </>
-                                    )}
-
-                                    {/* SECTION 5: References */}
-                                    {(activeMonographTab === 'all' || activeMonographTab === 'references') && (
-                                        Array.isArray(previewDrug.references) && previewDrug.references.length > 0 && (
-                                            <div className={styles.emulatedSectionCard}>
-                                                <div className={styles.emulatedSectionHeader}>
-                                                    <span className={styles.emulatedSectionIcon}>📚</span>
-                                                    <h2 className={styles.emulatedSectionTitle}>Referencias Bibliográficas</h2>
-                                                </div>
-                                                <ul className={styles.emulatedBulletList}>
-                                                    {previewDrug.references.map((ref, idx) => (
-                                                        <li key={idx}>{ref}</li>
-                                                    ))}
-                                                </ul>
-                                            </div>
-                                        )
-                                    )}
-                                </div>
+                                /* Exact Production Component */
+                                <DetalleFarmaco drugDataOverride={previewDrug} isPreview={true} />
                             )}
                         </div>
                     </aside>
