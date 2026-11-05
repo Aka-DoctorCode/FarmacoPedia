@@ -155,6 +155,36 @@ const DetalleFarmaco = ({ drugDataOverride = null, isPreview = false }) => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [isPreview]);
 
+    // Helper to safely format Map or Object presentations
+    const presentationsEntries = useMemo(() => {
+        if (!selectedDrug || !selectedDrug.presentations) return [];
+        if (selectedDrug.presentations instanceof Map) {
+            return Array.from(selectedDrug.presentations.entries());
+        }
+        if (typeof selectedDrug.presentations === 'object' && !Array.isArray(selectedDrug.presentations)) {
+            return Object.entries(selectedDrug.presentations);
+        }
+        return [];
+    }, [selectedDrug]);
+
+    const adultGuidanceEntries = useMemo(() => {
+        if (!selectedDrug) return [];
+        const guidance = selectedDrug.dosageGuidance?.adult || selectedDrug.adultGuidance;
+        if (!guidance) return [];
+        if (guidance instanceof Map) return Array.from(guidance.entries());
+        if (typeof guidance === 'object' && !Array.isArray(guidance)) return Object.entries(guidance);
+        return [];
+    }, [selectedDrug]);
+
+    const pediatricGuidanceEntries = useMemo(() => {
+        if (!selectedDrug) return [];
+        const guidance = selectedDrug.dosageGuidance?.pediatric || selectedDrug.pediatricGuidance;
+        if (!guidance) return [];
+        if (guidance instanceof Map) return Array.from(guidance.entries());
+        if (typeof guidance === 'object' && !Array.isArray(guidance)) return Object.entries(guidance);
+        return [];
+    }, [selectedDrug]);
+
     if (isDrugLoading) {
         return (
             <div className={styles.container}>
@@ -184,36 +214,6 @@ const DetalleFarmaco = ({ drugDataOverride = null, isPreview = false }) => {
     }
 
     const drug = selectedDrug;
-
-    // Helper to safely format Map or Object presentations
-    const presentationsEntries = useMemo(() => {
-        if (!drug || !drug.presentations) return [];
-        if (drug.presentations instanceof Map) {
-            return Array.from(drug.presentations.entries());
-        }
-        if (typeof drug.presentations === 'object' && !Array.isArray(drug.presentations)) {
-            return Object.entries(drug.presentations);
-        }
-        return [];
-    }, [drug]);
-
-    const adultGuidanceEntries = useMemo(() => {
-        if (!drug) return [];
-        const guidance = drug.dosageGuidance?.adult || drug.adultGuidance;
-        if (!guidance) return [];
-        if (guidance instanceof Map) return Array.from(guidance.entries());
-        if (typeof guidance === 'object' && !Array.isArray(guidance)) return Object.entries(guidance);
-        return [];
-    }, [drug]);
-
-    const pediatricGuidanceEntries = useMemo(() => {
-        if (!drug) return [];
-        const guidance = drug.dosageGuidance?.pediatric || drug.pediatricGuidance;
-        if (!guidance) return [];
-        if (guidance instanceof Map) return Array.from(guidance.entries());
-        if (typeof guidance === 'object' && !Array.isArray(guidance)) return Object.entries(guidance);
-        return [];
-    }, [drug]);
 
     const riskData = drug ? (drug.risk || drug.risks || {}) : {};
     const securityFlags = riskData.securityFlags || drug?.securityFlags || [];
