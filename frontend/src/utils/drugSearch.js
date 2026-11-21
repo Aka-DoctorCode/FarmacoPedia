@@ -8,13 +8,16 @@ import {
 
 /**
  * Normaliza texto para búsqueda: minúsculas y sin tildes/diacríticos.
- * Permite que "macrolidos" encuentre "Macrólidos".
+ * Unifica además conectores (+ y &) para que búsquedas como "amoxicilina y clavulanico"
+ * coincidan con "amoxicilina + acido clavulanico".
  */
 export const normalizeText = (value) =>
     String(value ?? '')
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .toLowerCase()
+        .replace(/[+&]/g, ' y ')
+        .replace(/\s+/g, ' ')
         .trim();
 
 const tokenize = (query) => normalizeText(query).split(/\s+/).filter(Boolean);
@@ -22,18 +25,28 @@ const tokenize = (query) => normalizeText(query).split(/\s+/).filter(Boolean);
 const indexCache = new WeakMap();
 
 /**
- * Sinónimos, nombres comerciales universales y variantes ortográficas comunes
+ * Sinónimos, nombres comerciales universales, variantes en inglés y variantes ortográficas comunes
  * para enriquecer la búsqueda de fármacos independientemente de cómo los busque el usuario.
  */
 export const DRUG_SYNONYMS = {
     paracetamol: ['acetaminofen', 'acetaminofeno', 'acetamifen', 'tylenol', 'panadol', 'tempra'],
     'acetaminofén (paracetamol)': ['paracetamol', 'acetamifen', 'acetaminofeno', 'tylenol', 'panadol', 'tempra'],
     'paracetamol intravenoso': ['perfalgan', 'acetaminofen iv', 'acetaminofen'],
-    'ácido acetilsalicílico': ['aspirina', 'asa', 'aspirin'],
+    'ácido acetilsalicílico': ['aspirina', 'asa', 'aspirin', 'acetylsalicylic acid'],
     dipirona: ['metamizol', 'nolotil', 'novalgina'],
     metamizol: ['dipirona', 'nolotil', 'novalgina'],
     ibuprofeno: ['advil', 'motrin'],
-    salbutamol: ['albuterol', 'ventolin']
+    salbutamol: ['albuterol', 'ventolin'],
+    'butilescopolamina bromuro': ['hyoscine butylbromide', 'buscapina', 'scopolamine butylbromide'],
+    'vacuna anti fiebre amarilla': ['yellow fever vaccine', 'stamaril'],
+    'vacuna anti rabia': ['rabies vaccine'],
+    'vacuna anti colera': ['cholera vaccine', 'dukoral'],
+    'vacuna anti bcg': ['bcg vaccine'],
+    'vacuna anti tifoidea': ['typhoid vaccine'],
+    'vacuna anti virus respiratorio sincitial': ['respiratory syncytial virus vaccine', 'arexvy', 'abrysvo'],
+    'inmunoglobulina anti-d (rh)': ['anti-d immunoglobulin', 'rhophylac'],
+    'acido folinico': ['calcium folinate', 'leucovorin calcium', 'leucovorina'],
+    'inmunoglobulina antirrabica humana': ['anti-rabies immunoglobulin', 'equine rabies immunoglobulin']
 };
 
 /**
