@@ -29,8 +29,13 @@ export const formatCategory = (category) => {
         return customDictionary[trimmed];
     }
 
+    // Si el texto viene completamente en mayúsculas (ej. catálogo oficial AEMPS/OMS),
+    // normalizarlo a minúsculas antes de aplicar capitalización y siglas médicas.
+    const isAllCaps = trimmed === trimmed.toUpperCase() && trimmed !== trimmed.toLowerCase();
+    const baseText = isAllCaps ? lower : trimmed;
+
     // Reglas dinámicas de reemplazo de números romanos y acrónimos
-    const formatted = trimmed
+    const formatted = baseText
         .replace(/\bii\b/gi, 'II')
         .replace(/\biii\b/gi, 'III')
         .replace(/\biv\b/gi, 'IV')
@@ -43,7 +48,11 @@ export const formatCategory = (category) => {
         .replace(/\bisrs\b/gi, 'ISRS')
         .replace(/\baines\b/gi, 'AINEs')
         .replace(/\bh1\b/gi, 'H1')
-        .replace(/\bh2\b/gi, 'H2');
+        .replace(/\bh2\b/gi, 'H2')
+        .replace(/\beca\b/gi, 'ECA')
+        .replace(/\bsnc\b/gi, 'SNC')
+        .replace(/\bvih\b/gi, 'VIH')
+        .replace(/\bi\.v\./gi, 'I.V.');
 
     // Capitalizar la primera letra si no está en mayúscula
     return formatted.charAt(0).toUpperCase() + formatted.slice(1);
