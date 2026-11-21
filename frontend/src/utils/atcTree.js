@@ -1,8 +1,24 @@
 /**
- * Catálogo Maestro Oficial ATC de la Organización Mundial de la Salud (OMS)
+ * Catálogo Maestro Oficial ATC de la Organización Mundial de la Salud (OMS / AEMPS)
  * con descripciones canónicas en español para los Niveles 1 al 4,
  * enriquecido para navegación taxonómica clínica (Drill-Down).
  */
+
+import atcCatalog from './atcCatalog.json';
+
+function mergeCatalogLevel(rawMap, curatedMap, parentLength) {
+    const merged = {};
+    if (rawMap && typeof rawMap === 'object') {
+        for (const [code, name] of Object.entries(rawMap)) {
+            merged[code] = {
+                code,
+                parent: code.substring(0, parentLength),
+                name
+            };
+        }
+    }
+    return { ...merged, ...curatedMap };
+}
 
 export const ATC_LEVEL_1 = {
     A: { code: 'A', name: 'Tracto Alimentario y Metabolismo', desc: 'Aparato digestivo, metabolismo, diabetes, vitaminas y minerales.' },
@@ -21,7 +37,7 @@ export const ATC_LEVEL_1 = {
     V: { code: 'V', name: 'Varios', desc: 'Antídotos, medios de contraste, radiofármacos y nutrientes.' }
 };
 
-export const ATC_LEVEL_2 = {
+export const ATC_LEVEL_2 = mergeCatalogLevel(atcCatalog.l2, {
     A01: { code: 'A01', parent: 'A', name: 'Preparaciones Estomatológicas' },
     A02: { code: 'A02', parent: 'A', name: 'Agentes para el Tratamiento de Alteraciones Causadas por Ácidos (Antiulcerosos)' },
     A03: { code: 'A03', parent: 'A', name: 'Agentes contra Padecimientos Funcionales Gastrointestinales (Espasmolíticos)' },
@@ -83,9 +99,9 @@ export const ATC_LEVEL_2 = {
     R06: { code: 'R06', parent: 'R', name: 'Antihistamínicos para Uso Sistémico' },
     S01: { code: 'S01', parent: 'S', name: 'Oftalmológicos' },
     V03: { code: 'V03', parent: 'V', name: 'Todos los Demás Productos Terapéuticos (Antídotos)' }
-};
+}, 1);
 
-export const ATC_LEVEL_3 = {
+export const ATC_LEVEL_3 = mergeCatalogLevel(atcCatalog.l3, {
     // A02
     A02A: { code: 'A02A', parent: 'A02', name: 'Antiácidos' },
     A02B: { code: 'A02B', parent: 'A02', name: 'Agentes contra la Úlcera Péptica y el Reflujo Gastroesofágico' },
@@ -146,9 +162,9 @@ export const ATC_LEVEL_3 = {
     R03C: { code: 'R03C', parent: 'R03', name: 'Adrenérgicos para Uso Sistémico' },
     // R06
     R06A: { code: 'R06A', parent: 'R06', name: 'Antihistamínicos para Uso Sistémico' }
-};
+}, 3);
 
-export const ATC_LEVEL_4 = {
+export const ATC_LEVEL_4 = mergeCatalogLevel(atcCatalog.l4, {
     // A02BC
     A02BC: { code: 'A02BC', parent: 'A02B', name: 'Inhibidores de la Bomba de Protones (IBP)' },
     A02BA: { code: 'A02BA', parent: 'A02B', name: 'Antagonistas del Receptor H2' },
@@ -214,7 +230,7 @@ export const ATC_LEVEL_4 = {
     R03AC: { code: 'R03AC', parent: 'R03A', name: 'Agonistas Selectivos de Receptores Beta-2 Adrenérgicos' },
     // R06AX
     R06AX: { code: 'R06AX', parent: 'R06A', name: 'Otros Antihistamínicos para Uso Sistémico' }
-};
+}, 4);
 
 /**
  * Normaliza y construye la ruta jerárquica de 5 niveles para un código ATC dado.
