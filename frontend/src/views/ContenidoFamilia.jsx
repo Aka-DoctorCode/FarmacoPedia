@@ -5,6 +5,7 @@ import { drugService } from '../services/drugService.js';
 import {
     getAtcChildren,
     getDrugAtcCode,
+    getDrugAtcCodes,
     getLevelInfo,
     buildPathFromCode,
     searchAtcTree
@@ -29,8 +30,8 @@ const ContenidoFamilia = () => {
     // [] = Nivel 1 (raíz anatómica); cada elemento adicional profundiza un nivel (hasta el Nivel 4).
     // Nivel 5 = fármacos individuales (/farmaco/:name).
     const currentPath = useMemo(
-        () => (selectedFamily ? buildPathFromCode(selectedFamily) : []),
-        [selectedFamily]
+        () => (selectedFamily ? buildPathFromCode(selectedFamily, allDrugs) : []),
+        [selectedFamily, allDrugs]
     );
 
     // Filter toggle: show only branches that contain registered drugs
@@ -78,16 +79,16 @@ const ContenidoFamilia = () => {
     const currentChildren = useMemo(() => {
         if (currentLevel >= 4) return [];
         const parentCode = currentNode ? currentNode.code : null;
-        return getAtcChildren(parentCode, currentLevel);
-    }, [currentLevel, currentNode]);
+        return getAtcChildren(parentCode, currentLevel, allDrugs);
+    }, [currentLevel, currentNode, allDrugs]);
 
     // Compute drug counts for each child node without allocating duplicate drug object arrays
     const childrenWithStats = useMemo(() => {
         return currentChildren.map((child) => {
             let count = 0;
             for (let i = 0; i < allDrugs.length; i++) {
-                const code = getDrugAtcCode(allDrugs[i]);
-                if (code && code.startsWith(child.code)) {
+                const codes = getDrugAtcCodes(allDrugs[i]);
+                if (codes.some((code) => code.startsWith(child.code))) {
                     count++;
                 }
             }
@@ -108,8 +109,8 @@ const ContenidoFamilia = () => {
     const leafDrugs = useMemo(() => {
         if (!currentNode) return [];
         return allDrugs.filter((drug) => {
-            const code = getDrugAtcCode(drug);
-            return code && code.startsWith(currentNode.code);
+            const codes = getDrugAtcCodes(drug);
+            return codes.some((code) => code.startsWith(currentNode.code));
         });
     }, [currentNode, allDrugs]);
 

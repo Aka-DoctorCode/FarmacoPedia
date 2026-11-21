@@ -241,11 +241,65 @@ export function parseAtcPath(atcCode) {
 }
 
 /**
- * Retorna la lista de hijos (Subgrupos) para un nodo dado del árbol ATC.
+ * Obtiene todos los códigos ATC normalizados de un objeto fármaco.
+ */
+export function getDrugAtcCodes(drug) {
+    if (!drug) return [];
+    const codes = [];
+    if (drug.atc && Array.isArray(drug.atc)) {
+        for (const entry of drug.atc) {
+            if (entry && typeof entry.code === 'string' && entry.code.trim()) {
+                const clean = entry.code.trim().toUpperCase();
+                if (!codes.includes(clean)) codes.push(clean);
+            }
+        }
+    }
+    if (codes.length === 0) {
+        const cleanName = (drug.name || '').toLowerCase().trim();
+        const fallback = CANONICAL_DRUG_ATC[cleanName];
+        if (fallback) codes.push(fallback);
+    }
+    return codes;
+}
+
+/**
+ * Construye un índice de nombres de subcategorías a partir de los fármacos cargados
+ * para resolver códigos ATC que no estén en el diccionario estático.
+ */
+function buildDynamicSubcategoryNames(allDrugs = []) {
+    const names = new Map();
+    if (!Array.isArray(allDrugs)) return names;
+
+    for (let i = 0; i < allDrugs.length; i++) {
+        const drug = allDrugs[i];
+        if (!drug || !Array.isArray(drug.atc)) continue;
+        for (const entry of drug.atc) {
+            if (!entry) continue;
+            const subCode = typeof entry.subcategoryCode === 'string' ? entry.subcategoryCode.trim().toUpperCase() : '';
+            const subName = typeof entry.subcategoryName === 'string' ? entry.subcategoryName.trim() : '';
+            if (subCode && subName && !names.has(subCode)) {
+                names.set(subCode, subName);
+            }
+            const catCode = typeof entry.categoryCode === 'string' ? entry.categoryCode.trim().toUpperCase() : '';
+            const catName = typeof entry.categoryName === 'string' ? entry.categoryName.trim() : '';
+            if (catCode && catName && !names.has(catCode)) {
+                names.set(catCode, catName);
+            }
+        }
+    }
+    return names;
+}
+
+const LEVEL_CODE_LENGTH = { 1: 1, 2: 3, 3: 4, 4: 5 };
+
+/**
+ * Retorna la lista de hijos (Subgrupos) para un nodo dado del árbol ATC,
+ * combinando el catálogo estático OMS con las subclasificaciones presentes en los fármacos cargados.
  * @param {string|null} parentCode - Código del nodo padre (null para Nivel 1).
  * @param {number} currentLevel - Nivel actual (0 para raíz -> retorna Nivel 1, 1 -> Nivel 2, etc.)
+ * @param {Array} allDrugs - Lista de fármacos para descubrir dinámicamente subgrupos no listados estáticamente.
  */
-export function getAtcChildren(parentCode, currentLevel = 0) {
+export function getAtcChildren(parentCode, currentLevel = 0, allDrugs = []) {
     if (currentLevel === 0 || !parentCode) {
         return Object.values(ATC_LEVEL_1).map(item => ({
             ...item,
@@ -254,37 +308,52 @@ export function getAtcChildren(parentCode, currentLevel = 0) {
         }));
     }
 
-    if (currentLevel === 1) {
-        return Object.values(ATC_LEVEL_2)
-            .filter(item => item.parent === parentCode)
-            .map(item => ({
+    const nextLevel = currentLevel + 1;
+    if (nextLevel < 2 || nextLevel > 4) return [];
+
+    const staticMap =
+        nextLevel === 2 ? ATC_LEVEL_2 :
+        nextLevel === 3 ? ATC_LEVEL_3 :
+        ATC_LEVEL_4;
+
+    const childrenMap = new Map();
+
+    // 1. Sembrar con el catálogo estático OMS
+    Object.values(staticMap)
+        .filter(item => item.parent === parentCode)
+        .forEach(item => {
+            childrenMap.set(item.code, {
                 ...item,
-                level: 2,
-                hasChildren: true
-            }));
+                level: nextLevel,
+                hasChildren: nextLevel < 4
+            });
+        });
+
+    // 2. Descubrir dinámicamente subgrupos presentes en los fármacos cargados
+    if (Array.isArray(allDrugs) && allDrugs.length > 0) {
+        const targetLen = LEVEL_CODE_LENGTH[nextLevel];
+        const dynamicNames = buildDynamicSubcategoryNames(allDrugs);
+
+        for (let i = 0; i < allDrugs.length; i++) {
+            const codes = getDrugAtcCodes(allDrugs[i]);
+            for (let j = 0; j < codes.length; j++) {
+                const code = codes[j];
+                if (!code.startsWith(parentCode) || code.length < targetLen) continue;
+                const childCode = code.substring(0, targetLen);
+                if (!childrenMap.has(childCode)) {
+                    childrenMap.set(childCode, {
+                        code: childCode,
+                        parent: parentCode,
+                        name: dynamicNames.get(childCode) || `Subgrupo ${childCode}`,
+                        level: nextLevel,
+                        hasChildren: nextLevel < 4
+                    });
+                }
+            }
+        }
     }
 
-    if (currentLevel === 2) {
-        return Object.values(ATC_LEVEL_3)
-            .filter(item => item.parent === parentCode)
-            .map(item => ({
-                ...item,
-                level: 3,
-                hasChildren: true
-            }));
-    }
-
-    if (currentLevel === 3) {
-        return Object.values(ATC_LEVEL_4)
-            .filter(item => item.parent === parentCode)
-            .map(item => ({
-                ...item,
-                level: 4,
-                hasChildren: false
-            }));
-    }
-
-    return [];
+    return Array.from(childrenMap.values()).sort((a, b) => a.code.localeCompare(b.code));
 }
 
 /**
@@ -388,36 +457,41 @@ export function getLevelInfo(level) {
 /**
  * Reconstruye el array de migas de pan para cualquier código ATC dado (ej. "J01DD" o "J01DD04").
  */
-export function buildPathFromCode(targetCode) {
+export function buildPathFromCode(targetCode, allDrugs = []) {
     if (!targetCode || typeof targetCode !== 'string') return [];
     const clean = targetCode.trim().toUpperCase();
     if (clean.length === 0) return [];
+
+    const dynamicNames = Array.isArray(allDrugs) && allDrugs.length > 0
+        ? buildDynamicSubcategoryNames(allDrugs)
+        : null;
+    const resolveName = (code, fallback) => (dynamicNames && dynamicNames.get(code)) || fallback;
 
     const path = [];
 
     // Nivel 1
     const l1Code = clean.charAt(0);
-    const l1 = ATC_LEVEL_1[l1Code] || { code: l1Code, name: `Grupo ${l1Code}` };
+    const l1 = ATC_LEVEL_1[l1Code] || { code: l1Code, name: resolveName(l1Code, `Grupo ${l1Code}`) };
     path.push({ code: l1.code, name: l1.name, level: 1 });
 
     // Nivel 2
     if (clean.length >= 3) {
         const l2Code = clean.substring(0, 3);
-        const l2 = ATC_LEVEL_2[l2Code] || { code: l2Code, parent: l1Code, name: `Subgrupo ${l2Code}` };
+        const l2 = ATC_LEVEL_2[l2Code] || { code: l2Code, parent: l1Code, name: resolveName(l2Code, `Subgrupo ${l2Code}`) };
         path.push({ code: l2.code, name: l2.name, level: 2 });
     }
 
     // Nivel 3
     if (clean.length >= 4) {
         const l3Code = clean.substring(0, 4);
-        const l3 = ATC_LEVEL_3[l3Code] || { code: l3Code, parent: clean.substring(0, 3), name: `Subgrupo ${l3Code}` };
+        const l3 = ATC_LEVEL_3[l3Code] || { code: l3Code, parent: clean.substring(0, 3), name: resolveName(l3Code, `Subgrupo ${l3Code}`) };
         path.push({ code: l3.code, name: l3.name, level: 3 });
     }
 
     // Nivel 4
     if (clean.length >= 5) {
         const l4Code = clean.substring(0, 5);
-        const l4 = ATC_LEVEL_4[l4Code] || { code: l4Code, parent: clean.substring(0, 4), name: `Subgrupo ${l4Code}` };
+        const l4 = ATC_LEVEL_4[l4Code] || { code: l4Code, parent: clean.substring(0, 4), name: resolveName(l4Code, `Subgrupo ${l4Code}`) };
         path.push({ code: l4.code, name: l4.name, level: 4 });
     }
 
