@@ -1,6 +1,7 @@
 import { useContext, useEffect, lazy, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { counterContext } from './context/counterContext.js';
 import Navbar from './components/Navbar.jsx';
 import BottomNav from './components/BottomNav.jsx';
@@ -66,6 +67,7 @@ const App = () => {
 
             {activeView !== 'adminEditor' && <Footer />}
             {activeView !== 'adminEditor' && <BottomNav />}
+            <Analytics />
         </>
     );
 };
