@@ -3,6 +3,8 @@ import { Helmet } from 'react-helmet-async';
 import { counterContext } from '../context/counterContext.js';
 import { drugService } from '../services/drugService.js';
 import { filterDrugsByQuery } from '../utils/drugSearch.js';
+import { ATC_LEVEL_1 } from '../utils/atcTree.js';
+import { formatCategory } from '../utils/formatCategory.js';
 import styles from './ContenidoFarmacos.module.css';
 
 const INITIAL_BATCH = 40;
@@ -88,12 +90,14 @@ const ContenidoFarmacos = () => {
 
     const categoryList = useMemo(() => {
         const mergedMap = new Map();
+        const resolveName = (code, rawName) =>
+            ATC_LEVEL_1[code]?.name || formatCategory(String(rawName || code).trim());
 
         (categories || []).forEach((cat) => {
             if (typeof cat === 'object' && cat !== null && cat.categoryCode) {
-                const code = String(cat.categoryCode).trim();
-                const name = String(cat.categoryName || code).trim();
+                const code = String(cat.categoryCode).trim().toUpperCase();
                 if (code) {
+                    const name = resolveName(code, cat.categoryName);
                     mergedMap.set(code, {
                         id: code,
                         label: `[${code}] ${name}`,
@@ -106,12 +110,16 @@ const ContenidoFarmacos = () => {
         // Also include any ATC Level 1 categories present in the loaded drugs list
         (drugs || []).forEach((drug) => {
             (drug.atc || []).forEach((a) => {
-                if (a && a.categoryCode && !mergedMap.has(a.categoryCode)) {
-                    mergedMap.set(a.categoryCode, {
-                        id: a.categoryCode,
-                        label: `[${a.categoryCode}] ${a.categoryName || a.categoryCode}`,
-                        filterKey: a.categoryCode
-                    });
+                if (a && a.categoryCode) {
+                    const code = String(a.categoryCode).trim().toUpperCase();
+                    if (code && !mergedMap.has(code)) {
+                        const name = resolveName(code, a.categoryName);
+                        mergedMap.set(code, {
+                            id: code,
+                            label: `[${code}] ${name}`,
+                            filterKey: code
+                        });
+                    }
                 }
             });
         });
