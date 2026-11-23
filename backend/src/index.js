@@ -7,6 +7,7 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const mongoose = require("mongoose");
 const path = require("path");
+const fs = require("fs");
 const crypto = require("crypto");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 require("dotenv").config();
@@ -276,7 +277,7 @@ drugSchema.index({ "atc.code": 1 });
 drugSchema.index({ "atc.subcategoryCode": 1 });
 drugSchema.index({ "atc.categoryCode": 1 });
 
-const Drug = mongoose.model("Drug", drugSchema);
+const Drug = mongoose.models.Drug || mongoose.model("Drug", drugSchema);
 
 const pendingDrugSchema = new mongoose.Schema({
     name: {
@@ -304,7 +305,7 @@ const pendingDrugSchema = new mongoose.Schema({
 
 pendingDrugSchema.index({ status: 1, searchCount: -1 });
 
-const PendingDrug = mongoose.model("PendingDrug", pendingDrugSchema);
+const PendingDrug = mongoose.models.PendingDrug || mongoose.model("PendingDrug", pendingDrugSchema);
 
 // Doctor & Health Professional Model
 const doctorUserSchema = new mongoose.Schema(
@@ -368,7 +369,7 @@ doctorUserSchema.virtual("licenseNumber").get(function () {
 doctorUserSchema.index({ email: 1 });
 doctorUserSchema.index({ country: 1 });
 
-const DoctorUser = mongoose.model("DoctorUser", doctorUserSchema);
+const DoctorUser = mongoose.models.DoctorUser || mongoose.model("DoctorUser", doctorUserSchema);
 
 // Password helpers (PBKDF2 con 210,000 iteraciones según estándar OWASP)
 const PBKDF2_ITERATIONS = 210000;
