@@ -206,7 +206,7 @@ const Navbar = () => {
                                                 className={styles.dropdownMenuItem}
                                                 onClick={() => {
                                                     setUserMenuOpen(false);
-                                                    window.open('/editor', '_blank', 'noopener,noreferrer');
+                                                    navigate('/editor');
                                                 }}
                                                 role="menuitem"
                                             >

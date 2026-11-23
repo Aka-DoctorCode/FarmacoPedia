@@ -498,7 +498,10 @@ const requireAdmin = async (req, res, next) => {
 // --------------------------------------------------------------
 // Servir directamente la aplicación web de tools/editor
 // --------------------------------------------------------------
-const toolsEditorPath = path.resolve(__dirname, "../../tools/editor");
+const toolsEditorCandidate = path.resolve(__dirname, "../../tools/editor");
+const toolsEditorPath = fs.existsSync(toolsEditorCandidate)
+  ? toolsEditorCandidate
+  : path.resolve(__dirname, "../public/editor");
 app.use("/editor", express.static(toolsEditorPath));
 
 app.get(["/session", "/editor/session"], asyncHandler(async (req, res) => {

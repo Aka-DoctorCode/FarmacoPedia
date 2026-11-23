@@ -120,7 +120,7 @@ const StateContext = ({ children }) => {
     const location = useLocation();
 
     const { activeView, selectedDrugName, atcCode } = useMemo(() => {
-        if (matchPath('/admin', location.pathname) || matchPath('/admin/editor', location.pathname)) {
+        if (matchPath('/admin', location.pathname) || matchPath('/admin/editor', location.pathname) || matchPath('/editor', location.pathname)) {
             return { activeView: 'adminEditor', selectedDrugName: null, atcCode: null };
         }
         if (matchPath('/about', location.pathname)) {

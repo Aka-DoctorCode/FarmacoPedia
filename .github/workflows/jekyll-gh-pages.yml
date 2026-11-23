@@ -60,6 +60,10 @@ jobs:
         working-directory: frontend
         env:
           VITE_API_URL: ${{ vars.VITE_API_URL || 'https://farmacopedia.onrender.com' }}
+      - name: Copy editor to dist
+        run: |
+          mkdir -p frontend/dist/editor
+          cp tools/editor/index.html tools/editor/app.js tools/editor/style.css frontend/dist/editor/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:

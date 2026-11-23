@@ -1,4 +1,6 @@
-const API = "/api";
+const IS_GH_PAGES = window.location.hostname.endsWith("github.io");
+const REMOTE_BACKEND = "https://farmacopedia.onrender.com";
+const API = IS_GH_PAGES ? REMOTE_BACKEND : "/api";
 const $ = (id) => document.getElementById(id);
 const state = { kind: "drugs", items: [], current: null, original: null, isNew: false };
 const STRIP = ["_id", "__v"];
@@ -23,14 +25,22 @@ async function unlockIfSession() {
   }
   const t = sessionStorage.getItem("tok");
   if (!t) return;
-  const sessionUrl = window.location.pathname.startsWith("/editor") ? "/editor/session" : "/session";
+  const sessionUrl = IS_GH_PAGES
+    ? REMOTE_BACKEND + "/editor/session"
+    : (window.location.pathname.startsWith("/editor") ? "/editor/session" : "/session");
   const r = await fetch(sessionUrl, { headers: { Authorization: "Bearer " + t } });
   if (r.ok) showApp();
 }
 $("login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const authUrl = window.location.pathname.startsWith("/editor") ? "/editor/auth" : "/auth";
-  const r = await fetch(authUrl, { method: "POST", body: JSON.stringify({ password: $("password").value }) });
+  const authUrl = IS_GH_PAGES
+    ? REMOTE_BACKEND + "/editor/auth"
+    : (window.location.pathname.startsWith("/editor") ? "/editor/auth" : "/auth");
+  const r = await fetch(authUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password: $("password").value }),
+  });
   if (!r.ok) { $("login-error").textContent = "Contraseña incorrecta"; return; }
   sessionStorage.setItem("tok", (await r.json()).token);
   showApp();
