@@ -143,11 +143,12 @@ const AdminEditor = () => {
         }
     };
 
-    // Filter items by search
+    // Filter items by search (accent-insensitive)
     const filteredItems = useMemo(() => {
-        const q = searchQuery.trim().toLowerCase();
+        const normalize = (s) => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        const q = normalize(searchQuery.trim());
         if (!q) return items;
-        return items.filter((item) => (item.name || '').toLowerCase().includes(q));
+        return items.filter((item) => normalize(item.name).includes(q));
     }, [items, searchQuery]);
 
     // Validation
